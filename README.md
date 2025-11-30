@@ -58,12 +58,6 @@ pnpm build
 
 ## 配置指南
 
-> 🚀 **推荐使用超级懒人模式（app.modules.ts）**
->
-> **一个文件搞定所有配置！** 详见：[LAZY-MODE.md](./LAZY-MODE.md)
->
-> 旧版配置方式（menu.ts、modules/）仍然可用，但不推荐。
-
 ### 🚀 超级懒人模式（推荐）
 
 只需在 **一个文件** 中配置所有内容：`src/config/app.modules.ts`
