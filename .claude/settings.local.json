@@ -11,7 +11,8 @@
       "Bash(if not exist \"C:\\Users\\Qzhan\\Desktop\\work\\new work\\svelte-manage-web\\src\\components\\Permission.svelte\" echo.)",
       "Bash(timeout 3 tail:*)",
       "Bash(npx tsc:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(move:*)"
     ],
     "deny": [],
     "ask": []

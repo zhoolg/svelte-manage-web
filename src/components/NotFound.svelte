@@ -1,0 +1,130 @@
+<script lang="ts">
+  /**
+   * 404 页面组件
+   * ============================================================
+   *
+   * 功能：
+   * - 显示 404 错误信息
+   * - 提供返回首页按钮
+   * - 显示当前访问的路径
+   * - 响应式设计
+   */
+  import { navigate } from '../stores/routerStore';
+  import { APP_CONFIG } from '../config';
+
+  export let path: string = '';
+
+  function goHome() {
+    navigate('/');
+  }
+
+  function goBack() {
+    window.history.back();
+  }
+</script>
+
+<div class="min-h-[calc(100vh-200px)] flex items-center justify-center p-4">
+  <div class="max-w-2xl w-full text-center">
+    <!-- 404 大标题 -->
+    <div class="mb-8">
+      <h1 class="text-9xl font-bold text-[#409eff] dark:text-[#66b1ff] mb-4 animate-pulse">
+        404
+      </h1>
+      <div class="flex items-center justify-center gap-2 text-gray-400 dark:text-gray-500 mb-2">
+        <div class="h-px flex-1 bg-gradient-to-r from-transparent to-gray-300 dark:to-gray-600"></div>
+        <i class="pi pi-exclamation-circle text-2xl"></i>
+        <div class="h-px flex-1 bg-gradient-to-l from-transparent to-gray-300 dark:to-gray-600"></div>
+      </div>
+    </div>
+
+    <!-- 错误信息 -->
+    <div class="bg-white dark:bg-[#1d1d1d] rounded-lg shadow-lg p-8 mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
+        页面未找到
+      </h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">
+        抱歉，您访问的页面不存在或已被移除。
+      </p>
+
+      {#if path}
+        <div class="bg-gray-50 dark:bg-[#2d2d2d] rounded-lg p-4 mb-6">
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+            您尝试访问的路径：
+          </p>
+          <code class="text-sm text-[#409eff] dark:text-[#66b1ff] font-mono break-all">
+            {path}
+          </code>
+        </div>
+      {/if}
+
+      <!-- 可能的原因 -->
+      <div class="text-left bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          可能的原因：
+        </p>
+        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+          <li class="flex items-start gap-2">
+            <i class="pi pi-angle-right text-xs mt-1"></i>
+            <span>页面地址输入错误</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="pi pi-angle-right text-xs mt-1"></i>
+            <span>页面已被删除或移动</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="pi pi-angle-right text-xs mt-1"></i>
+            <span>您没有访问该页面的权限</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="pi pi-angle-right text-xs mt-1"></i>
+            <span>链接已过期</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button
+          on:click={goBack}
+          class="px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-[#2d2d2d] dark:hover:bg-[#3d3d3d] text-gray-700 dark:text-gray-300 rounded-lg transition-colors flex items-center justify-center gap-2"
+        >
+          <i class="pi pi-arrow-left"></i>
+          <span>返回上一页</span>
+        </button>
+        <button
+          on:click={goHome}
+          class="px-6 py-3 bg-[#409eff] hover:bg-[#66b1ff] text-white rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
+        >
+          <i class="pi pi-home"></i>
+          <span>返回首页</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 底部提示 -->
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      如果您认为这是一个错误，请联系
+      <a
+        href="mailto:support@example.com"
+        class="text-[#409eff] hover:text-[#66b1ff] transition-colors"
+      >
+        技术支持
+      </a>
+    </p>
+  </div>
+</div>
+
+<style>
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+</style>

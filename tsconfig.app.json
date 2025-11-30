@@ -15,7 +15,17 @@
      */
     "allowJs": true,
     "checkJs": true,
-    "moduleDetection": "force"
+    "moduleDetection": "force",
+    // 路径别名配置
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "$lib/*": ["src/lib/*"],
+      "$config/*": ["src/config/*"],
+      "$components/*": ["src/components/*"],
+      "$stores/*": ["src/stores/*"],
+      "$utils/*": ["src/utils/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]
 }

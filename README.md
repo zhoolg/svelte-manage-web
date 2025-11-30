@@ -95,7 +95,7 @@ kubectl get pods -l app=svelte-admin
 kubectl get svc svelte-admin
 ```
 
-详细部署文档：[DEPLOYMENT.md](./DEPLOYMENT.md)
+详细部署文档：[DEPLOYMENT.md](./docs/DEPLOYMENT.md)
 
 ---
 
@@ -1083,9 +1083,28 @@ make scale REPLICAS=5
 | 生产 | 3-10   | 200m        | 256Mi          | 1000m     | 1Gi          |
 
 详细文档：
-- [Docker 部署指南](./Dockerfile)
-- [Kubernetes 部署指南](./DEPLOYMENT.md)
+- [Kubernetes 部署指南](./docs/DEPLOYMENT.md)
+- [K8s 部署方案总结](./docs/K8S-SUMMARY.md)
 - [K8s 配置说明](./k8s/README.md)
+
+---
+
+## 📚 文档索引
+
+### 部署相关
+- [Kubernetes 部署指南](./docs/DEPLOYMENT.md) - 详细的 K8s 部署步骤和故障排查
+- [K8s 部署方案总结](./docs/K8S-SUMMARY.md) - 部署方案特点和最佳实践
+- [K8s 配置说明](./k8s/README.md) - K8s 配置文件快速参考
+
+### 配置文件
+- [Dockerfile](./Dockerfile) - Docker 多阶段构建配置
+- [docker-compose.yml](./docker-compose.yml) - 本地测试配置
+- [nginx.conf](./nginx.conf) - Nginx 生产配置
+- [Makefile](./Makefile) - 常用命令简化工具
+
+### 环境配置
+- [.env](./.env) - 环境变量配置
+- [vite.config.ts](./vite.config.ts) - Vite 构建配置
 
 ---
 

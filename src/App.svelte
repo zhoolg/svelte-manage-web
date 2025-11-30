@@ -14,6 +14,7 @@
   import { initTheme } from './stores/settingsStore';
   import { currentPath, navigate } from './stores/routerStore';
   import { getModuleByPath, toModuleConfig } from './config/app.modules';
+  import { APP_CONFIG } from './config';
   import Toast from './components/Toast.svelte';
   import Modal from './components/Modal.svelte';
   import Login from './components/Login.svelte';
@@ -24,6 +25,7 @@
   import Logs from './components/Logs.svelte';
   import Dict from './components/Dict.svelte';
   import Agents from './components/Agents.svelte';
+  import NotFound from './components/NotFound.svelte';
   import './app.css';
 
   // 初始化
@@ -38,7 +40,7 @@
 </script>
 
 <svelte:head>
-  <title>Svelte 管理后台</title>
+  <title>{APP_CONFIG.title}</title>
 </svelte:head>
 
 <!-- Toast 和 Modal 组件 -->
@@ -64,20 +66,8 @@
       <!-- CRUD 页面 -->
       <CrudPage config={moduleConfig} />
     {:else}
-      <!-- 自定义页面或 404 -->
-      <div class="bg-white dark:bg-[#1d1d1d] rounded-lg p-8 text-center">
-        <i class="pi pi-exclamation-triangle text-6xl text-yellow-500 mb-4"></i>
-        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">页面开发中</h2>
-        <p class="text-gray-500 dark:text-gray-400 mb-4">
-          当前页面 "{$currentPath}" 正在开发中，敬请期待！
-        </p>
-        <button
-          on:click={() => navigate('/')}
-          class="px-4 py-2 bg-[#409eff] hover:bg-[#66b1ff] text-white rounded transition-colors"
-        >
-          返回首页
-        </button>
-      </div>
+      <!-- 404 页面 -->
+      <NotFound path={$currentPath} />
     {/if}
   </AdminLayout>
 {:else}
