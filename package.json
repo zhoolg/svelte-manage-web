@@ -1,0 +1,36 @@
+{
+  "name": "svelte-manage-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.10.0",
+    "bits-ui": "^1.8.0",
+    "primeicons": "^7.0.0",
+    "tailwindcss-primeui": "^0.6.1"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@tailwindcss/postcss": "^4.1.17",
+    "@tsconfig/svelte": "^5.0.6",
+    "@types/node": "^24.10.1",
+    "autoprefixer": "^10.4.22",
+    "flowbite": "^4.0.1",
+    "flowbite-svelte": "^1.28.3",
+    "postcss": "^8.5.6",
+    "svelte": "^5.43.8",
+    "svelte-check": "^4.3.4",
+    "tailwindcss": "^4.1.17",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-win32-x64-msvc": "^4.53.3"
+  }
+}
