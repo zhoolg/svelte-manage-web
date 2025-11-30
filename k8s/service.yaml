@@ -1,0 +1,57 @@
+# ============================================================
+# Kubernetes Service 配置
+# 用于暴露 Svelte 管理后台应用服务
+# ============================================================
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: svelte-admin
+  namespace: default
+  labels:
+    app: svelte-admin
+spec:
+  # 服务类型
+  type: ClusterIP
+
+  # 会话亲和性（可选）
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800  # 3小时
+
+  # 选择器
+  selector:
+    app: svelte-admin
+
+  # 端口配置
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80        # Service 端口
+    targetPort: 80  # Pod 端口
+
+---
+
+# ============================================================
+# Headless Service（可选）
+# 用于 StatefulSet 或需要直接访问 Pod 的场景
+# ============================================================
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: svelte-admin-headless
+  namespace: default
+  labels:
+    app: svelte-admin
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless Service
+  selector:
+    app: svelte-admin
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80

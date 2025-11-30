@@ -1,0 +1,44 @@
+# ============================================================
+# Docker Compose 配置
+# 用于本地开发和测试
+# ============================================================
+
+version: '3.8'
+
+services:
+  # Svelte 管理后台应用
+  svelte-admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: svelte-admin
+    ports:
+      - "8080:80"
+    environment:
+      # 应用配置
+      - VITE_APP_TITLE=管理平台
+      - VITE_APP_SHORT_TITLE=管理平台
+      - VITE_APP_DESCRIPTION=后台管理系统
+      - VITE_APP_LOGO_ICON=pi-briefcase
+      - VITE_APP_VERSION=v1.0.0
+      - VITE_APP_COPYRIGHT_OWNER=管理平台
+      # API 配置
+      - VITE_API_BASE_URL=/api
+      - VITE_APP_TARGET_URL=https://mlyj.quwei360.com.cn/mlyj-api/
+      - BACKEND_URL=https://mlyj.quwei360.com.cn/mlyj-api/
+      # 功能开关
+      - VITE_ENABLE_MOCK=false
+      - VITE_SHOW_DEV_LOGIN=true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - svelte-network
+
+networks:
+  svelte-network:
+    driver: bridge

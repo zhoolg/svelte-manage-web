@@ -5,7 +5,7 @@
 </p>
 
 
-[![Vite](https://img.shields.io/badge/Vite-7-4BC0C0?logo=vite&style=flat-square)](https://vitejs.dev/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&style=flat-square)](https://www.typescriptlang.org/) [![Svelte](https://img.shields.io/badge/Svelte-5-ff3e00?logo=svelte&style=flat-square)](https://svelte.dev/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&style=flat-square)](https://tailwindcss.com/) [![Bits UI](https://img.shields.io/badge/Bits_UI-1.8-000000?style=flat-square)](https://bits-ui.com/) [![MIT License](https://img.shields.io/badge/License-MIT-24292e?style=flat-square)](https://opensource.org/licenses/MIT) [![Author](https://img.shields.io/badge/Author-zhoolg-181717?logo=github&style=flat-square)](https://github.com/zhoolg)
+[![Vite](https://img.shields.io/badge/Vite-7-4BC0C0?logo=vite&style=flat-square)](https://vitejs.dev/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&style=flat-square)](https://www.typescriptlang.org/) [![Svelte](https://img.shields.io/badge/Svelte-5-ff3e00?logo=svelte&style=flat-square)](https://svelte.dev/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&style=flat-square)](https://tailwindcss.com/) [![Bits UI](https://img.shields.io/badge/Bits_UI-1.8-000000?style=flat-square)](https://bits-ui.com/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&style=flat-square)](https://www.docker.com/) [![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5?logo=kubernetes&style=flat-square)](https://kubernetes.io/) [![MIT License](https://img.shields.io/badge/License-MIT-24292e?style=flat-square)](https://opensource.org/licenses/MIT) [![Author](https://img.shields.io/badge/Author-zhoolg-181717?logo=github&style=flat-square)](https://github.com/zhoolg)
 
 基于 Svelte 5 + TypeScript + Vite 7 + Tailwind CSS 4 + Bits UI 构建的管理后台框架。
 
@@ -13,16 +13,29 @@
 
 ## 特性
 
+### 开发特性
+
 - **🚀 超级懒人模式** - 一个配置文件搞定所有（菜单、路由、API、CRUD）
 - **⚡ 10 秒添加模块** - 零代码自动生成完整的增删改查页面
 - **📝 配置即代码** - 修改配置文件即可快速定制
 - **🎯 零样板代码** - 无需创建页面文件、配置路由
 - **🔧 模块化设计** - 组件、API、页面分离，易于维护
+
+### 功能特性
+
 - **📊 二级菜单** - 支持菜单分组和折叠
 - **🔐 权限管理** - 细粒度的权限控制
 - **🌍 国际化** - 支持中英文切换
 - **🎨 主题定制** - 暗黑模式、多种主题色
 - **📱 响应式布局** - 适配各种屏幕尺寸
+
+### 部署特性
+
+- **🐳 Docker 支持** - 多阶段构建，优化镜像体积
+- **☸️ Kubernetes 就绪** - 完整的 K8s 部署配置
+- **📈 自动扩缩容** - HPA 配置，根据负载自动调整
+- **🔒 生产级安全** - 安全上下文、健康检查、资源限制
+- **🚀 零停机部署** - 滚动更新策略
 
 ## 技术栈
 
@@ -53,6 +66,36 @@ pnpm dev
 ```bash
 pnpm build
 ```
+
+### 🐳 Docker 部署
+
+```bash
+# 构建镜像
+docker build -t svelte-admin:latest .
+
+# 运行容器
+docker run -d -p 8080:80 svelte-admin:latest
+
+# 或使用 docker-compose
+docker-compose up -d
+```
+
+访问 http://localhost:8080
+
+### ☸️ Kubernetes 部署
+
+```bash
+# 快速部署
+kubectl apply -f k8s/
+
+# 查看部署状态
+kubectl get pods -l app=svelte-admin
+
+# 查看服务
+kubectl get svc svelte-admin
+```
+
+详细部署文档：[DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ---
 
@@ -917,6 +960,132 @@ src/
 7. [ ] 配置权限（如需要）
 
 </details>
+
+---
+
+## 🐳 Docker & Kubernetes 部署
+
+### Docker 部署
+
+本项目提供完整的 Docker 支持，使用多阶段构建优化镜像体积。
+
+#### 本地测试
+
+```bash
+# 使用 docker-compose 快速启动
+docker-compose up -d
+
+# 访问应用
+open http://localhost:8080
+```
+
+#### 生产部署
+
+```bash
+# 构建镜像
+docker build -t your-registry/svelte-admin:v1.0.0 .
+
+# 推送到镜像仓库
+docker push your-registry/svelte-admin:v1.0.0
+
+# 运行容器
+docker run -d \
+  -p 80:80 \
+  --name svelte-admin \
+  your-registry/svelte-admin:v1.0.0
+```
+
+### Kubernetes 部署
+
+提供完整的 K8s 部署配置，支持生产级部署。
+
+#### 快速部署
+
+```bash
+# 1. 修改配置
+# 编辑 k8s/configmap.yaml 和 k8s/deployment.yaml
+
+# 2. 部署到集群
+kubectl apply -f k8s/
+
+# 3. 查看状态
+kubectl get pods -l app=svelte-admin
+kubectl get svc svelte-admin
+kubectl get ingress svelte-admin
+```
+
+#### 使用 Makefile
+
+```bash
+# 构建并推送镜像
+make build push
+
+# 部署到 K8s
+make deploy
+
+# 查看状态
+make status
+
+# 查看日志
+make logs
+
+# 扩容到 5 个副本
+make scale REPLICAS=5
+```
+
+#### 功能特性
+
+- ✅ **多阶段构建** - 优化镜像体积（< 50MB）
+- ✅ **健康检查** - Liveness、Readiness、Startup 探针
+- ✅ **自动扩缩容** - HPA 根据 CPU/内存自动调整副本数
+- ✅ **滚动更新** - 零停机部署
+- ✅ **资源限制** - CPU 和内存配额管理
+- ✅ **安全配置** - 非 root 用户、安全上下文
+- ✅ **Ingress 支持** - HTTPS、域名路由
+- ✅ **ConfigMap** - 环境配置管理
+- ✅ **多环境支持** - Dev、Staging、Production
+
+#### 部署架构
+
+```
+┌─────────────────────────────────────────────┐
+│              Ingress Controller              │
+│         (HTTPS, 域名路由, 负载均衡)           │
+└─────────────────┬───────────────────────────┘
+                  │
+┌─────────────────▼───────────────────────────┐
+│              Service (ClusterIP)             │
+│            (内部负载均衡, 服务发现)            │
+└─────────────────┬───────────────────────────┘
+                  │
+        ┌─────────┼─────────┐
+        │         │         │
+┌───────▼──┐ ┌───▼─────┐ ┌─▼────────┐
+│  Pod 1   │ │  Pod 2  │ │  Pod 3   │
+│  Nginx   │ │  Nginx  │ │  Nginx   │
+│  + App   │ │  + App  │ │  + App   │
+└──────────┘ └─────────┘ └──────────┘
+     │            │            │
+     └────────────┴────────────┘
+              │
+     ┌────────▼─────────┐
+     │  HPA (自动扩缩容) │
+     │  3-10 副本       │
+     └──────────────────┘
+```
+
+#### 资源配置建议
+
+| 环境 | 副本数 | CPU Request | Memory Request | CPU Limit | Memory Limit |
+|------|--------|-------------|----------------|-----------|--------------|
+| 开发 | 1      | 50m         | 64Mi           | 200m      | 256Mi        |
+| 测试 | 2      | 100m        | 128Mi          | 500m      | 512Mi        |
+| 生产 | 3-10   | 200m        | 256Mi          | 1000m     | 1Gi          |
+
+详细文档：
+- [Docker 部署指南](./Dockerfile)
+- [Kubernetes 部署指南](./DEPLOYMENT.md)
+- [K8s 配置说明](./k8s/README.md)
 
 ---
 

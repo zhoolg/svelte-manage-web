@@ -1,0 +1,85 @@
+# ============================================================
+# Kubernetes ConfigMap 配置
+# 用于存储应用配置信息
+# ============================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: svelte-admin-config
+  namespace: default
+  labels:
+    app: svelte-admin
+data:
+  # 应用基础信息
+  VITE_APP_TITLE: "管理平台"
+  VITE_APP_SHORT_TITLE: "管理平台"
+  VITE_APP_DESCRIPTION: "后台管理系统"
+  VITE_APP_LOGO_ICON: "pi-briefcase"
+  VITE_APP_VERSION: "v1.0.0"
+  VITE_APP_COPYRIGHT_OWNER: "管理平台"
+
+  # API 配置
+  VITE_API_BASE_URL: "/api"
+  VITE_APP_TARGET_URL: "https://mlyj.quwei360.com.cn/mlyj-api/"
+
+  # 功能开关
+  VITE_ENABLE_MOCK: "false"
+  VITE_SHOW_DEV_LOGIN: "false"
+
+  # 后端服务地址（用于 Nginx 代理）
+  BACKEND_URL: "https://mlyj.quwei360.com.cn/mlyj-api/"
+
+---
+
+# ============================================================
+# ConfigMap - 环境特定配置（开发环境）
+# ============================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: svelte-admin-config-dev
+  namespace: default
+  labels:
+    app: svelte-admin
+    env: dev
+data:
+  VITE_APP_TITLE: "管理平台 - 开发环境"
+  VITE_APP_SHORT_TITLE: "管理平台(Dev)"
+  VITE_APP_DESCRIPTION: "后台管理系统 - 开发环境"
+  VITE_APP_LOGO_ICON: "pi-briefcase"
+  VITE_APP_VERSION: "v1.0.0-dev"
+  VITE_APP_COPYRIGHT_OWNER: "管理平台"
+  VITE_API_BASE_URL: "/api"
+  VITE_APP_TARGET_URL: "https://dev-api.example.com/"
+  VITE_ENABLE_MOCK: "true"
+  VITE_SHOW_DEV_LOGIN: "true"
+  BACKEND_URL: "https://dev-api.example.com/"
+
+---
+
+# ============================================================
+# ConfigMap - 环境特定配置（生产环境）
+# ============================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: svelte-admin-config-prod
+  namespace: default
+  labels:
+    app: svelte-admin
+    env: prod
+data:
+  VITE_APP_TITLE: "管理平台"
+  VITE_APP_SHORT_TITLE: "管理平台"
+  VITE_APP_DESCRIPTION: "后台管理系统"
+  VITE_APP_LOGO_ICON: "pi-briefcase"
+  VITE_APP_VERSION: "v1.0.0"
+  VITE_APP_COPYRIGHT_OWNER: "管理平台"
+  VITE_API_BASE_URL: "/api"
+  VITE_APP_TARGET_URL: "https://api.example.com/"
+  VITE_ENABLE_MOCK: "false"
+  VITE_SHOW_DEV_LOGIN: "false"
+  BACKEND_URL: "https://api.example.com/"

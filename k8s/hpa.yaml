@@ -1,0 +1,64 @@
+# ============================================================
+# Kubernetes HorizontalPodAutoscaler 配置
+# 用于自动水平扩缩容
+# ============================================================
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: svelte-admin-hpa
+  namespace: default
+  labels:
+    app: svelte-admin
+spec:
+  # 目标 Deployment
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: svelte-admin
+
+  # 副本数量范围
+  minReplicas: 3
+  maxReplicas: 10
+
+  # 扩缩容指标
+  metrics:
+  # CPU 使用率
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70  # CPU 使用率超过 70% 时扩容
+
+  # 内存使用率
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80  # 内存使用率超过 80% 时扩容
+
+  # 扩缩容行为配置
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300  # 缩容稳定窗口 5 分钟
+      policies:
+      - type: Percent
+        value: 50  # 每次最多缩容 50%
+        periodSeconds: 60
+      - type: Pods
+        value: 2   # 每次最多缩容 2 个 Pod
+        periodSeconds: 60
+      selectPolicy: Min  # 选择最小的缩容策略
+
+    scaleUp:
+      stabilizationWindowSeconds: 0  # 扩容立即生效
+      policies:
+      - type: Percent
+        value: 100  # 每次最多扩容 100%
+        periodSeconds: 30
+      - type: Pods
+        value: 4    # 每次最多扩容 4 个 Pod
+        periodSeconds: 30
+      selectPolicy: Max  # 选择最大的扩容策略
