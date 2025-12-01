@@ -3,6 +3,7 @@
    * 操作日志页面
    */
   import { writable } from 'svelte/store';
+  import { Button } from 'bits-ui';
   import { t } from '../lib/locales';
 
   interface LogItem {
@@ -103,27 +104,27 @@
         </select>
       </div>
       <div class="flex items-end gap-2">
-        <button
+        <Button.Root
           onclick={handleSearch}
           class="h-9 px-4 bg-[#409eff] text-white text-sm rounded-lg hover:bg-[#66b1ff] transition-colors"
         >
           <i class="pi pi-search mr-1"></i>
           {$t('common.search')}
-        </button>
-        <button
+        </Button.Root>
+        <Button.Root
           onclick={handleReset}
           class="h-9 px-4 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 text-sm rounded-lg hover:border-[#409eff] hover:text-[#409eff] transition-colors"
         >
           <i class="pi pi-refresh mr-1"></i>
           {$t('common.reset')}
-        </button>
-        <button
+        </Button.Root>
+        <Button.Root
           onclick={handleExport}
           class="h-9 px-4 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 text-sm rounded-lg hover:border-[#67c23a] hover:text-[#67c23a] transition-colors"
         >
           <i class="pi pi-download mr-1"></i>
           {$t('common.export')}
-        </button>
+        </Button.Root>
       </div>
     </div>
   </div>
@@ -167,12 +168,12 @@
               </td>
               <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{log.createTime}</td>
               <td class="px-4 py-3 text-sm">
-                <button
+                <Button.Root
                   onclick={() => selectedLog = log}
                   class="text-[#409eff] hover:text-[#66b1ff] transition-colors"
                 >
                   {$t('common.detail')}
-                </button>
+                </Button.Root>
               </td>
             </tr>
           {/each}
@@ -186,13 +187,13 @@
         {$t('table.total', { total: logs.length })}
       </div>
       <div class="flex items-center gap-2">
-        <button class="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded hover:border-[#409eff] hover:text-[#409eff] transition-colors disabled:opacity-50" disabled>
+        <Button.Root class="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded hover:border-[#409eff] hover:text-[#409eff] transition-colors disabled:opacity-50" disabled>
           {$t('table.prev')}
-        </button>
+        </Button.Root>
         <span class="px-3 py-1 text-sm bg-[#409eff] text-white rounded">1</span>
-        <button class="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded hover:border-[#409eff] hover:text-[#409eff] transition-colors disabled:opacity-50" disabled>
+        <Button.Root class="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded hover:border-[#409eff] hover:text-[#409eff] transition-colors disabled:opacity-50" disabled>
           {$t('table.next')}
-        </button>
+        </Button.Root>
       </div>
     </div>
   </div>
@@ -211,13 +212,13 @@
       <div class="relative w-full max-w-lg mx-4 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-xl">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
           <h3 class="text-lg font-medium text-gray-800 dark:text-white">{$t('logs.detail')}</h3>
-          <button
+          <Button.Root
             onclick={() => selectedLog = null}
             class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             aria-label={$t('common.close')}
           >
             <i class="pi pi-times"></i>
-          </button>
+          </Button.Root>
         </div>
         <div class="p-6 space-y-4">
           <div class="grid grid-cols-2 gap-4">
@@ -270,12 +271,12 @@
           </div>
         </div>
         <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex justify-end">
-          <button
+          <Button.Root
             onclick={() => selectedLog = null}
             class="px-4 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg hover:border-[#409eff] hover:text-[#409eff] transition-colors"
           >
             {$t('common.close')}
-          </button>
+          </Button.Root>
         </div>
       </div>
     </div>

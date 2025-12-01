@@ -8,7 +8,7 @@
    * - 保持原有功能和样式
    * - 提升可访问性和键盘导航
    */
-  import { Tabs } from 'bits-ui';
+  import { Tabs, Switch } from 'bits-ui';
   import { settingsStore } from '../stores/settingsStore';
   import { t, locale, setLocale, localeOptions } from '../lib/locales';
   import { APP_CONFIG } from '../config';
@@ -198,15 +198,13 @@
                       <p class="text-xs text-gray-500 mt-0.5">{item.desc}</p>
                     </div>
                   </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={item.value}
-                      onchange={(e) => item.onChange(e.currentTarget.checked)}
-                      class="sr-only peer"
-                    />
-                    <div class="w-12 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all after:shadow-sm peer-checked:bg-[#409eff]"></div>
-                  </label>
+                  <Switch.Root
+                    checked={item.value}
+                    onCheckedChange={(checked) => item.onChange(!!checked)}
+                    class="relative inline-flex items-center h-6 w-12 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#409eff] focus-visible:ring-offset-2 data-[state=checked]:bg-[#409eff] data-[state=unchecked]:bg-gray-200 dark:data-[state=unchecked]:bg-gray-700"
+                  >
+                    <Switch.Thumb class="pointer-events-none block h-5 w-5 rounded-full bg-white shadow-sm transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-[2px]" />
+                  </Switch.Root>
                 </div>
               {/each}
             </div>

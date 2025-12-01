@@ -16,7 +16,7 @@
    * - 移除手动的 clickOutside 逻辑
    */
   import { onMount } from 'svelte';
-  import { DropdownMenu, Popover, Dialog } from 'bits-ui';
+  import { DropdownMenu, Popover, Dialog, Button, Tooltip } from 'bits-ui';
   import { authStore } from '../stores/authStore';
   import { settingsStore } from '../stores/settingsStore';
   import { currentPath, navigate, routeNames } from '../stores/routerStore';
@@ -113,20 +113,20 @@
   <div class="flex items-center justify-between h-full px-4">
     <!-- 左侧：折叠按钮 + 面包屑 -->
     <div class="flex items-center">
-      <button
+      <Button.Root
         onclick={onToggle}
         class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
         aria-label="Toggle Menu"
       >
         <i class="pi pi-bars text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-      </button>
+      </Button.Root>
 
       <!-- 面包屑导航 -->
       <nav class="flex items-center ml-4 text-[14px]">
-        <button onclick={() => navigate('/')} class="text-[#97a8be] hover:text-[#409eff] cursor-pointer transition-colors">
+        <Button.Root onclick={() => navigate('/')} class="text-[#97a8be] hover:text-[#409eff] cursor-pointer transition-colors">
           <i class="pi pi-home text-[12px] mr-1"></i>
           {translate('menu.home')}
-        </button>
+        </Button.Root>
         {#if $currentPath !== '/'}
           {#if parentMenu}
             <span class="mx-2 text-[#97a8be]">/</span>
@@ -145,27 +145,42 @@
     <!-- 右侧：工具栏 -->
     <div class="flex items-center">
       <!-- 搜索按钮 -->
-      <button
-        onclick={() => searchVisible = true}
-        class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
-        title="搜索 (Ctrl+K)"
-      >
-        <i class="pi pi-search text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-      </button>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild let:builder>
+          <Button.Root
+            builders={[builder]}
+            onclick={() => searchVisible = true}
+            class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
+          >
+            <i class="pi pi-search text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
+          </Button.Root>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
+            sideOffset={5}
+          >
+            搜索 (Ctrl+K)
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
 
       <!-- 通知按钮 - 使用 Bits UI Popover -->
-      <Popover.Root>
-        <Popover.Trigger
-          class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors relative"
-          title="通知"
-        >
-          <i class="pi pi-bell text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-          {#if unreadCount > 0}
-            <span class="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
-              {unreadCount}
-            </span>
-          {/if}
-        </Popover.Trigger>
+      <Tooltip.Root>
+        <Popover.Root>
+          <Tooltip.Trigger asChild let:builder>
+            <Popover.Trigger
+              builders={[builder]}
+              class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors relative"
+            >
+              <i class="pi pi-bell text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
+              {#if unreadCount > 0}
+                <span class="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                  {unreadCount}
+                </span>
+              {/if}
+            </Popover.Trigger>
+          </Tooltip.Trigger>
 
         <Popover.Portal>
           <Popover.Content
@@ -175,7 +190,7 @@
           >
             <div class="px-4 py-3 border-b border-[#ebeef5] dark:border-[#303030] flex items-center justify-between">
               <span class="font-medium text-gray-800 dark:text-white">{translate('common.more')}</span>
-              <button class="text-xs text-[#409eff] hover:underline">{translate('common.all')}</button>
+              <Button.Root class="text-xs text-[#409eff] hover:underline">{translate('common.all')}</Button.Root>
             </div>
             <div class="max-h-[300px] overflow-y-auto">
               {#each notifications as item}
@@ -199,29 +214,53 @@
               {/each}
             </div>
             <div class="px-4 py-2 border-t border-[#ebeef5] dark:border-[#303030] text-center">
-              <button class="text-sm text-[#409eff] hover:underline">查看全部通知</button>
+              <Button.Root class="text-sm text-[#409eff] hover:underline">查看全部通知</Button.Root>
             </div>
           </Popover.Content>
         </Popover.Portal>
-      </Popover.Root>
+        </Popover.Root>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
+            sideOffset={5}
+          >
+            通知
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
 
       <!-- 暗黑模式切换 -->
-      <button
-        onclick={() => settingsStore.setTheme(theme === 'dark' ? 'light' : 'dark')}
-        class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
-        title={theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'}
-      >
-        <i class="pi {theme === 'dark' ? 'pi-sun' : 'pi-moon'} text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-      </button>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild let:builder>
+          <Button.Root
+            builders={[builder]}
+            onclick={() => settingsStore.setTheme(theme === 'dark' ? 'light' : 'dark')}
+            class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
+          >
+            <i class="pi {theme === 'dark' ? 'pi-sun' : 'pi-moon'} text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
+          </Button.Root>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
+            sideOffset={5}
+          >
+            {theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'}
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
 
       <!-- 语言切换 - 使用 Bits UI Dropdown Menu -->
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger
-          class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
-          title={translate('settings.language')}
-        >
-          <i class="pi pi-globe text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-        </DropdownMenu.Trigger>
+      <Tooltip.Root>
+        <DropdownMenu.Root>
+          <Tooltip.Trigger asChild let:builder>
+            <DropdownMenu.Trigger
+              builders={[builder]}
+              class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
+            >
+              <i class="pi pi-globe text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
+            </DropdownMenu.Trigger>
+          </Tooltip.Trigger>
 
         <DropdownMenu.Portal>
           <DropdownMenu.Content
@@ -243,16 +282,37 @@
             {/each}
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
-      </DropdownMenu.Root>
+        </DropdownMenu.Root>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
+            sideOffset={5}
+          >
+            {translate('settings.language')}
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
 
       <!-- 全屏按钮 -->
-      <button
-        onclick={toggleFullscreen}
-        class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
-        title={isFullscreen ? '退出全屏' : '全屏'}
-      >
-        <i class="pi {isFullscreen ? 'pi-window-minimize' : 'pi-window-maximize'} text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-      </button>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild let:builder>
+          <Button.Root
+            builders={[builder]}
+            onclick={toggleFullscreen}
+            class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
+          >
+            <i class="pi {isFullscreen ? 'pi-window-minimize' : 'pi-window-maximize'} text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
+          </Button.Root>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
+            sideOffset={5}
+          >
+            {isFullscreen ? '退出全屏' : '全屏'}
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
 
       <!-- 用户信息 - 使用 Bits UI Dropdown Menu -->
       <DropdownMenu.Root>
@@ -349,7 +409,7 @@
             <div class="grid grid-cols-2 gap-2">
               {#each filteredMenus as item}
                 {@const parent = getParentMenu(item.path!)}
-                <button
+                <Button.Root
                   onclick={() => { searchVisible = false; searchQuery = ''; navigate(item.path!); }}
                   class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
                 >
@@ -362,7 +422,7 @@
                       <span class="text-xs text-gray-400 truncate">{translate(parent.label)}</span>
                     {/if}
                   </div>
-                </button>
+                </Button.Root>
               {/each}
             </div>
           {/if}
@@ -372,7 +432,7 @@
           <div class="grid grid-cols-2 gap-2">
             {#each allMenus as item}
               {@const parent = getParentMenu(item.path!)}
-              <button
+              <Button.Root
                 onclick={() => { searchVisible = false; navigate(item.path!); }}
                 class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
               >
@@ -385,7 +445,7 @@
                     <span class="text-xs text-gray-400 truncate">{translate(parent.label)}</span>
                   {/if}
                 </div>
-              </button>
+              </Button.Root>
             {/each}
           </div>
         {/if}

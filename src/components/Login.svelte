@@ -270,7 +270,7 @@
     </div>
 
     <!-- 底部版权 -->
-    <p class="text-center text-xs text-gray-500 dark:text-gray-400 mt-8 opacity-60 hover:opacity-100 transition-opacity duration-300">
+    <p class="text-center text-xs text-white dark:text-gray-400 mt-8 opacity-60 hover:opacity-100 transition-opacity duration-300">
       {APP_CONFIG.copyright}
     </p>
   </div>

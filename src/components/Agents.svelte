@@ -2,6 +2,7 @@
   /**
    * 代理商管理页面（简化版）
    */
+  import { Button } from 'bits-ui';
   import { t } from '../lib/locales';
 
   interface Agent {
@@ -62,14 +63,14 @@
         placeholder={$t('agent.searchPlaceholder')}
         class="flex-1 h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-[#141414] focus:border-[#409eff] focus:outline-none"
       />
-      <button class="h-9 px-4 bg-[#409eff] text-white text-sm rounded-lg hover:bg-[#66b1ff] transition-colors">
+      <Button.Root class="h-9 px-4 bg-[#409eff] text-white text-sm rounded-lg hover:bg-[#66b1ff] transition-colors">
         <i class="pi pi-search mr-1"></i>
         {$t('common.search')}
-      </button>
-      <button class="h-9 px-4 bg-[#67c23a] text-white text-sm rounded-lg hover:bg-[#85ce61] transition-colors">
+      </Button.Root>
+      <Button.Root class="h-9 px-4 bg-[#67c23a] text-white text-sm rounded-lg hover:bg-[#85ce61] transition-colors">
         <i class="pi pi-plus mr-1"></i>
         {$t('agent.addAgent')}
-      </button>
+      </Button.Root>
     </div>
   </div>
 
@@ -104,12 +105,12 @@
             </td>
             <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{agent.createTime}</td>
             <td class="px-4 py-3 text-sm">
-              <button class="text-[#409eff] hover:text-[#66b1ff] mr-3">{$t('common.view')}</button>
+              <Button.Root class="text-[#409eff] hover:text-[#66b1ff] mr-3">{$t('common.view')}</Button.Root>
               {#if agent.status === 'pending'}
-                <button class="text-[#67c23a] hover:text-[#85ce61] mr-3">{$t('agent.approve')}</button>
-                <button class="text-red-500 hover:text-red-600">{$t('agent.reject')}</button>
+                <Button.Root class="text-[#67c23a] hover:text-[#85ce61] mr-3">{$t('agent.approve')}</Button.Root>
+                <Button.Root class="text-red-500 hover:text-red-600">{$t('agent.reject')}</Button.Root>
               {:else}
-                <button class="text-[#409eff] hover:text-[#66b1ff]">{$t('common.edit')}</button>
+                <Button.Root class="text-[#409eff] hover:text-[#66b1ff]">{$t('common.edit')}</Button.Root>
               {/if}
             </td>
           </tr>

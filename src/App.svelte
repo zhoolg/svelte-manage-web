@@ -10,6 +10,7 @@
    * - 主题初始化
    */
   import { onMount } from 'svelte';
+  import { Tooltip } from 'bits-ui';
   import { isLoggedIn, authStore } from './stores/authStore';
   import { initTheme } from './stores/settingsStore';
   import { currentPath, navigate } from './stores/routerStore';
@@ -47,29 +48,32 @@
 <Toast />
 <Modal />
 
-<!-- 主内容：根据登录状态显示不同页面 -->
-{#if $isLoggedIn}
-  <AdminLayout>
-    {#if $currentPath === '/'}
-      <Dashboard />
-    {:else if currentModule?.customPage === 'Settings'}
-      <Settings />
-    {:else if currentModule?.customPage === 'Logs'}
-      <Logs />
-    {:else if currentModule?.customPage === 'Dict'}
-      <Dict />
-    {:else if currentModule?.customPage === 'Agents'}
-      <Agents />
-    {:else if currentModule?.customPage === 'Dashboard'}
-      <Dashboard />
-    {:else if moduleConfig}
-      <!-- CRUD 页面 -->
-      <CrudPage config={moduleConfig} />
-    {:else}
-      <!-- 404 页面 -->
-      <NotFound path={$currentPath} />
-    {/if}
-  </AdminLayout>
-{:else}
-  <Login />
-{/if}
+<!-- Tooltip Provider 包裹整个应用 -->
+<Tooltip.Provider>
+  <!-- 主内容：根据登录状态显示不同页面 -->
+  {#if $isLoggedIn}
+    <AdminLayout>
+      {#if $currentPath === '/'}
+        <Dashboard />
+      {:else if currentModule?.customPage === 'Settings'}
+        <Settings />
+      {:else if currentModule?.customPage === 'Logs'}
+        <Logs />
+      {:else if currentModule?.customPage === 'Dict'}
+        <Dict />
+      {:else if currentModule?.customPage === 'Agents'}
+        <Agents />
+      {:else if currentModule?.customPage === 'Dashboard'}
+        <Dashboard />
+      {:else if moduleConfig}
+        <!-- CRUD 页面 -->
+        <CrudPage config={moduleConfig} />
+      {:else}
+        <!-- 404 页面 -->
+        <NotFound path={$currentPath} />
+      {/if}
+    </AdminLayout>
+  {:else}
+    <Login />
+  {/if}
+</Tooltip.Provider>

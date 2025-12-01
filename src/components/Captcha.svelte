@@ -92,10 +92,12 @@
     }
 
     // 绘制干扰点
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 100; i++) {
       ctx.fillStyle = randomColor(150, 200);
       ctx.beginPath();
-      ctx.arc(Math.random() * width, Math.random() * height, 1, 0, 2 * Math.PI);
+      // 随机噪点大小：0.5-1.5像素
+      const radius = Math.random() * 1 + 0.5;
+      ctx.arc(Math.random() * width, Math.random() * height, radius, 0, 2 * Math.PI);
       ctx.fill();
     }
 

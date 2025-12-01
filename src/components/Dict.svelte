@@ -3,6 +3,7 @@
    * 数据字典管理页面（简化版）
    */
   import { writable } from 'svelte/store';
+  import { Button } from 'bits-ui';
   import { t } from '../lib/locales';
 
   interface DictType {
@@ -82,7 +83,7 @@
         </div>
         <div class="divide-y divide-gray-100 dark:divide-gray-800">
           {#each filteredTypes as type}
-            <button
+            <Button.Root
               onclick={() => handleSelectType(type)}
               class="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-[#262626] transition-colors {selectedType?.id === type.id ? 'bg-[#409eff]/10 border-l-4 border-[#409eff]' : ''}"
             >
@@ -95,7 +96,7 @@
                   {type.status === 'enabled' ? $t('common.enable') : $t('common.disable')}
                 </span>
               </div>
-            </button>
+            </Button.Root>
           {/each}
         </div>
       </div>
@@ -109,10 +110,10 @@
             <h3 class="text-base font-medium text-gray-800 dark:text-white">
               {selectedType.name} - {$t('dict.dictItems')}
             </h3>
-            <button class="h-8 px-3 bg-[#409eff] text-white text-sm rounded hover:bg-[#66b1ff] transition-colors">
+            <Button.Root class="h-8 px-3 bg-[#409eff] text-white text-sm rounded hover:bg-[#66b1ff] transition-colors">
               <i class="pi pi-plus mr-1"></i>
               {$t('common.add')}
-            </button>
+            </Button.Root>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full">
@@ -137,8 +138,8 @@
                       </span>
                     </td>
                     <td class="px-4 py-3 text-sm">
-                      <button class="text-[#409eff] hover:text-[#66b1ff] mr-3">{$t('common.edit')}</button>
-                      <button class="text-red-500 hover:text-red-600">{$t('common.delete')}</button>
+                      <Button.Root class="text-[#409eff] hover:text-[#66b1ff] mr-3">{$t('common.edit')}</Button.Root>
+                      <Button.Root class="text-red-500 hover:text-red-600">{$t('common.delete')}</Button.Root>
                     </td>
                   </tr>
                 {/each}

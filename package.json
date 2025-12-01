@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.10.0",
-    "bits-ui": "^1.8.0",
+    "bits-ui": "^2.14.4",
     "primeicons": "^7.0.0",
     "tailwindcss-primeui": "^0.6.1"
   },

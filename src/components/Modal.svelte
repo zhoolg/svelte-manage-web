@@ -18,7 +18,7 @@
    * - 保持原有 API 和功能不变
    * - 提升可访问性（ARIA、键盘导航）
    */
-  import { Dialog } from 'bits-ui';
+  import { Dialog, Button } from 'bits-ui';
   import { writable } from 'svelte/store';
   import { getTranslator } from '../lib/locales';
 
@@ -99,21 +99,21 @@
 
       <!-- 底部按钮 -->
       <div class="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-100 dark:border-gray-800">
-        <button
+        <Button.Root
           type="button"
           onclick={() => handleClose(false)}
           class="h-8 px-4 text-sm border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded hover:text-[#409eff] hover:border-[#409eff] transition-colors"
         >
           {$confirmState.cancelText || t('common.cancel')}
-        </button>
-        <button
+        </Button.Root>
+        <Button.Root
           type="button"
           onclick={() => handleClose(true)}
           class="h-8 px-4 text-sm text-white rounded transition-colors"
           style="background-color: {$confirmState.type === 'danger' ? '#f56c6c' : '#409eff'}"
         >
           {$confirmState.confirmText || t('common.confirm')}
-        </button>
+        </Button.Root>
       </div>
     </Dialog.Content>
   </Dialog.Portal>

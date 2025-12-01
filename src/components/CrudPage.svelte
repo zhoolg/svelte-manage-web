@@ -12,7 +12,7 @@
    * - 支持权限控制
    */
   import { onMount } from 'svelte';
-  import { Dialog } from 'bits-ui';
+  import { Dialog, Button, Checkbox } from 'bits-ui';
   import { toast } from '../utils/toast';
   import { confirm } from '../utils/confirm';
   import { get, post } from '../api/request';
@@ -407,19 +407,19 @@
           </div>
         {/each}
         <div class="flex items-end gap-2">
-          <button
+          <Button.Root
             onclick={handleSearch}
             class="h-9 px-4 bg-[#409eff] hover:bg-[#66b1ff] text-white text-sm rounded transition-colors flex items-center gap-1"
           >
             <i class="pi pi-search text-xs"></i>
             {$t('common.search')}
-          </button>
-          <button
+          </Button.Root>
+          <Button.Root
             onclick={handleReset}
             class="h-9 px-4 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors"
           >
             {$t('common.reset')}
-          </button>
+          </Button.Root>
         </div>
       </div>
     </div>
@@ -436,20 +436,20 @@
               {$t('table.selected', { count: selectedRows.length })}
             </span>
             {#if canDelete && config.api.delete}
-              <button
+              <Button.Root
                 onclick={handleBatchDelete}
                 class="h-8 px-3 bg-[#f56c6c] hover:bg-[#f78989] text-white text-sm rounded transition-colors flex items-center gap-1"
               >
                 <i class="pi pi-trash text-xs"></i>
                 {$t('table.batchDelete')}
-              </button>
+              </Button.Root>
             {/if}
-            <button
+            <Button.Root
               onclick={() => selectedRows = []}
               class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors"
             >
               {$t('table.cancelSelect')}
-            </button>
+            </Button.Root>
           </div>
         {:else}
           <div class="text-sm text-gray-500">
@@ -459,44 +459,44 @@
       </div>
       <div class="flex items-center gap-2">
         {#if config.toolbar?.showAdd && config.api.add && canAdd}
-          <button
+          <Button.Root
             onclick={handleAdd}
             class="h-8 px-3 bg-[#409eff] hover:bg-[#66b1ff] text-white text-sm rounded transition-colors flex items-center gap-1"
           >
             <i class="pi pi-plus text-xs"></i>
             {config.toolbar.addText || $t('common.add')}
-          </button>
+          </Button.Root>
         {/if}
         {#if canExport}
           <div class="relative group">
-            <button class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1">
+            <Button.Root class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1">
               <i class="pi pi-download text-xs"></i>
               {$t('common.export')}
-            </button>
+            </Button.Root>
             <div class="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 hidden group-hover:block z-10">
-              <button
+              <Button.Root
                 onclick={handleExportCsv}
                 class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 {$t('table.exportCsv')}
-              </button>
-              <button
+              </Button.Root>
+              <Button.Root
                 onclick={handleExportExcel}
                 class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 {$t('table.exportExcel')}
-              </button>
+              </Button.Root>
             </div>
           </div>
         {/if}
         {#if config.toolbar?.showRefresh}
-          <button
+          <Button.Root
             onclick={() => { selectedRows = []; fetchData(); }}
             class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1"
           >
             <i class="pi pi-refresh text-xs"></i>
             {$t('common.refresh')}
-          </button>
+          </Button.Root>
         {/if}
       </div>
     </div>
@@ -508,10 +508,9 @@
           <tr>
             {#if config.table.showSelection}
               <th class="w-12 px-4 py-3">
-                <input
-                  type="checkbox"
+                <Checkbox.Root
                   checked={isAllSelected}
-                  onchange={(e) => handleSelectAll(e.currentTarget.checked)}
+                  onCheckedChange={(checked) => handleSelectAll(!!checked)}
                   class="w-4 h-4 text-[#409eff] border-gray-300 rounded focus:ring-[#409eff]"
                 />
               </th>
@@ -560,10 +559,9 @@
               <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors {isRowSelected(row) ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}">
                 {#if config.table.showSelection}
                   <td class="px-4 py-3">
-                    <input
-                      type="checkbox"
+                    <Checkbox.Root
                       checked={isRowSelected(row)}
-                      onchange={(e) => handleSelectRow(row, e.currentTarget.checked)}
+                      onCheckedChange={(checked) => handleSelectRow(row, !!checked)}
                       class="w-4 h-4 text-[#409eff] border-gray-300 rounded focus:ring-[#409eff]"
                     />
                   </td>
@@ -587,7 +585,7 @@
                         {@const show = typeof action.show === 'function' ? action.show(row) : action.show !== false}
                         {@const hasPermission = hasActionPermission(action)}
                         {#if show && hasPermission}
-                          <button
+                          <Button.Root
                             onclick={() => handleActionClick(action, row)}
                             class="text-sm hover:underline {getActionColor(action.type)}"
                           >
@@ -595,7 +593,7 @@
                               <i class="{action.icon} mr-1 text-xs"></i>
                             {/if}
                             {action.label}
-                          </button>
+                          </Button.Root>
                         {/if}
                       {/each}
                     </div>
@@ -615,30 +613,30 @@
           {$t('table.showRange', { start: (currentPage - 1) * pageSize + 1, end: Math.min(currentPage * pageSize, total), total })}
         </div>
         <div class="flex items-center gap-1">
-          <button
+          <Button.Root
             onclick={() => setPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
             class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             aria-label="上一页"
           >
             <i class="pi pi-angle-left text-sm"></i>
-          </button>
+          </Button.Root>
           {#each getPageButtons() as page}
-            <button
+            <Button.Root
               onclick={() => setPage(page)}
               class="w-8 h-8 flex items-center justify-center rounded text-sm transition-colors {currentPage === page ? 'bg-[#409eff] text-white' : 'border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff]'}"
             >
               {page}
-            </button>
+            </Button.Root>
           {/each}
-          <button
+          <Button.Root
             onclick={() => setPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
             class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             aria-label="下一页"
           >
             <i class="pi pi-angle-right text-sm"></i>
-          </button>
+          </Button.Root>
         </div>
       </div>
     {/if}

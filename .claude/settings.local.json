@@ -6,7 +6,10 @@
       "Bash(pnpm install:*)",
       "Bash(find:*)",
       "Bash(cat:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(npm run dev:*)",
+      "Bash(cd:*)",
+      "Bash(pnpm build:*)"
     ],
     "deny": [],
     "ask": []
