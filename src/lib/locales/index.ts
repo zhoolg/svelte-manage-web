@@ -83,22 +83,22 @@ function getInitialLocale(): Locale {
 // 创建 locale store
 function createLocaleStore() {
   const initialLocale = getInitialLocale();
-  console.log('[i18n] Initial locale detected:', initialLocale);
+  // console.log('[i18n] Initial locale detected:', initialLocale);
 
   const { subscribe, set, update } = writable<Locale>(initialLocale);
 
   return {
     subscribe,
     set: (locale: Locale) => {
-      console.log('[i18n] Setting locale to:', locale);
+      // console.log('[i18n] Setting locale to:', locale);
       set(locale);
       // 保存到 localStorage
       if (typeof window !== 'undefined') {
         localStorage.setItem('locale-storage', JSON.stringify({ locale }));
-        console.log('[i18n] Saved to localStorage:', locale);
+        // console.log('[i18n] Saved to localStorage:', locale);
         // 更新 HTML lang 属性
         document.documentElement.lang = locale;
-        console.log('[i18n] Updated HTML lang attribute:', locale);
+        // console.log('[i18n] Updated HTML lang attribute:', locale);
       }
     },
     update,

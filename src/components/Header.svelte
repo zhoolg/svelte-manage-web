@@ -59,7 +59,7 @@
     if (!confirmed) return;
 
     authStore.logout();
-    (window as any).toast?.success(translate('login.loginSuccess'));
+    (window as any).toast?.success(translate('message.logoutSuccess'));
   }
 
   function toggleFullscreen() {

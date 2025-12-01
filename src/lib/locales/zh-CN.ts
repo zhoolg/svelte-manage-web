@@ -321,6 +321,7 @@ export default {
   message: {
     deleteConfirm: '确定要删除吗？此操作不可恢复。',
     logoutConfirm: '确定要退出登录吗？',
+    logoutSuccess: '退出成功',
     saveSuccess: '保存成功',
     deleteSuccess: '删除成功',
     operationSuccess: '操作成功',

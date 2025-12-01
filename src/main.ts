@@ -16,7 +16,7 @@ if (favicon && import.meta.env.VITE_APP_FAVICON) {
 // 初始化语言设置
 const currentLocale = getLocale()
 document.documentElement.lang = currentLocale
-console.log('[i18n] Initial locale:', currentLocale)
+// console.log('[i18n] Initial locale:', currentLocale)
 
 const app = mount(App, {
   target: document.getElementById('app')!,

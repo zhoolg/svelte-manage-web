@@ -321,6 +321,7 @@ export default {
   message: {
     deleteConfirm: 'Are you sure to delete? This action cannot be undone.',
     logoutConfirm: 'Are you sure to logout?',
+    logoutSuccess: 'Logout successfully',
     saveSuccess: 'Saved successfully',
     deleteSuccess: 'Deleted successfully',
     operationSuccess: 'Operation successful',

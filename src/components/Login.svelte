@@ -12,8 +12,8 @@
   let captcha = '';
   let loading = false;
   let bgUrl = '';
-  let captchaCode = '';
   let showPassword = false;
+  let captchaComponent: Captcha; // 验证码组件引用
 
   // 简化的测试账号（直接定义，不依赖外部文件）
   const testAccounts = [
@@ -70,11 +70,6 @@
     };
   });
 
-  // 验证码验证函数
-  function validateCaptcha(input: string, code: string): boolean {
-    return input.toLowerCase() === code.toLowerCase();
-  }
-
   // 模拟登录
   function handleLogin() {
     const translate = $t;
@@ -97,11 +92,16 @@
       }
       return;
     }
-    if (!validateCaptcha(captcha, captchaCode)) {
+
+    // 使用增强型验证
+    const validationResult = captchaComponent?.validate(captcha);
+    if (!validationResult || !validationResult.valid) {
       if (typeof window !== 'undefined' && (window as any).toast) {
-        (window as any).toast.warning(translate('login.captchaError'));
+        const reason = validationResult?.reason || 'login.captchaError';
+        (window as any).toast.warning(translate(reason));
       }
       captcha = '';
+      captchaComponent?.refresh(); // 刷新验证码
       return;
     }
 
@@ -116,6 +116,8 @@
         if (typeof window !== 'undefined' && (window as any).toast) {
           (window as any).toast.error(translate('login.loginFailed'));
         }
+        captcha = ''; // 清空验证码输入
+        captchaComponent?.refresh(); // 刷新验证码
         loading = false;
         return;
       }
@@ -265,16 +267,18 @@
                   type="text"
                   bind:value={captcha}
                   onkeydown={handleKeyDown}
+                  onclick={() => captchaComponent?.recordInteraction?.()}
+                  onfocus={() => captchaComponent?.recordInteraction?.()}
                   maxlength="4"
                   class="w-full h-12 pl-12 pr-4 text-sm bg-gray-50 dark:bg-[#2c2c2c] text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-xl placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-[#2c2c2c] focus:border-[#409eff] focus:ring-4 focus:ring-[#409eff]/10 transition-all"
                   placeholder={$t('login.captcha')}
                 />
               </div>
               <Captcha
+                bind:this={captchaComponent}
                 width={120}
                 height={48}
                 length={4}
-                onChange={(code) => { captchaCode = code; }}
               />
             </div>
           </div>

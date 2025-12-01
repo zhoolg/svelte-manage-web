@@ -42,7 +42,7 @@ function loadSettings(): SettingsState {
       return { ...defaultSettings, ...parsed.state };
     }
   } catch (e) {
-    console.error('Failed to load settings:', e);
+    // console.error('Failed to load settings:', e);
   }
   return defaultSettings;
 }
@@ -54,7 +54,7 @@ function saveSettings(settings: SettingsState) {
   try {
     localStorage.setItem('settings-storage', JSON.stringify({ state: settings }));
   } catch (e) {
-    console.error('Failed to save settings:', e);
+    // console.error('Failed to save settings:', e);
   }
 }
 
@@ -62,18 +62,18 @@ function saveSettings(settings: SettingsState) {
 function applyTheme(theme: 'light' | 'dark' | 'system') {
   if (!browser) return;
 
-  console.log('[Theme] Applying theme:', theme);
+  // console.log('[Theme] Applying theme:', theme);
 
   if (theme === 'dark') {
     document.documentElement.classList.add('dark');
-    console.log('[Theme] Added dark class');
+    // console.log('[Theme] Added dark class');
   } else if (theme === 'light') {
     document.documentElement.classList.remove('dark');
-    console.log('[Theme] Removed dark class');
+    // console.log('[Theme] Removed dark class');
   } else {
     // system
     const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    console.log('[Theme] System preference:', isDark ? 'dark' : 'light');
+    // console.log('[Theme] System preference:', isDark ? 'dark' : 'light');
     if (isDark) {
       document.documentElement.classList.add('dark');
     } else {
@@ -81,7 +81,7 @@ function applyTheme(theme: 'light' | 'dark' | 'system') {
     }
   }
 
-  console.log('[Theme] Current classes:', document.documentElement.className);
+  // console.log('[Theme] Current classes:', document.documentElement.className);
 }
 
 // 应用主题色
