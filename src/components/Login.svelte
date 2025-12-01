@@ -6,7 +6,7 @@
   import Captcha from './Captcha.svelte';
   import { t } from '../lib/locales';
   import { APP_CONFIG } from '../config';
-  import { request } from '../api/request';
+  import { authApi } from '../api/auth';
 
   let username = '';
   let password = '';
@@ -64,23 +64,11 @@
     loading = true;
 
     try {
-      // 调用真实的登录 API
-      const response = await request<{
-        token: string;
-        user: {
-          username: string;
-          name: string;
-          roles: string[];
-        };
-        permissions: string[];
-        isAdmin: boolean;
-      }>('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({
-          username: username.trim(),
-          password: password.trim(),
-          captcha: captcha.trim(),
-        }),
+      // 调用登录 API
+      const response = await authApi.login({
+        username: username.trim(),
+        password: password.trim(),
+        captcha: captcha.trim(),
       });
 
       // 设置用户信息和token
