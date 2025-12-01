@@ -28,7 +28,6 @@ services:
       - BACKEND_URL=https://mlyj.quwei360.com.cn/mlyj-api/
       # 功能开关
       - VITE_ENABLE_MOCK=false
-      - VITE_SHOW_DEV_LOGIN=true
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]

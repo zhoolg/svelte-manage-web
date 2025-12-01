@@ -54,7 +54,6 @@ export default {
     captchaError: '验证码错误',
     loginSuccess: '登录成功',
     loginFailed: '登录失败',
-    devLogin: '开发模式快速登录',
   },
 
   // 菜单

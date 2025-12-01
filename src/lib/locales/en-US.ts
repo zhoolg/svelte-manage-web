@@ -54,7 +54,6 @@ export default {
     captchaError: 'Captcha error',
     loginSuccess: 'Login successful',
     loginFailed: 'Login failed',
-    devLogin: 'Dev Quick Login',
   },
 
   // Menu

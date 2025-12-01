@@ -39,9 +39,6 @@ export const APP_CONFIG = {
 
   /** 是否启用 Mock */
   enableMock: import.meta.env.VITE_ENABLE_MOCK === 'true',
-
-  /** 是否显示开发登录按钮 */
-  showDevLogin: import.meta.env.VITE_SHOW_DEV_LOGIN !== 'false',
 };
 
 // ============================================================

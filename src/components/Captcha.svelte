@@ -245,7 +245,7 @@
   {height}
   onclick={handleRefresh}
   onmousemove={handleMouseMove}
-  class="cursor-pointer rounded-lg border border-gray-200 dark:border-gray-700 hover:border-[#409eff] transition-colors"
+  class="cursor-pointer rounded-lg border border-gray-200 dark:border-gray-700"
   title="点击刷新验证码"
 ></canvas>
 

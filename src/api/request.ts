@@ -75,7 +75,7 @@ const responseInterceptor = async <T>(response: Response): Promise<ApiResponse<T
 };
 
 // 统一请求方法
-async function request<T>(
+export async function request<T>(
   url: string,
   config: RequestConfig = {}
 ): Promise<ApiResponse<T>> {

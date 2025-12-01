@@ -25,7 +25,6 @@ data:
 
   # 功能开关
   VITE_ENABLE_MOCK: "false"
-  VITE_SHOW_DEV_LOGIN: "false"
 
   # 后端服务地址（用于 Nginx 代理）
   BACKEND_URL: "https://mlyj.quwei360.com.cn/mlyj-api/"
@@ -54,7 +53,6 @@ data:
   VITE_API_BASE_URL: "/api"
   VITE_APP_TARGET_URL: "https://dev-api.example.com/"
   VITE_ENABLE_MOCK: "true"
-  VITE_SHOW_DEV_LOGIN: "true"
   BACKEND_URL: "https://dev-api.example.com/"
 
 ---
@@ -81,5 +79,4 @@ data:
   VITE_API_BASE_URL: "/api"
   VITE_APP_TARGET_URL: "https://api.example.com/"
   VITE_ENABLE_MOCK: "false"
-  VITE_SHOW_DEV_LOGIN: "false"
   BACKEND_URL: "https://api.example.com/"
