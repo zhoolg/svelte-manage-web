@@ -3,6 +3,9 @@
    * 应用主入口
    * ============================================================
    *
+   * Copyright 2025 zhoolg
+   * Licensed under the Apache License, Version 2.0
+   *
    * 功能：
    * - 路由管理
    * - 登录状态判断
