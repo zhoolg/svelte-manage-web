@@ -3,8 +3,8 @@ Copyright 2025 zhoolg
 
 本产品包含由以下组织和项目开发的软件：
 
-Apache Software Foundation (http://www.apache.org/)
-  - 本项目使用 Apache License 2.0
+本项目 (https://github.com/zhoolg/svelte-manage-web)
+  - 本项目使用 GPL-3.0 License
 
 Svelte (https://svelte.dev/)
   Copyright (c) Rich Harris

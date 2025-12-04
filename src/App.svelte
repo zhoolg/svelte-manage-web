@@ -4,7 +4,7 @@
    * ============================================================
    *
    * Copyright 2025 zhoolg
-   * Licensed under the Apache License, Version 2.0
+   * Licensed under GPL-3.0 License
    *
    * 功能：
    * - 路由管理

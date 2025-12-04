@@ -224,9 +224,9 @@ git commit -m "refactor(api): 重构 API 请求层"
 
 ## 许可证协议
 
-### Apache License 2.0
+### GPL-3.0 License
 
-本项目采用 Apache License 2.0 开源协议。向本项目贡献代码即表示您同意：
+本项目采用 GNU General Public License v3.0 开源协议。向本项目贡献代码即表示您同意：
 
 1. **授予许可**
    - 您授予本项目永久的、全球性的、非独占的、免费的、不可撤销的版权许可
@@ -239,7 +239,7 @@ git commit -m "refactor(api): 重构 API 请求层"
 
 3. **代码归属**
    - 提交的代码将成为项目的一部分
-   - 您的贡献将在 Apache 2.0 协议下发布
+   - 您的贡献将在 GPL-3.0 协议下发布
    - 您将在 NOTICE 文件或代码注释中被标注为贡献者
 
 ### 贡献者许可协议 (CLA)
@@ -260,17 +260,18 @@ git commit -m "refactor(api): 重构 API 请求层"
 /*
  * Copyright 2025 zhoolg
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 ```
 
@@ -280,7 +281,7 @@ git commit -m "refactor(api): 重构 API 请求层"
 /*
  * Modifications Copyright 2025 Your Name
  *
- * Licensed under the Apache License, Version 2.0
+ * Licensed under GPL-3.0 License
  */
 ```
 
