@@ -1,0 +1,28 @@
+Svelte 管理后台框架 (Svelte Admin Framework)
+Copyright 2025 zhoolg
+
+本产品包含由以下组织和项目开发的软件：
+
+Apache Software Foundation (http://www.apache.org/)
+  - 本项目使用 Apache License 2.0
+
+Svelte (https://svelte.dev/)
+  Copyright (c) Rich Harris
+  Licensed under MIT License
+
+Vite (https://vitejs.dev/)
+  Copyright (c) Evan You
+  Licensed under MIT License
+
+Tailwind CSS (https://tailwindcss.com/)
+  Copyright (c) Tailwind Labs
+  Licensed under MIT License
+
+Bits UI (https://bits-ui.com/)
+  Licensed under MIT License
+
+TypeScript (https://www.typescriptlang.org/)
+  Copyright Microsoft Corporation
+  Licensed under Apache License 2.0
+
+感谢所有开源贡献者的辛勤工作！

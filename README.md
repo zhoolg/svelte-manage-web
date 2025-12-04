@@ -5,7 +5,7 @@
 </p>
 
 
-[![Vite](https://img.shields.io/badge/Vite-7-4BC0C0?logo=vite&style=flat-square)](https://vitejs.dev/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&style=flat-square)](https://www.typescriptlang.org/) [![Svelte](https://img.shields.io/badge/Svelte-5-ff3e00?logo=svelte&style=flat-square)](https://svelte.dev/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&style=flat-square)](https://tailwindcss.com/) [![Bits UI](https://img.shields.io/badge/Bits_UI-2-000000?style=flat-square)](https://bits-ui.com/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&style=flat-square)](https://www.docker.com/) [![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5?logo=kubernetes&style=flat-square)](https://kubernetes.io/) [![MIT License](https://img.shields.io/badge/License-MIT-24292e?style=flat-square)](https://opensource.org/licenses/MIT) [![Author](https://img.shields.io/badge/Author-zhoolg-181717?logo=github&style=flat-square)](https://github.com/zhoolg)
+[![Vite](https://img.shields.io/badge/Vite-7-4BC0C0?logo=vite&style=flat-square)](https://vitejs.dev/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&style=flat-square)](https://www.typescriptlang.org/) [![Svelte](https://img.shields.io/badge/Svelte-5-ff3e00?logo=svelte&style=flat-square)](https://svelte.dev/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&style=flat-square)](https://tailwindcss.com/) [![Bits UI](https://img.shields.io/badge/Bits_UI-2-000000?style=flat-square)](https://bits-ui.com/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&style=flat-square)](https://www.docker.com/) [![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5?logo=kubernetes&style=flat-square)](https://kubernetes.io/) [![Apache License 2.0](https://img.shields.io/badge/License-Apache%202.0-D22128?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0) [![Author](https://img.shields.io/badge/Author-zhoolg-181717?logo=github&style=flat-square)](https://github.com/zhoolg)
 
 基于 Svelte 5 + TypeScript + Vite 7 + Tailwind CSS 4 + Bits UI 构建的管理后台框架。
 
@@ -1116,4 +1116,15 @@ make scale REPLICAS=5
 
 ## License
 
-MIT
+Apache License 2.0
+
+本项目采用 Apache License 2.0 开源协议，该协议提供：
+
+- ✅ 明确的专利授权保护
+- ✅ 商业使用友好
+- ✅ 修改和再分发自由
+- ✅ 专利报复条款（防御性保护）
+- ✅ 要求说明代码修改内容
+- ✅ 商标和品牌保护
+
+详见 [LICENSE](./LICENSE) 文件。
