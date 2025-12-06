@@ -108,45 +108,64 @@ kubectl get svc svelte-admin
 #### 快速添加新模块（10 秒完成）
 
 ```typescript
-export const APP_MODULES: AppModule[] = [
+// src/config/modules/products.config.ts
+import type { AppModule } from '../app.modules';
+
+const productsModule: AppModule = {
+  id: 'products',           // 模块 ID
+  label: 'menu.products',   // 菜单名称（国际化 key）
+  icon: 'pi pi-shopping-bag', // 图标
+  path: '/products',        // 路由路径
+
+  // CRUD 配置
+  crud: {
+    title: '商品管理',
+    apiBase: '/product',   // API 基础路径，自动生成所有接口
+
+    // 表格列
+    columns: [
+      { field: 'id', label: 'ID', width: 80 },
+      { field: 'name', label: '商品名称', minWidth: 150 },
+      { field: 'price', label: '价格', width: 100 },
+    ],
+
+    // 搜索字段
+    search: [
+      { field: 'name', label: '商品名称', type: 'input' },
+    ],
+
+    // 表单字段（新增/编辑）
+    form: [
+      { field: 'name', label: '商品名称', type: 'input', required: true },
+      { field: 'price', label: '价格', type: 'number', required: true },
+    ],
+
+    // 工具栏
+    showAdd: true,        // 显示新增按钮
+    showExport: true,     // 显示导出按钮
+    showSelection: true,  // 显示复选框
+  },
+};
+
+export default productsModule;
+```
+
+**第 2 步：配置菜单关系**
+
+在 `src/config/menu-structure.config.ts` 中添加菜单配置：
+
+```typescript
+export const MENU_STRUCTURE: MenuStructure[] = [
   // ... 其他配置
 
-  // 🎉 添加新模块
+  // 添加到系统管理下
   {
-    id: 'products',           // 模块 ID
-    label: '商品管理',        // 菜单名称
-    icon: 'pi pi-shopping-bag', // 图标
-    path: '/products',        // 路由路径
-
-    // CRUD 配置
-    crud: {
-      title: '商品管理',
-      apiBase: '/product',   // API 基础路径，自动生成所有接口
-
-      // 表格列
-      columns: [
-        { field: 'id', label: 'ID', width: 80 },
-        { field: 'name', label: '商品名称', minWidth: 150 },
-        { field: 'price', label: '价格', width: 100 },
-      ],
-
-      // 搜索字段
-      search: [
-        { field: 'name', label: '商品名称', type: 'input' },
-      ],
-
-      // 表单字段（新增/编辑）
-      form: [
-        { field: 'name', label: '商品名称', type: 'input', required: true },
-        { field: 'price', label: '价格', type: 'number', required: true },
-      ],
-
-      // 工具栏
-      showAdd: true,        // 显示新增按钮
-      showExport: true,     // 显示导出按钮
-      showSelection: true,  // 显示复选框
-    },
+    id: 'system',
+    children: ['logs', 'dict', 'settings', 'products'], // 添加 products
   },
+
+  // 或者作为一级菜单
+  { id: 'products' },
 ];
 ```
 
@@ -155,6 +174,46 @@ export const APP_MODULES: AppModule[] = [
 - ✅ 路由配置
 - ✅ API 调用（list、add、edit、delete）
 - ✅ 完整的 CRUD 页面（列表、搜索、新增、编辑、删除、导出）
+
+#### 📁 配置文件说明
+
+**页面配置文件** (`src/config/modules/*.config.ts`)
+- 每个页面一个独立配置文件
+- 文件名必须以 `.config.ts` 结尾
+- 必须使用 `export default` 导出配置
+
+**菜单结构配置** (`src/config/menu-structure.config.ts`)
+- 统一管理菜单的层级关系和显示顺序
+- 支持一级菜单和二级菜单
+- 修改菜单顺序只需调整配置顺序
+
+#### 🎯 优势
+
+- ✅ **模块化** - 每个页面独立配置，易于维护
+- ✅ **自动导入** - 无需手动 import，系统自动扫描
+- ✅ **减少冲突** - 团队协作时减少 Git 冲突
+- ✅ **清晰结构** - 菜单关系一目了然
+
+#### 📂 文件结构
+
+```
+src/config/
+├── menu-structure.config.ts  # 菜单结构配置
+├── app.modules.ts             # 自动组装（无需修改）
+└── modules/                   # 页面配置目录
+    ├── home.config.ts         # 首页
+    ├── user-center.config.ts  # 用户中心分组
+    ├── users.config.ts        # 用户管理
+    ├── agents.config.ts       # 代理商管理
+    ├── content.config.ts      # 内容管理分组
+    ├── faq.config.ts          # 问答管理
+    ├── articles.config.ts     # 文章管理
+    ├── system.config.ts       # 系统管理分组
+    ├── logs.config.ts         # 操作日志
+    ├── dict.config.ts         # 数据字典
+    ├── settings.config.ts     # 系统设置
+    └── profile.config.ts      # 个人信息
+```
 
 **详细文档**：[LAZY-MODE.md](./LAZY-MODE.md)
 

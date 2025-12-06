@@ -1,19 +1,47 @@
 /**
- *  超级懒人配置 - 一个文件搞定所有配置
+ * 应用模块配置 - 自动导入模式
  * ============================================================
  *
- * 在这个文件中配置：
- * ✅ 菜单结构
- * ✅ 路由配置
- * ✅ API 接口
- * ✅ CRUD 页面配置
- * ✅ 权限配置（使用 permissions.ts 中的常量）
+ * 🚀 添加新页面只需 2 步：
+ * 1. 在 src/config/modules/ 下创建 xxx.config.ts 文件
+ * 2. 在 src/config/menu-structure.config.ts 中配置菜单关系
  *
- * 只需在这里添加配置，无需手动创建页面文件、配置路由、写API调用！
+ * 系统会自动导入所有配置文件并组装成菜单树！
+ *
+ * 配置文件命名规则：
+ * - 文件名必须以 .config.ts 结尾
+ * - 必须使用 export default 导出配置
+ * - 配置对象必须包含 id 字段
+ *
+ * 示例：
+ * // src/config/modules/mypage.config.ts
+ * import type { AppModule } from '../app.modules';
+ *
+ * const mypageModule: AppModule = {
+ *   id: 'mypage',
+ *   label: 'menu.mypage',
+ *   icon: 'pi pi-star',
+ *   path: '/mypage',
+ *   crud: { ... }
+ * };
+ *
+ * export default mypageModule;
  */
 
 import type { ModuleConfig, TableColumn, SearchField, FormField } from './module';
-import { ALL_PERMISSIONS } from './permissions';
+import { MENU_STRUCTURE } from './menu-structure.config';
+
+// 🔥 自动导入所有模块配置文件
+const moduleFiles = import.meta.glob<{ default: AppModule }>('./modules/*.config.ts', { eager: true });
+
+// 提取所有模块配置
+const allModules = Object.values(moduleFiles).map(module => module.default);
+
+// 创建模块映射表（通过 id 快速查找）
+const moduleMap = new Map<string, AppModule>();
+allModules.forEach(module => {
+  moduleMap.set(module.id, module);
+});
 
 // ==================== 配置接口 ====================
 
@@ -106,488 +134,59 @@ export interface CrudConfig<T = Record<string, unknown>> {
   };
 }
 
+// ==================== 菜单树构建 ====================
+
+/**
+ * 根据菜单结构配置构建菜单树
+ */
+function buildMenuTree(): AppModule[] {
+  const result: AppModule[] = [];
+
+  MENU_STRUCTURE.forEach(item => {
+    const module = moduleMap.get(item.id);
+    if (!module) {
+      console.warn(`[Config] Module "${item.id}" not found in modules/`);
+      return;
+    }
+
+    // 如果有子菜单，递归构建
+    if (item.children && item.children.length > 0) {
+      const children: AppModule[] = [];
+      item.children.forEach(childId => {
+        const childModule = moduleMap.get(childId);
+        if (childModule) {
+          children.push(childModule);
+        } else {
+          console.warn(`[Config] Child module "${childId}" not found in modules/`);
+        }
+      });
+
+      // 将子菜单添加到父模块
+      result.push({
+        ...module,
+        children,
+      });
+    } else {
+      result.push(module);
+    }
+  });
+
+  return result;
+}
+
 // ==================== 应用配置 ====================
 
 /**
- * 🎯 应用模块配置
+ * 🚀 应用模块配置
  *
- * 添加新模块只需在这里配置，系统会自动：
- * 1. 生成菜单项
- * 2. 生成路由
- * 3. 生成 CRUD 页面
- * 4. 配置 API 调用
+ * 🔥 自动组装菜单结构
+ * 系统会自动从 modules/ 目录加载所有配置，并根据 menu-structure.config.ts 组装成菜单树
+ *
+ * 添加新页面步骤：
+ * 1. 在 src/config/modules/ 下创建 xxx.config.ts 文件
+ * 2. 在 src/config/menu-structure.config.ts 中配置菜单关系
  */
-export const APP_MODULES: AppModule[] = [
-  // ==================== 首页 ====================
-  {
-    id: 'home',
-    label: 'menu.home',
-    icon: 'pi pi-home',
-    path: '/',
-    crud: {
-      title: '首页',
-      apiBase: '/dashboard',
-      columns: [
-        { field: 'id', label: 'ID', width: 80 },
-        { field: 'title', label: '标题', minWidth: 200 },
-        { field: 'value', label: '数值', width: 120 },
-        { field: 'createTime', label: '创建时间', minWidth: 180, format: 'datetime' },
-      ],
-      showAdd: false,
-      showExport: false,
-      showSelection: false,
-    },
-  },
-
-  // ==================== 用户中心 ====================
-  {
-    id: 'user-center',
-    label: 'menu.userCenter',
-    icon: 'pi pi-users',
-    path: '/user-center',
-    children: [
-      // 用户管理 - CRUD 页面
-      {
-        id: 'users',
-        label: 'menu.users',
-        icon: 'pi pi-user',
-        path: '/users',
-        permissions: [ALL_PERMISSIONS.USER.VIEW],  // 使用权限常量
-        crud: {
-          title: '用户',
-          apiBase: '/manage',
-
-          columns: [
-            { field: 'id', label: 'ID', width: 80 },
-            { field: 'name', label: '姓名', minWidth: 120 },
-            { field: 'phone', label: '手机号码', minWidth: 150 },
-            { field: 'createTime', label: '创建时间', minWidth: 180, format: 'datetime' },
-          ],
-
-          search: [
-            { field: 'name', label: '姓名', type: 'input', placeholder: '请输入姓名' },
-            { field: 'phone', label: '手机号码', type: 'input', placeholder: '请输入手机号码' },
-          ],
-
-          form: [
-            { field: 'name', label: '姓名', type: 'input', required: true, placeholder: '请输入姓名' },
-            { field: 'phone', label: '手机号码', type: 'input', required: true, placeholder: '请输入手机号码' },
-            { field: 'email', label: '邮箱', type: 'input', placeholder: '请输入邮箱' },
-          ],
-
-          actions: [
-            { label: '编辑', type: 'primary', icon: 'pi pi-pencil', permission: ALL_PERMISSIONS.USER.EDIT },
-            { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除该用户吗？', permission: ALL_PERMISSIONS.USER.DELETE },
-          ],
-
-          // 操作权限配置 - 使用权限常量
-          actionPermissions: {
-            add: ALL_PERMISSIONS.USER.ADD,
-            edit: ALL_PERMISSIONS.USER.EDIT,
-            delete: ALL_PERMISSIONS.USER.DELETE,
-            export: ALL_PERMISSIONS.USER.EXPORT,
-            view: ALL_PERMISSIONS.USER.VIEW,
-          },
-
-          showAdd: true,
-          showExport: true,
-          showSelection: true,
-        },
-      },
-
-      // 代理商管理 - CRUD 页面
-      {
-        id: 'agents',
-        label: 'menu.agents',
-        icon: 'pi pi-briefcase',
-        path: '/agents',
-        permissions: [ALL_PERMISSIONS.AGENT.VIEW],  // 使用权限常量
-        crud: {
-          title: '代理商',
-          apiBase: '/agent',
-
-          columns: [
-            { field: 'id', label: 'ID', width: 80 },
-            { field: 'name', label: '代理商名称', minWidth: 150 },
-            { field: 'contact', label: '联系人', width: 120 },
-            { field: 'phone', label: '联系电话', minWidth: 150 },
-            { field: 'level', label: '代理等级', width: 120 },
-            {
-              field: 'status',
-              label: '状态',
-              width: 100,
-              format: 'status',
-              statusMap: {
-                pending: { label: '待审核', color: 'warning' },
-                approved: { label: '已通过', color: 'success' },
-                rejected: { label: '已拒绝', color: 'danger' },
-              },
-            },
-            { field: 'createTime', label: '创建时间', minWidth: 180, format: 'datetime' },
-          ],
-
-          search: [
-            { field: 'name', label: '代理商名称', type: 'input', placeholder: '请输入代理商名称' },
-            { field: 'contact', label: '联系人', type: 'input', placeholder: '请输入联系人' },
-            {
-              field: 'status',
-              label: '状态',
-              type: 'select',
-              options: [
-                { label: '待审核', value: 'pending' },
-                { label: '已通过', value: 'approved' },
-                { label: '已拒绝', value: 'rejected' },
-              ],
-            },
-          ],
-
-          form: [
-            { field: 'name', label: '代理商名称', type: 'input', required: true, placeholder: '请输入代理商名称' },
-            { field: 'contact', label: '联系人', type: 'input', required: true, placeholder: '请输入联系人' },
-            { field: 'phone', label: '联系电话', type: 'input', required: true, placeholder: '请输入联系电话' },
-            {
-              field: 'level',
-              label: '代理等级',
-              type: 'select',
-              required: true,
-              options: [
-                { label: '金牌代理', value: '金牌代理' },
-                { label: '银牌代理', value: '银牌代理' },
-                { label: '普通代理', value: '普通代理' },
-              ],
-            },
-            {
-              field: 'status',
-              label: '状态',
-              type: 'select',
-              defaultValue: 'pending',
-              options: [
-                { label: '待审核', value: 'pending' },
-                { label: '已通过', value: 'approved' },
-                { label: '已拒绝', value: 'rejected' },
-              ],
-            },
-            { field: 'address', label: '地址', type: 'textarea', placeholder: '请输入地址', rows: 3 },
-          ],
-
-          actions: [
-            { label: '编辑', type: 'primary', icon: 'pi pi-pencil', permission: ALL_PERMISSIONS.AGENT.EDIT },
-            { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除该代理商吗？', permission: ALL_PERMISSIONS.AGENT.DELETE },
-          ],
-
-          // 操作权限配置 - 使用权限常量
-          actionPermissions: {
-            add: ALL_PERMISSIONS.AGENT.ADD,
-            edit: ALL_PERMISSIONS.AGENT.EDIT,
-            delete: ALL_PERMISSIONS.AGENT.DELETE,
-            export: ALL_PERMISSIONS.AGENT.EXPORT,
-            view: ALL_PERMISSIONS.AGENT.VIEW,
-          },
-
-          showAdd: true,
-          showExport: true,
-          showSelection: true,
-        },
-      },
-    ],
-  },
-
-  // ==================== 内容管理 ====================
-  {
-    id: 'content',
-    label: 'menu.content',
-    icon: 'pi pi-file',
-    path: '/content',
-    children: [
-      // 问答管理 - CRUD 页面
-      {
-        id: 'faq',
-        label: 'menu.faq',
-        icon: 'pi pi-question-circle',
-        path: '/faq',
-        crud: {
-          title: '问答管理',
-          apiBase: '/interlocution',
-
-          // 自定义 API（覆盖默认）
-          api: {
-            list: '/interlocution',
-            add: '/interlocution',
-            edit: '/interlocution/update',
-            delete: '/interlocution/delete',
-          },
-
-          columns: [
-            { field: 'id', label: 'ID', width: 80 },
-            { field: 'question', label: '问题', minWidth: 200 },
-            { field: 'answer', label: '答案', minWidth: 300 },
-            { field: 'sortOrder', label: '排序', width: 80, align: 'center' },
-            { field: 'createTime', label: '创建时间', minWidth: 180, format: 'datetime' },
-          ],
-
-          search: [
-            { field: 'question', label: '问题', type: 'input', placeholder: '请输入问题关键词' },
-          ],
-
-          form: [
-            {
-              field: 'question',
-              label: '问题',
-              type: 'input',
-              required: true,
-              placeholder: '请输入问题',
-              maxLength: 200,
-            },
-            {
-              field: 'answer',
-              label: '答案',
-              type: 'textarea',
-              required: true,
-              placeholder: '请输入答案',
-              rows: 4,
-            },
-            {
-              field: 'sortOrder',
-              label: '排序',
-              type: 'number',
-              defaultValue: 0,
-              tip: '数字越小越靠前',
-            },
-          ],
-
-          actions: [
-            { label: '编辑', type: 'primary', icon: 'pi pi-pencil' },
-            { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除该问答吗？' },
-          ],
-
-          showAdd: true,
-          showExport: true,
-        },
-      },
-
-      // 文章管理 - 新增模块示例（自动生成）
-      {
-        id: 'articles',
-        label: 'menu.articles',
-        icon: 'pi pi-file-edit',
-        path: '/articles',
-        crud: {
-          title: '文章管理',
-          apiBase: '/article',
-
-          columns: [
-            { field: 'id', label: 'ID', width: 80 },
-            { field: 'title', label: '标题', minWidth: 200 },
-            { field: 'author', label: '作者', width: 120 },
-            {
-              field: 'status',
-              label: '状态',
-              width: 100,
-              format: 'status',
-              statusMap: {
-                0: { label: '草稿', color: 'info' },
-                1: { label: '已发布', color: 'success' },
-                2: { label: '已下架', color: 'danger' },
-              },
-            },
-            { field: 'createTime', label: '创建时间', minWidth: 180, format: 'datetime' },
-          ],
-
-          search: [
-            { field: 'title', label: '标题', type: 'input', placeholder: '请输入标题' },
-            {
-              field: 'status',
-              label: '状态',
-              type: 'select',
-              options: [
-                { label: '草稿', value: 0 },
-                { label: '已发布', value: 1 },
-                { label: '已下架', value: 2 },
-              ],
-            },
-          ],
-
-          form: [
-            { field: 'title', label: '标题', type: 'input', required: true },
-            { field: 'author', label: '作者', type: 'input', required: true },
-            { field: 'content', label: '内容', type: 'textarea', required: true, rows: 6 },
-            {
-              field: 'status',
-              label: '状态',
-              type: 'select',
-              defaultValue: 0,
-              options: [
-                { label: '草稿', value: 0 },
-                { label: '已发布', value: 1 },
-              ],
-            },
-          ],
-
-          actions: [
-            { label: '编辑', type: 'primary', icon: 'pi pi-pencil' },
-            { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除吗？' },
-          ],
-
-          showAdd: true,
-          showExport: true,
-          showSelection: true,
-        },
-      },
-    ],
-  },
-
-  // ==================== 系统管理 ====================
-  {
-    id: 'system',
-    label: 'menu.system',
-    icon: 'pi pi-cog',
-    path: '/system',
-    children: [
-      {
-        id: 'logs',
-        label: 'menu.logs',
-        icon: 'pi pi-history',
-        path: '/logs',
-        crud: {
-          title: '操作日志',
-          apiBase: '/log',
-
-          columns: [
-            { field: 'id', label: 'ID', width: 80 },
-            { field: 'username', label: '操作人', width: 120 },
-            { field: 'action', label: '操作类型', width: 120 },
-            { field: 'module', label: '模块', width: 120 },
-            { field: 'description', label: '操作描述', minWidth: 200 },
-            { field: 'ip', label: 'IP地址', width: 150 },
-            { field: 'createTime', label: '操作时间', minWidth: 180, format: 'datetime' },
-          ],
-
-          search: [
-            { field: 'username', label: '操作人', type: 'input', placeholder: '请输入操作人' },
-            { field: 'module', label: '模块', type: 'input', placeholder: '请输入模块名称' },
-            {
-              field: 'action',
-              label: '操作类型',
-              type: 'select',
-              options: [
-                { label: '新增', value: 'add' },
-                { label: '编辑', value: 'edit' },
-                { label: '删除', value: 'delete' },
-                { label: '查询', value: 'query' },
-                { label: '登录', value: 'login' },
-              ],
-            },
-          ],
-
-          showAdd: false,
-          showExport: true,
-          showSelection: false,
-        },
-      },
-      {
-        id: 'dict',
-        label: 'menu.dict',
-        icon: 'pi pi-book',
-        path: '/dict',
-        crud: {
-          title: '数据字典',
-          apiBase: '/dict',
-
-          columns: [
-            { field: 'id', label: 'ID', width: 80 },
-            { field: 'dictType', label: '字典类型', width: 150 },
-            { field: 'dictLabel', label: '字典标签', width: 150 },
-            { field: 'dictValue', label: '字典值', width: 150 },
-            { field: 'sortOrder', label: '排序', width: 80, align: 'center' },
-            {
-              field: 'status',
-              label: '状态',
-              width: 100,
-              format: 'status',
-              statusMap: {
-                0: { label: '禁用', color: 'danger' },
-                1: { label: '启用', color: 'success' },
-              },
-            },
-            { field: 'createTime', label: '创建时间', minWidth: 180, format: 'datetime' },
-          ],
-
-          search: [
-            { field: 'dictType', label: '字典类型', type: 'input', placeholder: '请输入字典类型' },
-            { field: 'dictLabel', label: '字典标签', type: 'input', placeholder: '请输入字典标签' },
-          ],
-
-          form: [
-            { field: 'dictType', label: '字典类型', type: 'input', required: true, placeholder: '请输入字典类型' },
-            { field: 'dictLabel', label: '字典标签', type: 'input', required: true, placeholder: '请输入字典标签' },
-            { field: 'dictValue', label: '字典值', type: 'input', required: true, placeholder: '请输入字典值' },
-            { field: 'sortOrder', label: '排序', type: 'number', defaultValue: 0 },
-            {
-              field: 'status',
-              label: '状态',
-              type: 'select',
-              defaultValue: 1,
-              options: [
-                { label: '启用', value: 1 },
-                { label: '禁用', value: 0 },
-              ],
-            },
-            { field: 'remark', label: '备注', type: 'textarea', placeholder: '请输入备注', rows: 3 },
-          ],
-
-          actions: [
-            { label: '编辑', type: 'primary', icon: 'pi pi-pencil' },
-            { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除该字典吗？' },
-          ],
-
-          showAdd: true,
-          showExport: true,
-          showSelection: true,
-        },
-      },
-      {
-        id: 'settings',
-        label: 'menu.settings',
-        icon: 'pi pi-sliders-h',
-        path: '/settings',
-        customPage: 'Settings',  // 系统设置保留自定义页面（UI配置）
-      },
-    ],
-  },
-
-  // ==================== 隐藏菜单 ====================
-  {
-    id: 'profile',
-    label: 'menu.profile',
-    icon: 'pi pi-user',
-    path: '/profile',
-    hidden: true,
-    crud: {
-      title: '个人信息',
-      apiBase: '/profile',
-
-      columns: [
-        { field: 'id', label: 'ID', width: 80 },
-        { field: 'username', label: '用户名', width: 150 },
-        { field: 'nickname', label: '昵称', width: 150 },
-        { field: 'email', label: '邮箱', minWidth: 200 },
-        { field: 'phone', label: '手机号', width: 150 },
-      ],
-
-      form: [
-        { field: 'username', label: '用户名', type: 'input', disabled: true },
-        { field: 'nickname', label: '昵称', type: 'input', required: true, placeholder: '请输入昵称' },
-        { field: 'email', label: '邮箱', type: 'input', placeholder: '请输入邮箱' },
-        { field: 'phone', label: '手机号', type: 'input', placeholder: '请输入手机号' },
-        { field: 'avatar', label: '头像URL', type: 'input', placeholder: '请输入头像URL' },
-      ],
-
-      showAdd: false,
-      showExport: false,
-      showSelection: false,
-    },
-  },
-];
+export const APP_MODULES: AppModule[] = buildMenuTree();
 
 // ==================== 辅助函数 ====================
 
