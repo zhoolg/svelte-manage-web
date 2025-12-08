@@ -146,14 +146,11 @@
     <div class="flex items-center">
       <!-- 搜索按钮 -->
       <Tooltip.Root>
-        <Tooltip.Trigger asChild let:builder>
-          <Button.Root
-            builders={[builder]}
-            onclick={() => searchVisible = true}
-            class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
-          >
-            <i class="pi pi-search text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-          </Button.Root>
+        <Tooltip.Trigger
+          onclick={() => searchVisible = true}
+          class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
+        >
+          <i class="pi pi-search text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
         </Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content
@@ -166,12 +163,13 @@
       </Tooltip.Root>
 
       <!-- 通知按钮 - 使用 Bits UI Popover -->
-      <Tooltip.Root>
-        <Popover.Root>
-          <Tooltip.Trigger asChild let:builder>
+      <Popover.Root>
+        <Tooltip.Root>
+          <Tooltip.Trigger
+            class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors relative"
+          >
             <Popover.Trigger
-              builders={[builder]}
-              class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors relative"
+              class="w-full h-full flex items-center justify-center"
             >
               <i class="pi pi-bell text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
               {#if unreadCount > 0}
@@ -181,6 +179,15 @@
               {/if}
             </Popover.Trigger>
           </Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Content
+              class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
+              sideOffset={5}
+            >
+              通知
+            </Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
 
         <Popover.Portal>
           <Popover.Content
@@ -218,27 +225,15 @@
             </div>
           </Popover.Content>
         </Popover.Portal>
-        </Popover.Root>
-        <Tooltip.Portal>
-          <Tooltip.Content
-            class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
-            sideOffset={5}
-          >
-            通知
-          </Tooltip.Content>
-        </Tooltip.Portal>
-      </Tooltip.Root>
+      </Popover.Root>
 
       <!-- 暗黑模式切换 -->
       <Tooltip.Root>
-        <Tooltip.Trigger asChild let:builder>
-          <Button.Root
-            builders={[builder]}
-            onclick={() => settingsStore.setTheme(theme === 'dark' ? 'light' : 'dark')}
-            class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
-          >
-            <i class="pi {theme === 'dark' ? 'pi-sun' : 'pi-moon'} text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-          </Button.Root>
+        <Tooltip.Trigger
+          onclick={() => settingsStore.setTheme(theme === 'dark' ? 'light' : 'dark')}
+          class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
+        >
+          <i class="pi {theme === 'dark' ? 'pi-sun' : 'pi-moon'} text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
         </Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content
@@ -251,16 +246,26 @@
       </Tooltip.Root>
 
       <!-- 语言切换 - 使用 Bits UI Dropdown Menu -->
-      <Tooltip.Root>
-        <DropdownMenu.Root>
-          <Tooltip.Trigger asChild let:builder>
+      <DropdownMenu.Root>
+        <Tooltip.Root>
+          <Tooltip.Trigger
+            class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
+          >
             <DropdownMenu.Trigger
-              builders={[builder]}
-              class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
+              class="w-full h-full flex items-center justify-center"
             >
               <i class="pi pi-globe text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
             </DropdownMenu.Trigger>
           </Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Content
+              class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
+              sideOffset={5}
+            >
+              {translate('settings.language')}
+            </Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
 
         <DropdownMenu.Portal>
           <DropdownMenu.Content
@@ -282,27 +287,15 @@
             {/each}
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
-        </DropdownMenu.Root>
-        <Tooltip.Portal>
-          <Tooltip.Content
-            class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
-            sideOffset={5}
-          >
-            {translate('settings.language')}
-          </Tooltip.Content>
-        </Tooltip.Portal>
-      </Tooltip.Root>
+      </DropdownMenu.Root>
 
       <!-- 全屏按钮 -->
       <Tooltip.Root>
-        <Tooltip.Trigger asChild let:builder>
-          <Button.Root
-            builders={[builder]}
-            onclick={toggleFullscreen}
-            class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
-          >
-            <i class="pi {isFullscreen ? 'pi-window-minimize' : 'pi-window-maximize'} text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-          </Button.Root>
+        <Tooltip.Trigger
+          onclick={toggleFullscreen}
+          class="w-[40px] h-[50px] flex items-center justify-center hover:bg-[#f6f6f6] dark:hover:bg-[#262626] transition-colors"
+        >
+          <i class="pi {isFullscreen ? 'pi-window-minimize' : 'pi-window-maximize'} text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
         </Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content

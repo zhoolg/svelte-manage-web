@@ -5,9 +5,9 @@
 </p>
 
 
-[![Vite](https://img.shields.io/badge/Vite-7-4BC0C0?logo=vite&style=flat-square)](https://vitejs.dev/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&style=flat-square)](https://www.typescriptlang.org/) [![Svelte](https://img.shields.io/badge/Svelte-5-ff3e00?logo=svelte&style=flat-square)](https://svelte.dev/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&style=flat-square)](https://tailwindcss.com/) [![Bits UI](https://img.shields.io/badge/Bits_UI-2-000000?style=flat-square)](https://bits-ui.com/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&style=flat-square)](https://www.docker.com/) [![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5?logo=kubernetes&style=flat-square)](https://kubernetes.io/) [![GPL-3.0 License](https://img.shields.io/badge/License-GPL%203.0-blue?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0.html) [![Author](https://img.shields.io/badge/Author-zhoolg-181717?logo=github&style=flat-square)](https://github.com/zhoolg)
+[![Vite](https://img.shields.io/badge/Vite-7-4BC0C0?logo=vite&style=flat-square)](https://vitejs.dev/) [![TypeScript](https://img.shields.io/badge/TypeScript-7_Native-3178c6?logo=typescript&style=flat-square)](https://devblogs.microsoft.com/typescript/announcing-typescript-native-preview/) [![Svelte](https://img.shields.io/badge/Svelte-5-ff3e00?logo=svelte&style=flat-square)](https://svelte.dev/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&style=flat-square)](https://tailwindcss.com/) [![Bits UI](https://img.shields.io/badge/Bits_UI-2-000000?style=flat-square)](https://bits-ui.com/) [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&style=flat-square)](https://www.docker.com/) [![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5?logo=kubernetes&style=flat-square)](https://kubernetes.io/) [![GPL-3.0 License](https://img.shields.io/badge/License-GPL%203.0-blue?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0.html) [![Author](https://img.shields.io/badge/Author-zhoolg-181717?logo=github&style=flat-square)](https://github.com/zhoolg)
 
-基于 Svelte 5 + TypeScript + Vite 7 + Tailwind CSS 4 + Bits UI 构建的管理后台框架。
+基于 Svelte 5 + TypeScript Native + Vite 7 + Tailwind CSS 4 + Bits UI 构建的管理后台框架。
 
 ---
 
@@ -40,10 +40,10 @@
 ## 技术栈
 
 - Svelte 5
-- TypeScript 5
+- TypeScript 7 Native
 - Vite 7
 - Tailwind CSS 4
-- Bits UI 1.8 (无障碍组件库)
+- Bits UI 2 (无障碍组件库)
 - Svelte Stores (状态管理)
 - PrimeIcons (图标)
 

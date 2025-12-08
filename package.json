@@ -24,7 +24,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsgo -p tsconfig.node.json"
   },
   "dependencies": {
     "@internationalized/date": "^3.10.0",
@@ -37,6 +37,7 @@
     "@tailwindcss/postcss": "^4.1.17",
     "@tsconfig/svelte": "^5.0.6",
     "@types/node": "^24.10.1",
+    "@typescript/native-preview": "7.0.0-dev.20251207.1",
     "autoprefixer": "^10.4.22",
     "flowbite": "^4.0.1",
     "flowbite-svelte": "^1.28.3",
@@ -44,7 +45,6 @@
     "svelte": "^5.43.8",
     "svelte-check": "^4.3.4",
     "tailwindcss": "^4.1.17",
-    "typescript": "~5.9.3",
     "vite": "^7.2.4"
   },
   "optionalDependencies": {

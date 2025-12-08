@@ -64,7 +64,7 @@
 
     // 检查角色
     if (item.roles && item.roles.length > 0) {
-      if (item.roles.some(role => permissionStore.hasRole(role))) {
+      if (item.roles.some((role: string) => permissionStore.hasRole(role))) {
         return true;
       }
     }

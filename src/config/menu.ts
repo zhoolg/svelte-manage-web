@@ -34,6 +34,10 @@ export interface MenuItem {
   external?: boolean;
   /** 是否默认展开 */
   defaultOpen?: boolean;
+  /** 权限列表（用户需要拥有其中任一权限才能访问） */
+  permissions?: string[];
+  /** 角色列表（用户需要拥有其中任一角色才能访问） */
+  roles?: string[];
 }
 
 /**
