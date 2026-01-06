@@ -11,6 +11,7 @@
    */
   import { navigate } from '../stores/routerStore';
   import { APP_CONFIG } from '../config';
+  import { t } from '$lib/locales';
 
   export let path: string = '';
 
@@ -40,16 +41,16 @@
     <!-- 错误信息 -->
     <div class="bg-white dark:bg-[#1d1d1d] rounded-lg shadow-lg p-8 mb-6">
       <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
-        页面未找到
+        {$t('notFound.title')}
       </h2>
       <p class="text-gray-600 dark:text-gray-400 mb-6">
-        抱歉，您访问的页面不存在或已被移除。
+        {$t('notFound.subtitle')}
       </p>
 
       {#if path}
         <div class="bg-gray-50 dark:bg-[#2d2d2d] rounded-lg p-4 mb-6">
           <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
-            您尝试访问的路径：
+            {$t('notFound.pathLabel')}
           </p>
           <code class="text-sm text-[#409eff] dark:text-[#66b1ff] font-mono break-all">
             {path}
@@ -60,24 +61,24 @@
       <!-- 可能的原因 -->
       <div class="text-left bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
         <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          可能的原因：
+          {$t('notFound.reasonTitle')}
         </p>
         <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
           <li class="flex items-start gap-2">
             <i class="pi pi-angle-right text-xs mt-1"></i>
-            <span>页面地址输入错误</span>
+            <span>{$t('notFound.reason1')}</span>
           </li>
           <li class="flex items-start gap-2">
             <i class="pi pi-angle-right text-xs mt-1"></i>
-            <span>页面已被删除或移动</span>
+            <span>{$t('notFound.reason2')}</span>
           </li>
           <li class="flex items-start gap-2">
             <i class="pi pi-angle-right text-xs mt-1"></i>
-            <span>您没有访问该页面的权限</span>
+            <span>{$t('notFound.reason3')}</span>
           </li>
           <li class="flex items-start gap-2">
             <i class="pi pi-angle-right text-xs mt-1"></i>
-            <span>链接已过期</span>
+            <span>{$t('notFound.reason4')}</span>
           </li>
         </ul>
       </div>
@@ -89,26 +90,26 @@
           class="px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-[#2d2d2d] dark:hover:bg-[#3d3d3d] text-gray-700 dark:text-gray-300 rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <i class="pi pi-arrow-left"></i>
-          <span>返回上一页</span>
+          <span>{$t('notFound.back')}</span>
         </button>
         <button
           on:click={goHome}
           class="px-6 py-3 bg-[#409eff] hover:bg-[#66b1ff] text-white rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
         >
           <i class="pi pi-home"></i>
-          <span>返回首页</span>
+          <span>{$t('notFound.home')}</span>
         </button>
       </div>
     </div>
 
     <!-- 底部提示 -->
     <p class="text-sm text-gray-500 dark:text-gray-400">
-      如果您认为这是一个错误，请联系
+      {$t('notFound.footer')}
       <a
-        href="mailto:support@example.com"
+        href="mailto:op@zhoolg.com"
         class="text-[#409eff] hover:text-[#66b1ff] transition-colors"
       >
-        技术支持
+        {$t('notFound.support')}
       </a>
     </p>
   </div>

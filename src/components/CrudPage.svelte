@@ -12,7 +12,7 @@
    * - 支持权限控制
    */
   import { onMount } from 'svelte';
-  import { Dialog, Button, Checkbox } from 'bits-ui';
+  import { Dialog, Button, Checkbox, Switch } from 'bits-ui';
   import { toast } from '../utils/toast';
   import { confirm } from '../utils/confirm';
   import { get, post } from '../api/request';
@@ -220,6 +220,41 @@
     }
   }
 
+  // 状态切换 (Switch)
+  async function handleSwitchChange(row: Record<string, unknown>, col: TableColumn, checked: boolean) {
+    if (!col.switchConfig?.api) return;
+
+    const {
+      api,
+      activeValue = true,
+      inactiveValue = false,
+      idField = 'id',
+      statusField = col.field as string,
+      successMessage,
+      errorMessage
+    } = col.switchConfig;
+
+    const newValue = checked ? activeValue : inactiveValue;
+    const oldValue = row[col.field as string];
+
+    // 乐观更新 (Optimistic update)
+    row[col.field as string] = newValue;
+    data = [...data];
+
+    try {
+      await post(api, {
+        [idField]: row[rowKey] || row[idField],
+        [statusField]: newValue
+      });
+      toast.success(successMessage || translate('common.success'));
+    } catch (err) {
+      // 失败时回滚
+      row[col.field as string] = oldValue;
+      data = [...data];
+      toast.error(err instanceof Error ? err.message : (errorMessage || translate('common.failed')));
+    }
+  }
+
   function isRowSelected(row: Record<string, unknown>) {
     return selectedRows.some((r) => r[rowKey] === row[rowKey]);
   }
@@ -329,8 +364,14 @@
 
   // 渲染单元格内容
   function renderCellValue(col: TableColumn, value: unknown, row: Record<string, unknown>): string {
-    if (col.format === 'datetime' && value) {
-      return String(value);
+    if (col.format === 'datetime') {
+      if (!value) return '-';
+      try {
+        const date = new Date(String(value));
+        return isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+      } catch (e) {
+        return String(value);
+      }
     }
     return value != null ? String(value) : '-';
   }
@@ -387,20 +428,20 @@
         {#each config.search.fields as field}
           <div>
             <label for="search-{field.field}" class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
-              {field.label}
+              {$t(field.label)}
             </label>
             {#if field.type === 'select'}
               <FormSelect
                 bind:value={searchForm[field.field] as string | number}
                 options={field.options || []}
-                placeholder={field.placeholder || $t('table.selectPlaceholder')}
+                placeholder={field.placeholder ? $t(field.placeholder) : $t('table.selectPlaceholder')}
               />
             {:else}
               <input
                 id="search-{field.field}"
                 type="text"
                 bind:value={searchForm[field.field]}
-                placeholder={field.placeholder}
+                placeholder={field.placeholder ? $t(field.placeholder) : ''}
                 class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff]"
               />
             {/if}
@@ -521,7 +562,7 @@
                 style:width={col.width ? `${col.width}px` : undefined}
                 style:min-width={col.minWidth ? `${col.minWidth}px` : undefined}
               >
-                {col.label}
+                {$t(col.label)}
               </th>
             {/each}
             {#if config.table.actions && config.table.actions.length > 0}
@@ -573,6 +614,30 @@
                       <span class="px-2 py-1 text-xs rounded {status?.class}">
                         {status?.label}
                       </span>
+                    {:else if col.format === 'switch' && col.switchConfig}
+                      <div class="flex items-center">
+                        <Switch.Root
+                          checked={row[col.field as string] === (col.switchConfig.activeValue ?? true)}
+                          onCheckedChange={(checked) => handleSwitchChange(row, col, checked)}
+                          class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#409eff] focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#409eff] data-[state=unchecked]:bg-gray-200 dark:data-[state=unchecked]:bg-gray-700 dark:focus-visible:ring-offset-gray-950"
+                        >
+                          <Switch.Thumb class="pointer-events-none block h-4 w-4 rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0" />
+                        </Switch.Root>
+                      </div>
+                    {:else if col.format === 'image'}
+                      {#if row[col.field as string]}
+                        <div class="h-10 w-10 rounded overflow-hidden border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                          <img
+                            src={String(row[col.field as string])}
+                            alt={col.label}
+                            class="h-full w-full object-cover"
+                          />
+                        </div>
+                      {:else}
+                        <div class="h-10 w-10 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center border border-gray-100 dark:border-gray-700">
+                          <i class="pi pi-image text-gray-400"></i>
+                        </div>
+                      {/if}
                     {:else}
                       {renderCellValue(col, row[col.field as string], row)}
                     {/if}
@@ -654,7 +719,7 @@
       >
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
           <Dialog.Title class="text-lg font-medium">
-            {dialogMode === 'add' ? $t('table.addTitle', { title: config.title }) : $t('table.editTitle', { title: config.title })}
+            {dialogMode === 'add' ? $t('table.addTitle', { title: $t(config.title) }) : $t('table.editTitle', { title: $t(config.title) })}
           </Dialog.Title>
           <Dialog.Close class="text-gray-400 hover:text-gray-600 transition-colors">
             <i class="pi pi-times"></i>
@@ -667,13 +732,13 @@
                 {#if field.required}
                   <span class="text-red-500 mr-1">*</span>
                 {/if}
-                {field.label}
+                {$t(field.label)}
               </label>
               {#if field.type === 'textarea'}
                 <textarea
                   id="form-{field.field}"
                   bind:value={formData[field.field]}
-                  placeholder={field.placeholder}
+                  placeholder={field.placeholder ? $t(field.placeholder) : ''}
                   rows={field.rows || 3}
                   maxlength={field.maxLength}
                   disabled={field.disabled}
@@ -684,7 +749,7 @@
                   id="form-{field.field}"
                   type="number"
                   bind:value={formData[field.field]}
-                  placeholder={field.placeholder}
+                  placeholder={field.placeholder ? $t(field.placeholder) : ''}
                   disabled={field.disabled}
                   class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff]"
                 />
@@ -692,7 +757,7 @@
                 <FormSelect
                   bind:value={formData[field.field] as string | number}
                   options={field.options || []}
-                  placeholder={field.placeholder || $t('table.selectPlaceholder')}
+                  placeholder={field.placeholder ? $t(field.placeholder) : $t('table.selectPlaceholder')}
                   disabled={field.disabled}
                 />
               {:else}
@@ -700,14 +765,14 @@
                   id="form-{field.field}"
                   type="text"
                   bind:value={formData[field.field]}
-                  placeholder={field.placeholder}
+                  placeholder={field.placeholder ? $t(field.placeholder) : ''}
                   maxlength={field.maxLength}
                   disabled={field.disabled}
                   class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff]"
                 />
               {/if}
               {#if field.tip}
-                <p class="mt-1 text-xs text-gray-400">{field.tip}</p>
+                <p class="mt-1 text-xs text-gray-400">{$t(field.tip)}</p>
               {/if}
             </div>
           {/each}

@@ -3,14 +3,18 @@
    * 空状态组件
    * 用于显示无数据状态
    */
-  export let text: string = '暂无数据';
+  import { t } from '$lib/locales';
+
+  export let text: string = '';
   export let icon: string = 'pi-inbox';
   export let description: string = '';
+
+  $: displayText = text || $t('common.noData');
 </script>
 
 <div class="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
   <i class="pi {icon} text-5xl mb-3 opacity-50"></i>
-  <p class="text-sm">{text}</p>
+  <p class="text-sm">{displayText}</p>
   {#if description}
     <p class="text-xs mt-1 opacity-70">{description}</p>
   {/if}

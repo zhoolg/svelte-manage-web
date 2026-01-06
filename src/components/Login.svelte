@@ -3,18 +3,17 @@
   import { permissionStore } from '../stores/permissionStore';
   import { onMount } from 'svelte';
   import { Toggle, Button, Label } from 'bits-ui';
-  import Captcha from './Captcha.svelte';
   import { t } from '../lib/locales';
   import { APP_CONFIG } from '../config';
-  import { authApi } from '../api/auth';
+  import { organizationApi } from '../api/organization';
+  import { getUserPermissions } from '../config/permissions';
+  import { encryptLoginCredentials } from '../utils/rsa';
 
   let username = '';
   let password = '';
-  let captcha = '';
   let loading = false;
   let bgUrl = '';
   let showPassword = false;
-  let captchaComponent: Captcha; // 验证码组件引用
 
   // 获取 Bing 每日壁纸
   onMount(() => {
@@ -42,45 +41,57 @@
       }
       return;
     }
-    if (!captcha.trim()) {
-      if (typeof window !== 'undefined' && (window as any).toast) {
-        (window as any).toast.warning(translate('login.captchaRequired'));
-      }
-      return;
-    }
-
-    // 验证码验证
-    const validationResult = captchaComponent?.validate(captcha);
-    if (!validationResult || !validationResult.valid) {
-      if (typeof window !== 'undefined' && (window as any).toast) {
-        const reason = validationResult?.reason || 'login.captchaError';
-        (window as any).toast.warning(translate(reason));
-      }
-      captcha = '';
-      captchaComponent?.refresh();
-      return;
-    }
 
     loading = true;
 
     try {
-      // 调用登录 API
-      const response = await authApi.login({
-        username: username.trim(),
-        password: password.trim(),
-        captcha: captcha.trim(),
+      // RSA 加密账号和密码
+      const encrypted = encryptLoginCredentials(
+        username.trim(),
+        password.trim()
+      );
+
+      // 调用后端登录 API（发送加密后的数据）
+      const response = await organizationApi.login({
+        accountNo: encrypted.accountNo,
+        password: encrypted.password,
       });
 
-      // 设置用户信息和token
-      authStore.login(response.data.token, response.data.user);
+      // 后端返回格式: { code: 0/200, data: {...}, msg: "" }
+      // 兼容 code === 0 和 code === 200 两种成功码
+      if ((response.code === 0 || response.code === 200) && response.data) {
+        // 生成 token（如果后端返回了token则使用，否则生成模拟token）
+        const token = response.data.token || `token_${username.trim()}_${Date.now()}`;
 
-      // 设置用户权限
-      permissionStore.setPermissions(response.data.permissions);
-      permissionStore.setIsAdmin(response.data.isAdmin);
+        // 构造用户信息
+        const user = {
+          id: response.data.id || 1,
+          username: response.data.username || username.trim(),
+          accountNo: response.data.accountNo || username.trim(),
+          roleId: response.data.roleId || 1,
+          roleName: response.data.roleName || '管理员',
+        };
 
-      // 显示成功消息
-      if (typeof window !== 'undefined' && (window as any).toast) {
-        (window as any).toast.success(translate('login.loginSuccess'));
+        // 设置用户信息和token
+        authStore.login(token, user);
+
+        // 获取用户权限（暂时使用模拟数据，后续可对接权限接口）
+        const mockPermissions = getUserPermissions(username.trim());
+        if (mockPermissions) {
+          permissionStore.setPermissions(mockPermissions.permissions);
+          permissionStore.setIsAdmin(mockPermissions.isAdmin);
+        } else {
+          // 默认权限
+          permissionStore.setPermissions(['*']);
+          permissionStore.setIsAdmin(true);
+        }
+
+        // 显示成功消息
+        if (typeof window !== 'undefined' && (window as any).toast) {
+          (window as any).toast.success(response.msg || translate('login.loginSuccess'));
+        }
+      } else {
+        throw new Error(response.msg || '登录失败');
       }
 
     } catch (error: any) {
@@ -88,8 +99,6 @@
       if (typeof window !== 'undefined' && (window as any).toast) {
         (window as any).toast.error(error.message || translate('login.loginFailed'));
       }
-      captcha = '';
-      captchaComponent?.refresh();
     } finally {
       loading = false;
     }
@@ -150,7 +159,7 @@
                 bind:value={username}
                 onkeydown={handleKeyDown}
                 class="w-full h-12 pl-9 pr-4 text-base bg-transparent text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#409eff] transition-all duration-300"
-                placeholder="admin / user"
+                placeholder={$t('login.accountPlaceholder')}
               />
               <!-- 底线动画 -->
               <div class="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-[#409eff] to-[#66b1ff] group-focus-within:w-full transition-all duration-500"></div>
@@ -175,7 +184,7 @@
                 bind:value={password}
                 onkeydown={handleKeyDown}
                 class="w-full h-12 pl-9 pr-12 text-base bg-transparent text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#409eff] transition-all duration-300"
-                placeholder="••••••••"
+                placeholder={$t('login.passwordPlaceholder')}
               />
               <!-- 底线动画 -->
               <div class="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-[#409eff] to-[#66b1ff] group-focus-within:w-full transition-all duration-500"></div>
@@ -187,44 +196,6 @@
               >
                 <i class="pi {showPassword ? 'pi-eye' : 'pi-eye-slash'} text-lg"></i>
               </Toggle.Root>
-            </div>
-          </div>
-
-          <!-- 验证码 - 底线风格 with bits-ui Label -->
-          <div class="group relative">
-            <Label.Root
-              for="captcha-input"
-              class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 ml-1 transition-colors duration-200 group-focus-within:text-[#409eff]"
-            >
-              {$t('login.captcha')}
-            </Label.Root>
-            <div class="flex gap-3 items-end">
-              <div class="relative flex-1">
-                <span class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#409eff] transition-all duration-300">
-                  <i class="pi pi-shield text-lg"></i>
-                </span>
-                <input
-                  id="captcha-input"
-                  type="text"
-                  bind:value={captcha}
-                  onkeydown={handleKeyDown}
-                  onclick={() => captchaComponent?.recordInteraction?.()}
-                  onfocus={() => captchaComponent?.recordInteraction?.()}
-                  maxlength="4"
-                  class="w-full h-12 pl-9 pr-4 text-base bg-transparent text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#409eff] transition-all duration-300"
-                  placeholder="ABCD"
-                />
-                <!-- 底线动画 -->
-                <div class="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-[#409eff] to-[#66b1ff] group-focus-within:w-full transition-all duration-500"></div>
-              </div>
-              <div class="flex-shrink-0 rounded-xl overflow-hidden shadow-md">
-                <Captcha
-                  bind:this={captchaComponent}
-                  width={120}
-                  height={48}
-                  length={4}
-                />
-              </div>
             </div>
           </div>
 

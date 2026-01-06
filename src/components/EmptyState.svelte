@@ -10,6 +10,7 @@
    * - 多种预设类型（empty、developing、error、noPermission）
    */
   import { navigate } from '../stores/routerStore';
+  import { t } from '$lib/locales';
 
   // 组件属性
   export let type: 'empty' | 'developing' | 'error' | 'noPermission' | 'custom' = 'empty';
@@ -17,40 +18,40 @@
   export let title: string = '';
   export let description: string = '';
   export let showButton: boolean = true;
-  export let buttonText: string = '返回首页';
+  export let buttonText: string = '';
   export let buttonIcon: string = 'pi-home';
   export let onButtonClick: (() => void) | null = null;
 
   // 预设配置
-  const presets = {
+  $: presets = {
     empty: {
       icon: 'pi-inbox',
       iconColor: 'text-gray-400',
-      title: '暂无数据',
-      description: '当前没有任何数据，请稍后再试。',
+      title: $t('emptyState.empty.title'),
+      description: $t('emptyState.empty.desc'),
     },
     developing: {
       icon: 'pi-wrench',
       iconColor: 'text-yellow-500',
-      title: '页面开发中',
-      description: '该功能正在开发中，敬请期待！',
+      title: $t('emptyState.developing.title'),
+      description: $t('emptyState.developing.desc'),
     },
     error: {
       icon: 'pi-exclamation-triangle',
       iconColor: 'text-red-500',
-      title: '出错了',
-      description: '页面加载失败，请刷新页面重试。',
+      title: $t('emptyState.error.title'),
+      description: $t('emptyState.error.desc'),
     },
     noPermission: {
       icon: 'pi-lock',
       iconColor: 'text-orange-500',
-      title: '无访问权限',
-      description: '您没有权限访问此页面，请联系管理员。',
+      title: $t('emptyState.noPermission.title'),
+      description: $t('emptyState.noPermission.desc'),
     },
     custom: {
       icon: 'pi-info-circle',
       iconColor: 'text-blue-500',
-      title: '提示',
+      title: $t('emptyState.custom.title'),
       description: '',
     },
   };
@@ -60,6 +61,7 @@
   $: finalIcon = icon || currentConfig.icon;
   $: finalTitle = title || currentConfig.title;
   $: finalDescription = description || currentConfig.description;
+  $: finalButtonText = buttonText || $t('emptyState.buttonText');
 
   // 按钮点击处理
   function handleButtonClick() {
@@ -100,7 +102,7 @@
         class="px-6 py-2.5 bg-[#409eff] hover:bg-[#66b1ff] text-white rounded-lg transition-colors inline-flex items-center gap-2"
       >
         <i class="pi {buttonIcon}"></i>
-        <span>{buttonText}</span>
+        <span>{finalButtonText}</span>
       </button>
     {/if}
   </div>

@@ -14,6 +14,7 @@
     calculateSimilarity,
     checkIntegrity
   } from '../lib/captchaUtils';
+  import { t } from '$lib/locales';
 
   export let width = 120;
   export let height = 40;
@@ -167,20 +168,20 @@
     // 1. 检测自动化工具（提高阈值，降低误判）
     const automationScore = detectAutomation();
     if (automationScore > 80) { // 从 50 提高到 80
-      return { valid: false, reason: '检测到自动化工具' };
+      return { valid: false, reason: $t('captcha.automationDetected') };
     }
 
     // 2. 验证鼠标行为（降低要求）
     // 只有在有足够鼠标移动时才验证，否则跳过
     if (mouseTracker.validate && !mouseTracker.validate()) {
       // 给用户一个提示，但不强制要求
-      console.warn('鼠标行为验证未通过，但继续验证');
+      console.warn($t('captcha.mouseBehaviorWarn'));
     }
 
     // 3. 验证时效性（5分钟）
     const now = Date.now();
     if (now - timestamp > 300000) {
-      return { valid: false, reason: '验证码已过期' };
+      return { valid: false, reason: $t('captcha.expired') };
     }
 
     // 4. 验证 Canvas 指纹相似度
@@ -193,7 +194,7 @@
 
       if (!isValid) {
         // console.error(`浏览器指纹验证失败，相似度: ${similarity}%`);
-        return { valid: false, reason: '浏览器环境异常，请刷新页面重试' };
+        return { valid: false, reason: $t('captcha.envError') };
       }
 
       // console.log(`浏览器指纹验证通过，相似度: ${similarity}%`);
@@ -202,7 +203,7 @@
     // 5. 使用多层解密验证
     const isValid = validateObfuscated(input, captchaHash, salt, timestamp);
     if (!isValid) {
-      return { valid: false, reason: '验证码错误' };
+      return { valid: false, reason: $t('captcha.incorrect') };
     }
 
     return { valid: true };
@@ -248,6 +249,5 @@
   onclick={handleRefresh}
   onmousemove={handleMouseMove}
   class="cursor-pointer rounded-lg border border-gray-200 dark:border-gray-700"
-  title="点击刷新验证码"
+  title={$t('captcha.refreshTitle')}
 ></canvas>
-

@@ -2,7 +2,7 @@ import { TokenStorage, clearAuth } from '../utils/storage';
 import { getTranslator } from '../lib/locales';
 import { APP_CONFIG } from '../config';
 
-const BASE_URL = APP_CONFIG.apiBaseUrl;
+export const BASE_URL = APP_CONFIG.apiBaseUrl;
 
 export interface ApiResponse<T = unknown> {
   code: number;
@@ -152,8 +152,21 @@ export function get<T>(url: string, params?: Record<string, unknown>): Promise<A
 }
 
 // POST 请求
-export function post<T>(url: string, data?: unknown): Promise<ApiResponse<T>> {
-  return request<T>(url, {
+export function post<T>(
+  url: string,
+  data?: unknown,
+  options?: { params?: Record<string, unknown> }
+): Promise<ApiResponse<T>> {
+  // 如果有 query 参数，添加到 URL
+  const queryString = options?.params
+    ? '?' + new URLSearchParams(
+        Object.entries(options.params)
+          .filter(([, v]) => v !== undefined && v !== null && v !== '')
+          .map(([k, v]) => [k, String(v)])
+      ).toString()
+    : '';
+
+  return request<T>(url + queryString, {
     method: 'POST',
     body: data ? JSON.stringify(data) : undefined,
   });

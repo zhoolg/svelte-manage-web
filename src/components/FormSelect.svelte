@@ -11,15 +11,17 @@
    * - 完整的可访问性支持
    */
   import { Select } from 'bits-ui';
+  import { t } from '$lib/locales';
 
   export let value: string | number = '';
   export let options: Array<{ label: string; value: string | number }> = [];
-  export let placeholder: string = '请选择';
+  export let placeholder: string = '';
   export let disabled: boolean = false;
 
   // 找到当前选中的选项
+  $: displayPlaceholder = placeholder || $t('table.selectPlaceholder');
   $: selectedOption = options.find(opt => opt.value === value);
-  $: displayValue = selectedOption?.label || placeholder;
+  $: displayValue = selectedOption ? $t(selectedOption.label) : displayPlaceholder;
 </script>
 
 <Select.Root
@@ -42,21 +44,21 @@
       <!-- 占位符选项 -->
       <Select.Item
         value=""
-        label={placeholder}
+        label={displayPlaceholder}
         class="px-3 py-2 text-sm text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors data-[highlighted]:bg-gray-100 data-[highlighted]:dark:bg-gray-700"
       >
-        {placeholder}
+        {displayPlaceholder}
       </Select.Item>
 
       <!-- 选项列表 -->
       {#each options as option}
         <Select.Item
           value={String(option.value)}
-          label={option.label}
+          label={$t(option.label)}
           onclick={() => { value = option.value; }}
           class="px-3 py-2 text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors data-[highlighted]:bg-gray-100 data-[highlighted]:dark:bg-gray-700 data-[selected]:bg-[#409eff] data-[selected]:text-white flex items-center justify-between"
         >
-          <span>{option.label}</span>
+          <span>{$t(option.label)}</span>
           {#if value === option.value}
             <i class="pi pi-check text-xs"></i>
           {/if}

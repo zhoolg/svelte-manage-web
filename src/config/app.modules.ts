@@ -213,9 +213,12 @@ export function getFlatModules(modules: AppModule[] = APP_MODULES): AppModule[] 
 
 /**
  * 根据路径获取模块
+ * 支持带 query 参数的路径匹配
  */
 export function getModuleByPath(path: string): AppModule | undefined {
-  return getFlatModules().find(m => m.path === path);
+  // 移除 query 参数和 hash，只保留路径部分
+  const cleanPath = path.split('?')[0].split('#')[0];
+  return getFlatModules().find(m => m.path === cleanPath);
 }
 
 /**

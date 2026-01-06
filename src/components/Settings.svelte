@@ -13,15 +13,6 @@
   import { t, locale, setLocale, localeOptions } from '../lib/locales';
   import { APP_CONFIG } from '../config';
 
-  const themeColors = [
-    { name: '默认蓝', value: '#409eff' },
-    { name: '极光绿', value: '#67c23a' },
-    { name: '明亮紫', value: '#722ed1' },
-    { name: '活力橙', value: '#fa8c16' },
-    { name: '浪漫粉', value: '#eb2f96' },
-    { name: '极客青', value: '#13c2c2' },
-  ];
-
   async function handleReset() {
     const confirmed = await (window as any).confirm({
       title: $t('settings.resetSettings'),
@@ -120,31 +111,6 @@
                       <i class="pi pi-check text-white text-xs"></i>
                     </div>
                   {/if}
-                </button>
-              {/each}
-            </div>
-          </div>
-
-          <!-- 主题色 -->
-          <div class="bg-white dark:bg-[#1d1d1d] rounded-lg shadow-sm p-6">
-            <h3 class="text-base font-medium text-gray-800 dark:text-white mb-4">
-              {$t('settings.themeColor')}
-            </h3>
-            <div class="flex flex-wrap gap-4">
-              {#each themeColors as color}
-                <button
-                  type="button"
-                  onclick={() => settingsStore.setPrimaryColor(color.value)}
-                  class="group relative w-14 h-14 rounded-xl flex items-center justify-center transition-all hover:scale-110 {$settingsStore.primaryColor === color.value ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-[#1d1d1d] ring-gray-400' : ''}"
-                  style="background-color: {color.value}"
-                  title={color.name}
-                >
-                  {#if $settingsStore.primaryColor === color.value}
-                    <i class="pi pi-check text-white text-lg"></i>
-                  {/if}
-                  <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-gray-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                    {color.name}
-                  </span>
                 </button>
               {/each}
             </div>

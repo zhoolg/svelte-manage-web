@@ -20,34 +20,24 @@
   import { authStore } from '../stores/authStore';
   import { settingsStore } from '../stores/settingsStore';
   import { currentPath, navigate, routeNames } from '../stores/routerStore';
-  import { menuConfig, getParentMenu, getFlatMenus } from '../config/menu';
-  import { t, locale, setLocale, localeOptions } from '../lib/locales';
+  import { getParentMenu, getFlatMenus } from '../config/menu';
+  import { t, locale, setLocale, localeOptions } from '$lib/locales';
 
-  export let onToggle: () => void;
-  export const collapsed: boolean = false;
+  let { onToggle }: { onToggle: () => void } = $props();
 
-  let searchVisible = false;
-  let searchQuery = '';
-  let isFullscreen = false;
+  let searchVisible = $state(false);
+  let searchQuery = $state('');
+  let isFullscreen = $state(false);
   let searchInputRef: HTMLInputElement;
 
   // 获取翻译函数
-  $: translate = $t;
-  $: user = $authStore.user;
-  $: theme = $settingsStore.theme;
+  const translate = $derived($t);
+  const user = $derived($authStore.user);
+  const theme = $derived($settingsStore.theme);
 
   // 获取当前路由名称
-  $: currentRoute = $t(routeNames[$currentPath] || 'menu.home');
-  $: parentMenu = getParentMenu($currentPath);
-
-  // 模拟通知数据
-  const notifications = [
-    { id: 1, type: 'message', title: '新的代理商申请', content: '李四提交了代理商申请，请及时审核', time: '5分钟前', read: false },
-    { id: 2, type: 'system', title: '系统更新通知', content: '系统将于今晚进行维护升级', time: '1小时前', read: false },
-    { id: 3, type: 'task', title: '待办提醒', content: '您有3个待审核的申请', time: '2小时前', read: true },
-  ];
-
-  $: unreadCount = notifications.filter(n => !n.read).length;
+  const currentRoute = $derived($t(routeNames[$currentPath] || 'menu.home'));
+  const parentMenu = $derived(getParentMenu($currentPath));
 
   async function handleLogout() {
     const confirmed = await (window as any).confirm({
@@ -104,9 +94,11 @@
   });
 
   // 搜索框显示时自动聚焦
-  $: if (searchVisible && searchInputRef) {
-    setTimeout(() => searchInputRef?.focus(), 0);
-  }
+  $effect(() => {
+    if (searchVisible && searchInputRef) {
+      setTimeout(() => searchInputRef?.focus(), 0);
+    }
+  });
 </script>
 
 <header class="sticky top-0 z-30 bg-white dark:bg-[#141414] h-[50px] border-b border-[#ebeef5] dark:border-[#303030]">
@@ -131,7 +123,7 @@
           {#if parentMenu}
             <span class="mx-2 text-[#97a8be]">/</span>
             <span class="text-[#97a8be]">
-              {parentMenu.label}
+              {parentMenu.label.startsWith('menu.') ? translate(parentMenu.label) : parentMenu.label}
             </span>
           {/if}
           <span class="mx-2 text-[#97a8be]">/</span>
@@ -157,7 +149,7 @@
             class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
             sideOffset={5}
           >
-            搜索 (Ctrl+K)
+            {translate('header.searchShortcut')}
           </Tooltip.Content>
         </Tooltip.Portal>
       </Tooltip.Root>
@@ -172,11 +164,6 @@
               class="w-full h-full flex items-center justify-center"
             >
               <i class="pi pi-bell text-[18px] text-[#5a5e66] dark:text-[#ccc]"></i>
-              {#if unreadCount > 0}
-                <span class="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              {/if}
             </Popover.Trigger>
           </Tooltip.Trigger>
           <Tooltip.Portal>
@@ -184,7 +171,7 @@
               class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
               sideOffset={5}
             >
-              通知
+              {translate('header.notifications.title')}
             </Tooltip.Content>
           </Tooltip.Portal>
         </Tooltip.Root>
@@ -195,33 +182,12 @@
             sideOffset={8}
             align="end"
           >
-            <div class="px-4 py-3 border-b border-[#ebeef5] dark:border-[#303030] flex items-center justify-between">
-              <span class="font-medium text-gray-800 dark:text-white">{translate('common.more')}</span>
-              <Button.Root class="text-xs text-[#409eff] hover:underline">{translate('common.all')}</Button.Root>
+            <div class="px-4 py-3 border-b border-[#ebeef5] dark:border-[#303030]">
+              <span class="font-medium text-gray-800 dark:text-white">{translate('header.notifications.title')}</span>
             </div>
-            <div class="max-h-[300px] overflow-y-auto">
-              {#each notifications as item}
-                <div
-                  class="px-4 py-3 border-b border-[#ebeef5] dark:border-[#303030] last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer {!item.read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}"
-                >
-                  <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 {item.type === 'message' ? 'bg-blue-100 text-blue-600' : item.type === 'system' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'}">
-                      <i class="pi {item.type === 'message' ? 'pi-envelope' : item.type === 'system' ? 'pi-cog' : 'pi-check-circle'} text-sm"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-gray-800 dark:text-white truncate">{item.title}</p>
-                      <p class="text-xs text-gray-500 mt-0.5 truncate">{item.content}</p>
-                      <p class="text-xs text-gray-400 mt-1">{item.time}</p>
-                    </div>
-                    {#if !item.read}
-                      <span class="w-2 h-2 bg-[#409eff] rounded-full flex-shrink-0 mt-2"></span>
-                    {/if}
-                  </div>
-                </div>
-              {/each}
-            </div>
-            <div class="px-4 py-2 border-t border-[#ebeef5] dark:border-[#303030] text-center">
-              <Button.Root class="text-sm text-[#409eff] hover:underline">查看全部通知</Button.Root>
+            <div class="px-4 py-8 text-center">
+              <i class="pi pi-bell-slash text-4xl text-gray-300 dark:text-gray-600 mb-2"></i>
+              <p class="text-sm text-gray-400">{translate('header.notifications.empty')}</p>
             </div>
           </Popover.Content>
         </Popover.Portal>
@@ -240,7 +206,7 @@
             class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
             sideOffset={5}
           >
-            {theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'}
+            {theme === 'dark' ? translate('header.theme.switchToLight') : translate('header.theme.switchToDark')}
           </Tooltip.Content>
         </Tooltip.Portal>
       </Tooltip.Root>
@@ -302,7 +268,7 @@
             class="px-3 py-1.5 text-xs bg-gray-900 dark:bg-gray-700 text-white rounded shadow-lg z-[9999]"
             sideOffset={5}
           >
-            {isFullscreen ? '退出全屏' : '全屏'}
+            {isFullscreen ? translate('header.fullscreen.exit') : translate('header.fullscreen.enter')}
           </Tooltip.Content>
         </Tooltip.Portal>
       </Tooltip.Root>
@@ -318,7 +284,7 @@
             class="w-[30px] h-[30px] rounded-full"
           />
           <span class="ml-2 text-[14px] text-[#606266] dark:text-[#ccc] hidden sm:inline">
-            {user?.name || user?.username || '管理员'}
+            {user?.name || user?.username || translate('header.user.defaultName')}
           </span>
           <i class="pi pi-angle-down ml-1 text-[12px] text-[#606266] dark:text-[#ccc]"></i>
         </DropdownMenu.Trigger>
@@ -329,20 +295,6 @@
             sideOffset={8}
             align="end"
           >
-            <!-- 用户信息头部 -->
-            <div class="px-4 py-3 border-b border-[#ebeef5] dark:border-[#303030]">
-              <p class="text-sm font-medium text-gray-800 dark:text-white">{user?.name || '管理员'}</p>
-              <p class="text-xs text-gray-500 mt-0.5">超级管理员</p>
-            </div>
-
-            <DropdownMenu.Item
-              onclick={() => navigate('/profile')}
-              class="w-full flex items-center px-4 py-2.5 text-[14px] text-[#606266] dark:text-[#ccc] hover:bg-[#ecf5ff] hover:text-[#409eff] transition-colors cursor-pointer outline-none"
-            >
-              <i class="pi pi-user mr-3 text-[14px]"></i>
-              {translate('menu.profile')}
-            </DropdownMenu.Item>
-
             <DropdownMenu.Item
               onclick={() => navigate('/settings')}
               class="w-full flex items-center px-4 py-2.5 text-[14px] text-[#606266] dark:text-[#ccc] hover:bg-[#ecf5ff] hover:text-[#409eff] transition-colors cursor-pointer outline-none"
@@ -412,7 +364,7 @@
                   <div class="flex flex-col min-w-0">
                     <span class="text-sm text-gray-700 dark:text-gray-300 truncate">{translate(item.label)}</span>
                     {#if parent}
-                      <span class="text-xs text-gray-400 truncate">{translate(parent.label)}</span>
+                      <span class="text-xs text-gray-400 truncate">{parent.label.startsWith('menu.') ? translate(parent.label) : parent.label}</span>
                     {/if}
                   </div>
                 </Button.Root>
@@ -435,7 +387,7 @@
                 <div class="flex flex-col min-w-0">
                   <span class="text-sm text-gray-700 dark:text-gray-300 truncate">{translate(item.label)}</span>
                   {#if parent}
-                    <span class="text-xs text-gray-400 truncate">{translate(parent.label)}</span>
+                    <span class="text-xs text-gray-400 truncate">{parent.label.startsWith('menu.') ? translate(parent.label) : parent.label}</span>
                   {/if}
                 </div>
               </Button.Root>

@@ -117,12 +117,12 @@
                   <!-- 父级菜单按钮 -->
                   <Collapsible.Trigger
                     class="w-full flex items-center h-[50px] text-[14px] transition-colors {collapsed ? 'justify-center px-0' : 'justify-between px-5'} {hasActiveChild(item, $currentPath) ? 'text-white bg-[#263445]' : 'text-[#bfcbd9] hover:bg-[#263445]'}"
-                    title={collapsed ? $t(item.label) : undefined}
+                    title={collapsed ? (item.label.startsWith('menu.') ? $t(item.label) : item.label) : undefined}
                   >
                     <div class="flex items-center {collapsed ? 'justify-center w-full' : ''}">
                       <i class="{item.icon} text-[18px] {collapsed ? '' : 'mr-3'}"></i>
                       {#if !collapsed}
-                        <span>{$t(item.label)}</span>
+                        <span>{item.label.startsWith('menu.') ? $t(item.label) : item.label}</span>
                       {/if}
                     </div>
                     {#if !collapsed}
@@ -165,7 +165,7 @@
                       style="background: #304156"
                     >
                       <div class="px-4 py-2.5 text-[12px] text-[#909399] border-b border-[#263445] font-medium">
-                        {$t(item.label)}
+                        {item.label.startsWith('menu.') ? $t(item.label) : item.label}
                       </div>
                       {#each item.children as child}
                         {#if !child.hidden && child.path && hasMenuPermission(child)}
@@ -175,7 +175,7 @@
                             class="w-full flex items-center px-4 py-3 text-[13px] transition-all {$currentPath === child.path ? 'bg-[#409eff] text-white' : 'text-[#bfcbd9] hover:bg-[#263445] hover:pl-5'}"
                           >
                             <i class="{child.icon} text-[16px] mr-3"></i>
-                            <span>{$t(child.label)}</span>
+                            <span>{child.label.startsWith('menu.') ? $t(child.label) : child.label}</span>
                           </button>
                         {/if}
                       {/each}
@@ -191,11 +191,11 @@
                   onclick={() => navigate(item.path!)}
                   class="w-full flex items-center h-[50px] text-[14px] transition-colors {collapsed ? 'justify-center' : ''} {$currentPath === item.path ? 'bg-[#409eff] text-white' : 'text-[#bfcbd9] hover:bg-[#263445]'}"
                   style="padding-left: {collapsed ? 0 : 20}px; padding-right: {collapsed ? 0 : 20}px"
-                  title={collapsed ? $t(item.label) : undefined}
+                  title={collapsed ? (item.label.startsWith('menu.') ? $t(item.label) : item.label) : undefined}
                 >
                   <i class="{item.icon} text-[18px] {collapsed ? '' : 'mr-3'}"></i>
                   {#if !collapsed}
-                    <span>{$t(item.label)}</span>
+                    <span>{item.label.startsWith('menu.') ? $t(item.label) : item.label}</span>
                   {/if}
                 </button>
               </li>

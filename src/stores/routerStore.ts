@@ -6,6 +6,7 @@
 import { writable, derived } from 'svelte/store';
 import { recordVisit } from './visitHistoryStore';
 import { getTranslator } from '../lib/locales';
+import { getFlatModules } from '../config/app.modules';
 
 // 当前路径
 export const currentPath = writable('/');
@@ -34,22 +35,28 @@ export function goBack() {
   });
 }
 
-// 根据路径获取路由名称（使用翻译键）
-export const routeNames: Record<string, string> = {
-  '/': 'menu.home',
-  '/users': 'menu.users',
-  '/agents': 'menu.agents',
-  '/faq': 'menu.faq',
-  '/logs': 'menu.logs',
-  '/dict': 'menu.dict',
-  '/settings': 'menu.settings',
-  '/profile': 'menu.profile',
-  '/articles': 'menu.articles',
-};
+/**
+ * 自动从模块配置生成路由名称映射
+ * 这样新增模块时无需手动添加路由配置
+ */
+export const routeNames: Record<string, string> = (() => {
+  const names: Record<string, string> = {};
+
+  // 从所有模块配置中提取路径和标签
+  getFlatModules().forEach(module => {
+    if (module.path) {
+      names[module.path] = module.label;
+    }
+  });
+
+  return names;
+})();
 
 // 获取当前路由名称（翻译后的）
 export const currentRouteName = derived(currentPath, ($path) => {
   const t = getTranslator();
-  const key = routeNames[$path] || 'menu.home';
+  // 移除 query 参数和 hash，只保留路径部分
+  const cleanPath = $path.split('?')[0].split('#')[0];
+  const key = routeNames[cleanPath] || 'menu.home';
   return t(key);
 });
