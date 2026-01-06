@@ -340,4 +340,17 @@ export default {
     featureInDevelopment: '功能开发中',
     pleaseSelectDictType: '请先选择字典类型',
   },
+
+  // 图片上传
+  imageUpload: {
+    fileTooLarge: '文件 {name} 超过 {maxSize}MB 限制',
+    multiNotSupported: '多图上传功能开发中',
+    success: '图片上传成功',
+    failed: '上传失败',
+    loading: '上传中...',
+    button: '上传图片',
+    previewAlt: '预览',
+    previewFailed: '加载失败',
+    hint: '支持 JPG、PNG、GIF 格式，大小不超过 {maxSize}MB',
+  },
 };

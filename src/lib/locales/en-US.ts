@@ -340,4 +340,17 @@ export default {
     featureInDevelopment: 'Feature in development',
     pleaseSelectDictType: 'Please select a dictionary type first',
   },
+
+  // Image Upload
+  imageUpload: {
+    fileTooLarge: 'File {name} exceeds {maxSize}MB limit',
+    multiNotSupported: 'Multi-image upload in development',
+    success: 'Image uploaded successfully',
+    failed: 'Upload failed',
+    loading: 'Uploading...',
+    button: 'Upload Image',
+    previewAlt: 'Preview',
+    previewFailed: 'Load failed',
+    hint: 'Supports JPG, PNG, GIF formats, max size {maxSize}MB',
+  },
 };
