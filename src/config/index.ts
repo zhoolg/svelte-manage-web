@@ -37,6 +37,9 @@ export const APP_CONFIG = {
   /** API 基础路径 */
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL || '/api',
 
+  /** 图片基础路径 */
+  imageBaseUrl: import.meta.env.VITE_IMAGE_BASE_URL || '',
+
   /** 是否启用 Mock */
   enableMock: import.meta.env.VITE_ENABLE_MOCK === 'true',
 };

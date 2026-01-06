@@ -12,8 +12,13 @@
   import { topVisitedPaths } from '../stores/visitHistoryStore';
 
   // 从配置文件自动生成快捷入口
-  // 获取所有非隐藏的、有路径的模块（排除首页）
-  const allModules = getFlatModules().filter(m => !m.hidden && m.path && m.path !== '/');
+  // 获取所有非隐藏的、有路径的、有组件的模块（排除首页）
+  const allModules = getFlatModules().filter(m =>
+    !m.hidden &&
+    m.path &&
+    m.path !== '/' &&
+    (m.customPage || m.crud) // 只包含有自定义页面或CRUD配置的模块
+  );
 
   // 创建路径到模块的映射
   const pathToModule = new Map(allModules.map(m => [m.path, m]));
