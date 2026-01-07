@@ -43,6 +43,8 @@ export default {
     title: '登录',
     username: '用户名',
     password: '密码',
+    accountPlaceholder: '请输入账号',
+    passwordPlaceholder: '请输入密码',
     captcha: '验证码',
     rememberMe: '记住密码',
     forgotPassword: '忘记密码?',

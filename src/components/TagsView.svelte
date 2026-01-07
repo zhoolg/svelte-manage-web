@@ -31,7 +31,9 @@
   // 监听路由变化，添加新标签
   $: {
     const path = $currentPath;
-    const titleKey = routeNames[path];
+    // 去掉查询参数,只保留路径部分
+    const cleanPath = path.split('?')[0].split('#')[0];
+    const titleKey = routeNames[cleanPath];
 
     if (titleKey && !tags.find(tag => tag.path === path)) {
       tags = [...tags, { path, title: titleKey, closable: path !== '/' }];

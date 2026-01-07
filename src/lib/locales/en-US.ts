@@ -43,6 +43,8 @@ export default {
     title: 'Login',
     username: 'Username',
     password: 'Password',
+    accountPlaceholder: 'Enter your account',
+    passwordPlaceholder: 'Enter your password',
     captcha: 'Captcha',
     rememberMe: 'Remember me',
     forgotPassword: 'Forgot password?',
