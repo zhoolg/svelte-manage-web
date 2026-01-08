@@ -106,6 +106,16 @@
     }
   }
 
+  // 监听 config 变化，当路由切换时重新获取数据
+  $: if (config?.api?.list) {
+    // 重置状态
+    currentPage = 1;
+    searchForm = {};
+    selectedRows = [];
+    // 重新获取数据
+    fetchData();
+  }
+
   onMount(() => {
     fetchData();
   });
