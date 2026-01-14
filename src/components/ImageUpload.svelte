@@ -107,6 +107,23 @@
     [newList[index], newList[targetIndex]] = [newList[targetIndex], newList[index]];
     value = newList.join(',');
   }
+
+  /**
+   * 判断是否为视频文件
+   */
+  function isVideo(url: string): boolean {
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.wmv', '.flv', '.mkv'];
+    const lowerUrl = url.toLowerCase();
+    return videoExtensions.some(ext => lowerUrl.endsWith(ext));
+  }
+
+  /**
+   * 预览视频（在新窗口打开）
+   */
+  function previewVideo(url: string) {
+    const fullUrl = getImageUrl(url);
+    window.open(fullUrl, '_blank');
+  }
 </script>
 
 <div class="space-y-2">
@@ -126,59 +143,90 @@
     {#each imageList as url, index (url + index)}
       <div class="relative inline-block group">
         <div class="w-32 h-32 border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-gray-50 dark:bg-gray-800">
-          <img
-            src={getImageUrl(url)}
-            alt={$t('imageUpload.previewAlt')}
-            class="w-full h-full object-cover"
-            onerror={(e) => {
-              const placeholderText = encodeURIComponent($t('imageUpload.previewFailed'));
-              (e.currentTarget as HTMLImageElement).src = `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128"%3E%3Crect fill="%23ddd" width="128" height="128"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14"%3E${placeholderText}%3C/text%3E%3C/svg%3E`;
-            }}
-          />
+          {#if isVideo(url)}
+            <!-- 视频预览（无控制条，避免与操作按钮重叠） -->
+            <video
+              src={getImageUrl(url)}
+              class="w-full h-full object-cover"
+              preload="metadata"
+              muted
+            >
+              <track kind="captions" />
+            </video>
+            <!-- 视频标识 -->
+            <div class="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center gap-1 pointer-events-none">
+              <i class="pi pi-play-circle"></i>
+              <span>视频</span>
+            </div>
+          {:else}
+            <!-- 图片预览 -->
+            <img
+              src={getImageUrl(url)}
+              alt={$t('imageUpload.previewAlt')}
+              class="w-full h-full object-cover"
+              onerror={(e) => {
+                const placeholderText = encodeURIComponent($t('imageUpload.previewFailed'));
+                (e.currentTarget as HTMLImageElement).src = `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128"%3E%3Crect fill="%23ddd" width="128" height="128"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14"%3E${placeholderText}%3C/text%3E%3C/svg%3E`;
+              }}
+            />
+          {/if}
         </div>
 
         <!-- 悬浮操作按钮 -->
         {#if !disabled}
-          <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-            {#if multiple}
-              <!-- 多图排序 -->
-              <div class="flex gap-2">
+          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 pointer-events-none">
+            <div class="pointer-events-auto flex flex-col items-center gap-2">
+              {#if isVideo(url)}
+                <!-- 视频预览按钮 -->
                 <Button.Root
-                  onclick={() => moveImage(index, -1)}
-                  disabled={index === 0}
-                  class="h-8 w-8 bg-white hover:bg-gray-100 text-gray-900 text-xs rounded transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="左移"
+                  onclick={() => previewVideo(url)}
+                  class="h-8 px-3 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors flex items-center gap-1"
+                  title="预览视频"
                 >
-                  <i class="pi pi-arrow-left"></i>
+                  <i class="pi pi-play"></i>
+                  <span>预览</span>
                 </Button.Root>
+              {/if}
+              {#if multiple}
+                <!-- 多图排序 -->
+                <div class="flex gap-2">
+                  <Button.Root
+                    onclick={() => moveImage(index, -1)}
+                    disabled={index === 0}
+                    class="h-8 w-8 bg-white hover:bg-gray-100 text-gray-900 text-xs rounded transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="左移"
+                  >
+                    <i class="pi pi-arrow-left"></i>
+                  </Button.Root>
+                  <Button.Root
+                    onclick={() => moveImage(index, 1)}
+                    disabled={index === imageList.length - 1}
+                    class="h-8 w-8 bg-white hover:bg-gray-100 text-gray-900 text-xs rounded transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="右移"
+                  >
+                    <i class="pi pi-arrow-right"></i>
+                  </Button.Root>
+                </div>
+              {:else}
+                <!-- 单图替换 -->
                 <Button.Root
-                  onclick={() => moveImage(index, 1)}
-                  disabled={index === imageList.length - 1}
-                  class="h-8 w-8 bg-white hover:bg-gray-100 text-gray-900 text-xs rounded transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="右移"
+                  onclick={triggerUpload}
+                  disabled={uploading}
+                  class="h-8 px-3 bg-white hover:bg-gray-100 text-gray-900 text-xs rounded transition-colors"
+                  title={$t('common.edit')}
                 >
-                  <i class="pi pi-arrow-right"></i>
+                  <i class="pi pi-refresh"></i>
                 </Button.Root>
-              </div>
-            {:else}
-              <!-- 单图替换 -->
+              {/if}
+              <!-- 删除按钮 -->
               <Button.Root
-                onclick={triggerUpload}
-                disabled={uploading}
-                class="h-8 px-3 bg-white hover:bg-gray-100 text-gray-900 text-xs rounded transition-colors"
-                title={$t('common.edit')}
+                onclick={() => removeImage(index)}
+                class="h-8 px-3 bg-red-500 hover:bg-red-600 text-white text-xs rounded transition-colors"
+                title={$t('common.delete')}
               >
-                <i class="pi pi-refresh"></i>
+                <i class="pi pi-trash"></i>
               </Button.Root>
-            {/if}
-            <!-- 删除按钮 -->
-            <Button.Root
-              onclick={() => removeImage(index)}
-              class="h-8 px-3 bg-red-500 hover:bg-red-600 text-white text-xs rounded transition-colors"
-              title={$t('common.delete')}
-            >
-              <i class="pi pi-trash"></i>
-            </Button.Root>
+            </div>
           </div>
         {/if}
       </div>
@@ -202,12 +250,4 @@
       </button>
     {/if}
   </div>
-
-  <!-- 提示信息 -->
-  <p class="text-xs text-gray-500">
-    {$t('imageUpload.hint', { maxSize })}
-    {#if multiple && limit > 0}
-      <span class="ml-1">({imageList.length}/{limit})</span>
-    {/if}
-  </p>
 </div>
