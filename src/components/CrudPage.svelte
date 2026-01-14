@@ -20,6 +20,7 @@
   import { t, getTranslator } from '../lib/locales';
   import type { ModuleConfig, TableColumn, SearchField, FormField } from '../config/module';
   import FormSelect from './FormSelect.svelte';
+  import TagInput from './TagInput.svelte';
 
   // 获取翻译函数（用于函数调用）
   const translate = getTranslator();
@@ -648,6 +649,18 @@
                           <i class="pi pi-image text-gray-400"></i>
                         </div>
                       {/if}
+                    {:else if col.format === 'tags'}
+                      {#if row[col.field as string]}
+                        <div class="flex flex-wrap gap-1">
+                          {#each String(row[col.field as string]).split(',').filter(Boolean) as tag}
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs rounded bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+                              {tag.trim()}
+                            </span>
+                          {/each}
+                        </div>
+                      {:else}
+                        -
+                      {/if}
                     {:else}
                       {renderCellValue(col, row[col.field as string], row)}
                     {/if}
@@ -768,6 +781,12 @@
                   bind:value={formData[field.field] as string | number}
                   options={field.options || []}
                   placeholder={field.placeholder ? $t(field.placeholder) : $t('table.selectPlaceholder')}
+                  disabled={field.disabled}
+                />
+              {:else if field.type === 'tags'}
+                <TagInput
+                  bind:value={formData[field.field] as string}
+                  placeholder={field.placeholder ? $t(field.placeholder) : '输入后按回车或逗号添加标签'}
                   disabled={field.disabled}
                 />
               {:else}
