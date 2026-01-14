@@ -724,10 +724,10 @@
     <Dialog.Portal>
       <Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
       <Dialog.Content
-        class="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-xl"
-        style="width: {config.form.width || 500}px"
+        class="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-xl flex flex-col"
+        style="width: {config.form.width || 500}px; max-height: 90vh"
       >
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between flex-shrink-0">
           <Dialog.Title class="text-lg font-medium">
             {dialogMode === 'add' ? $t('table.addTitle', { title: $t(config.title) }) : $t('table.editTitle', { title: $t(config.title) })}
           </Dialog.Title>
@@ -735,7 +735,7 @@
             <i class="pi pi-times"></i>
           </Dialog.Close>
         </div>
-        <div class="p-6 space-y-4">
+        <div class="p-6 space-y-4 overflow-y-auto flex-1">
           {#each config.form.fields as field}
             <div>
               <label for="form-{field.field}" class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
@@ -787,7 +787,7 @@
             </div>
           {/each}
         </div>
-        <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-2">
+        <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-2 flex-shrink-0">
           <Dialog.Close class="h-9 px-4 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors">
             {$t('common.cancel')}
           </Dialog.Close>

@@ -119,6 +119,9 @@ export interface CrudConfig<T = Record<string, unknown>> {
     role?: string;
   }>;
 
+  /** 操作列宽度（默认 150） */
+  actionWidth?: number;
+
   /** 操作权限配置 */
   actionPermissions?: {
     /** 添加权限 */
@@ -265,7 +268,7 @@ export function toModuleConfig(module: AppModule): ModuleConfig | null {
       rowKey: 'id',
       showSelection: crud.showSelection ?? false,
       actions: crud.actions,
-      actionWidth: 150,
+      actionWidth: crud.actionWidth ?? 150,
     },
     search: crud.search ? { fields: crud.search } : undefined,
     form: crud.form ? { fields: crud.form, width: 600 } : undefined,
