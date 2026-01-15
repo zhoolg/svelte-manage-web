@@ -18,7 +18,7 @@
   // 获取 Bing 每日壁纸
   onMount(() => {
     const img = new Image();
-    img.src = 'https://bing.img.run/1920x1080.php';
+    img.src = 'https://bing.zhoolg.com';
     img.onload = () => {
       bgUrl = img.src;
     };
