@@ -43,10 +43,29 @@
   let formData: Record<string, unknown> = {};
   let submitting = false;
   let selectedRows: Record<string, unknown>[] = [];
+  let jumpToPage = '';
 
   $: totalPages = Math.ceil(total / pageSize);
   $: rowKey = config.table.rowKey || 'id';
   $: moduleName = config.name;
+
+  // 响应式计算分页按钮
+  $: pageButtons = (() => {
+    const buttons: number[] = [];
+    const maxButtons = 5;
+
+    if (totalPages <= maxButtons) {
+      for (let i = 1; i <= totalPages; i++) buttons.push(i);
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= maxButtons; i++) buttons.push(i);
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - maxButtons + 1; i <= totalPages; i++) buttons.push(i);
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) buttons.push(i);
+    }
+
+    return buttons;
+  })();
 
   // 获取权限配置（优先使用 actionPermissions，否则使用模块名称）
   function getPermission(action: 'add' | 'edit' | 'delete' | 'export' | 'view'): string {
@@ -413,21 +432,21 @@
     fetchData();
   }
 
-  // 获取分页按钮
-  function getPageButtons() {
-    const buttons: number[] = [];
-    const maxButtons = 5;
-
-    if (totalPages <= maxButtons) {
-      for (let i = 1; i <= totalPages; i++) buttons.push(i);
-    } else if (currentPage <= 3) {
-      for (let i = 1; i <= maxButtons; i++) buttons.push(i);
-    } else if (currentPage >= totalPages - 2) {
-      for (let i = totalPages - maxButtons + 1; i <= totalPages; i++) buttons.push(i);
-    } else {
-      for (let i = currentPage - 2; i <= currentPage + 2; i++) buttons.push(i);
+  // 跳转到指定页
+  function handleJumpToPage() {
+    const page = parseInt(jumpToPage);
+    if (isNaN(page) || page < 1 || page > totalPages) {
+      toast.warning(`请输入 1 到 ${totalPages} 之间的页码`);
+      return;
     }
-    return buttons;
+    setPage(page);
+  }
+
+  // 处理回车键跳转
+  function handleJumpKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter') {
+      handleJumpToPage();
+    }
   }
 </script>
 
@@ -709,7 +728,7 @@
           >
             <i class="pi pi-angle-left text-sm"></i>
           </Button.Root>
-          {#each getPageButtons() as page}
+          {#each pageButtons as page}
             <Button.Root
               onclick={() => setPage(page)}
               class="w-8 h-8 flex items-center justify-center rounded text-sm transition-colors {currentPage === page ? 'bg-[#409eff] text-white' : 'border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff]'}"
@@ -725,6 +744,17 @@
           >
             <i class="pi pi-angle-right text-sm"></i>
           </Button.Root>
+          <span class="ml-2 text-sm text-gray-500">跳至</span>
+          <input
+            type="number"
+            bind:value={jumpToPage}
+            onkeydown={handleJumpKeydown}
+            min="1"
+            max={totalPages}
+            class="w-12 h-8 px-2 text-sm text-center border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            placeholder=""
+          />
+          <span class="text-sm text-gray-500">页，共 {totalPages} 页</span>
         </div>
       </div>
     {/if}
