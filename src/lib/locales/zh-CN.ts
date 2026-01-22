@@ -355,4 +355,19 @@ export default {
     previewFailed: '加载失败',
     hint: '支持 JPG、PNG、GIF 格式，大小不超过 {maxSize}MB',
   },
+
+  // 浏览器兼容性
+  browserCompatibility: {
+    unsupported: {
+      title: '浏览器版本过低',
+      description: '您正在使用 {browser} {version}，该浏览器版本过低，可能无法正常使用本系统的所有功能。',
+      upgradeHint: '请升级到以下浏览器的最新版本以获得更好的体验：',
+      downloadChrome: '下载 Chrome',
+      downloadFirefox: '下载 Firefox',
+    },
+    oldVersion: {
+      message: '您的浏览器版本 ({browser} {version}) 较旧，建议升级到最新版本以获得更好的体验。',
+      dismiss: '知道了',
+    },
+  },
 };

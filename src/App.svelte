@@ -11,6 +11,7 @@
    * - 登录状态判断
    * - 全局组件挂载（Toast、Modal）
    * - 主题初始化
+   * - 浏览器兼容性检测
    */
   import { onMount } from 'svelte';
   import { Tooltip } from 'bits-ui';
@@ -19,6 +20,7 @@
   import { currentPath, navigate } from './stores/routerStore';
   import { getModuleByPath, toModuleConfig } from './config/app.modules';
   import { APP_CONFIG } from './config';
+  import { initBrowserCompatibility } from './utils/browser-compatibility';
   import Toast from './components/Toast.svelte';
   import Modal from './components/Modal.svelte';
   import Login from './components/Login.svelte';
@@ -36,6 +38,7 @@
   onMount(() => {
     authStore.init();
     initTheme();
+    initBrowserCompatibility();
   });
 
   // 根据路径获取模块配置

@@ -355,4 +355,19 @@ export default {
     previewFailed: 'Load failed',
     hint: 'Supports JPG, PNG, GIF formats, max size {maxSize}MB',
   },
+
+  // Browser Compatibility
+  browserCompatibility: {
+    unsupported: {
+      title: 'Browser Version Too Old',
+      description: 'You are using {browser} {version}, which is too old and may not support all features of this system.',
+      upgradeHint: 'Please upgrade to the latest version of the following browsers for a better experience:',
+      downloadChrome: 'Download Chrome',
+      downloadFirefox: 'Download Firefox',
+    },
+    oldVersion: {
+      message: 'Your browser version ({browser} {version}) is outdated. We recommend upgrading to the latest version for a better experience.',
+      dismiss: 'Got it',
+    },
+  },
 };
