@@ -1,0 +1,148 @@
+/**
+ * 框架基础翻译 - 英文
+ * @zhoolg/svelte-admin-framework
+ */
+export default {
+    // Common
+    common: {
+        confirm: 'Confirm',
+        cancel: 'Cancel',
+        save: 'Save',
+        delete: 'Delete',
+        edit: 'Edit',
+        add: 'Add',
+        search: 'Search',
+        reset: 'Reset',
+        export: 'Export',
+        import: 'Import',
+        refresh: 'Refresh',
+        back: 'Back',
+        close: 'Close',
+        loading: 'Loading...',
+        noData: 'No Data',
+        success: 'Success',
+        failed: 'Failed',
+        warning: 'Warning',
+        info: 'Info',
+        error: 'Error',
+        yes: 'Yes',
+        no: 'No',
+        all: 'All',
+        selected: 'Selected',
+        items: 'items',
+        operation: 'Operation',
+        status: 'Status',
+        createTime: 'Created At',
+        updateTime: 'Updated At',
+        actions: 'Actions',
+    },
+    // Table
+    table: {
+        total: 'Total {total} items',
+        pageSize: '{size} items per page',
+        noData: 'No Data',
+        loading: 'Loading...',
+        selectAll: 'Select All',
+        selected: '{count} items selected',
+        batchDelete: 'Batch Delete',
+        confirmDelete: 'Are you sure to delete?',
+        confirmBatchDelete: 'Are you sure to delete {count} selected items?',
+        deleteSuccess: 'Deleted successfully',
+        deleteFailed: 'Delete failed',
+        exportSuccess: 'Exported successfully',
+        exportFailed: 'Export failed',
+    },
+    // Form
+    form: {
+        required: 'This field is required',
+        invalid: 'Invalid format',
+        submitSuccess: 'Submitted successfully',
+        submitFailed: 'Submit failed',
+        pleaseInput: 'Please input',
+        pleaseSelect: 'Please select',
+        pleaseUpload: 'Please upload',
+    },
+    // Login
+    login: {
+        title: 'Login',
+        username: 'Username',
+        password: 'Password',
+        captcha: 'Captcha',
+        rememberMe: 'Remember me',
+        forgotPassword: 'Forgot password',
+        login: 'Login',
+        logging: 'Logging in...',
+        loginSuccess: 'Login successful',
+        loginFailed: 'Login failed',
+        pleaseInputUsername: 'Please input username',
+        pleaseInputPassword: 'Please input password',
+        pleaseInputCaptcha: 'Please input captcha',
+        captchaError: 'Captcha error',
+        accountOrPasswordError: 'Account or password error',
+    },
+    // API Errors
+    api: {
+        networkError: 'Network error, please check your connection',
+        timeout: 'Request timeout, please try again',
+        serverError: 'Server error ({status})',
+        requestFailed: 'Request failed',
+        unknownError: 'Unknown error',
+        noResponse: 'No response from server',
+        responseFormatError: 'Response format error',
+    },
+    // Messages
+    message: {
+        sessionExpired: 'Session expired, please login again',
+        noPermission: 'You do not have permission to perform this action',
+        confirmLogout: 'Are you sure to logout?',
+        logoutSuccess: 'Logout successful',
+    },
+    // Menu
+    menu: {
+        home: 'Home',
+        dashboard: 'Dashboard',
+        profile: 'Profile',
+        settings: 'Settings',
+    },
+    // Browser Compatibility
+    browserCompatibility: {
+        unsupported: {
+            title: 'Browser Not Supported',
+            description: 'You are using {browser} {version}, which does not support some features of this system.',
+            upgradeHint: 'Please upgrade to the latest version of the following browsers:',
+            downloadChrome: 'Download Chrome',
+            downloadFirefox: 'Download Firefox',
+        },
+        oldVersion: {
+            message: 'Your {browser} {version} is outdated. Please upgrade to the latest version for a better experience.',
+            dismiss: 'Dismiss',
+        },
+    },
+    // 404 Page
+    notFound: {
+        title: 'Page Not Found',
+        subtitle: 'Sorry, the page you visited does not exist or has been removed.',
+        pathLabel: 'Path you visited:',
+        reasonTitle: 'Possible reasons:',
+        reason1: 'The page address was entered incorrectly',
+        reason2: 'The page has been deleted or moved',
+        reason3: 'You do not have permission to access this page',
+        reason4: 'The link has expired',
+        back: 'Go Back',
+        home: 'Go Home',
+        footer: 'If the problem persists, please contact',
+        support: 'Technical Support',
+    },
+    // Image Upload
+    imageUpload: {
+        button: 'Upload Image',
+        loading: 'Uploading...',
+        success: 'Upload successful',
+        failed: 'Upload failed',
+        fileTooLarge: 'File {name} exceeds {maxSize}MB limit',
+        previewAlt: 'Preview image',
+        previewFailed: 'Load failed',
+        video: 'Video',
+        preview: 'Preview',
+    },
+};

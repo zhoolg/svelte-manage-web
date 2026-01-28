@@ -1,0 +1,1 @@
+{"version":3,"file":"Icon.svelte.d.ts","sourceRoot":"","sources":["../../src/components/Icon.svelte.ts"],"names":[],"mappings":"AA6ME,UAAU,KAAK;IACb,IAAI,EAAE,MAAM,CAAC;IACb,IAAI,CAAC,EAAE,MAAM,CAAC;IACd,KAAK,CAAC,EAAE,MAAM,CAAC;IACf,WAAW,CAAC,EAAE,MAAM,CAAC;CACtB;AAuQH,QAAA,MAAM,IAAI,2CAAwC,CAAC;AACnD,KAAK,IAAI,GAAG,UAAU,CAAC,OAAO,IAAI,CAAC,CAAC;AACpC,eAAe,IAAI,CAAC"}
