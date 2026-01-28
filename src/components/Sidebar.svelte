@@ -10,11 +10,13 @@
    * - 提升可访问性和键盘导航
    */
   import { Collapsible } from 'bits-ui';
+  import { ChevronDown } from 'lucide-svelte';
   import { menuConfig, hasActiveChild, type MenuItem } from '../config/menu';
   import { APP_CONFIG } from '../config';
   import { currentPath, navigate } from '../stores/routerStore';
   import { t } from '../lib/locales';
   import { permissionStore } from '../stores/permissionStore';
+  import Icon from './Icon.svelte';
 
   export let collapsed: boolean = false;
 
@@ -24,7 +26,7 @@
   // 初始化和路由变化时更新展开状态
   $: {
     const path = $currentPath;
-    menuConfig.forEach((menu) => {
+    menuConfig.forEach(menu => {
       if (menu.children && hasActiveChild(menu, path)) {
         if (!openKeys.includes(menu.label)) {
           openKeys = [...openKeys, menu.label];
@@ -35,9 +37,7 @@
 
   // 切换菜单展开状态
   function toggleMenu(key: string) {
-    openKeys = openKeys.includes(key)
-      ? openKeys.filter((k) => k !== key)
-      : [...openKeys, key];
+    openKeys = openKeys.includes(key) ? openKeys.filter(k => k !== key) : [...openKeys, key];
   }
 
   // 检查是否展开
@@ -95,7 +95,7 @@
     <div class="h-[50px] flex items-center px-4 overflow-hidden border-b border-[#263445]">
       <div class="flex items-center gap-2">
         <div class="w-8 h-8 bg-[#409eff] rounded flex items-center justify-center flex-shrink-0">
-          <i class="pi {APP_CONFIG.logoIcon} text-white text-[16px]"></i>
+          <Icon name={APP_CONFIG.logoIcon} size={16} class="text-white" />
         </div>
         {#if !collapsed}
           <h1 class="text-[#fff] text-[14px] font-semibold whitespace-nowrap overflow-hidden">
@@ -106,27 +106,51 @@
     </div>
 
     <!-- 菜单区域 -->
-    <nav class="flex-1 scrollbar-thin {collapsed ? 'overflow-visible' : 'overflow-y-auto overflow-x-hidden'}">
+    <nav
+      class="flex-1 scrollbar-thin {collapsed
+        ? 'overflow-visible'
+        : 'overflow-y-auto overflow-x-hidden'}"
+    >
       <ul class="py-1">
         {#each menuConfig as item}
           {#if !item.hidden && (hasMenuPermission(item) || hasVisibleChildren(item))}
             {#if item.children && item.children.length > 0 && hasVisibleChildren(item)}
               <!-- 有子菜单的父级菜单 - 使用 Bits UI Collapsible -->
               <li class={collapsed ? 'group relative' : ''}>
-                <Collapsible.Root open={isOpen(item.label)} onOpenChange={() => !collapsed && toggleMenu(item.label)}>
+                <Collapsible.Root
+                  open={isOpen(item.label)}
+                  onOpenChange={() => !collapsed && toggleMenu(item.label)}
+                >
                   <!-- 父级菜单按钮 -->
                   <Collapsible.Trigger
-                    class="w-full flex items-center h-[50px] text-[14px] transition-colors {collapsed ? 'justify-center px-0' : 'justify-between px-5'} {hasActiveChild(item, $currentPath) ? 'text-white bg-[#263445]' : 'text-[#bfcbd9] hover:bg-[#263445]'}"
-                    title={collapsed ? (item.label.startsWith('menu.') ? $t(item.label) : item.label) : undefined}
+                    class="w-full flex items-center h-[50px] text-[14px] transition-colors {collapsed
+                      ? 'justify-center px-0'
+                      : 'justify-between px-5'} {hasActiveChild(item, $currentPath)
+                      ? 'text-white bg-[#263445]'
+                      : 'text-[#bfcbd9] hover:bg-[#263445]'}"
+                    title={collapsed
+                      ? item.label.startsWith('menu.')
+                        ? $t(item.label)
+                        : item.label
+                      : undefined}
                   >
                     <div class="flex items-center {collapsed ? 'justify-center w-full' : ''}">
-                      <i class="{item.icon} text-[18px] {collapsed ? '' : 'mr-3'}"></i>
+                      <Icon
+                        name={item.icon?.replace('pi pi-', '') || 'file'}
+                        size={18}
+                        class={collapsed ? '' : 'mr-3'}
+                      />
                       {#if !collapsed}
                         <span>{item.label.startsWith('menu.') ? $t(item.label) : item.label}</span>
                       {/if}
                     </div>
                     {#if !collapsed}
-                      <i class="pi pi-angle-down text-[12px] transition-transform duration-200 {isOpen(item.label) ? 'rotate-180' : ''}"></i>
+                      <ChevronDown
+                        size={12}
+                        class="transition-transform duration-200 {isOpen(item.label)
+                          ? 'rotate-180'
+                          : ''}"
+                      />
                     {/if}
                   </Collapsible.Trigger>
 
@@ -143,10 +167,17 @@
                               <button
                                 type="button"
                                 onclick={() => navigate(child.path!)}
-                                class="w-full flex items-center h-[50px] text-[14px] transition-colors {$currentPath === child.path ? 'bg-[#409eff] text-white' : 'text-[#bfcbd9] hover:bg-[#263445]'}"
+                                class="w-full flex items-center h-[50px] text-[14px] transition-colors {$currentPath ===
+                                child.path
+                                  ? 'bg-[#409eff] text-white'
+                                  : 'text-[#bfcbd9] hover:bg-[#263445]'}"
                                 style="padding-left: 52px; padding-right: 20px"
                               >
-                                <i class="{child.icon} text-[18px] mr-3"></i>
+                                <Icon
+                                  name={child.icon?.replace('pi pi-', '') || 'file'}
+                                  size={18}
+                                  class="mr-3"
+                                />
                                 <span>{$t(child.label)}</span>
                               </button>
                             </li>
@@ -159,12 +190,16 @@
 
                 <!-- 折叠状态下的悬浮子菜单 -->
                 {#if collapsed}
-                  <div class="absolute left-full top-0 hidden group-hover:block z-50 pointer-events-none">
+                  <div
+                    class="absolute left-full top-0 hidden group-hover:block z-50 pointer-events-none"
+                  >
                     <div
                       class="py-2 min-w-[180px] rounded-lg shadow-xl border border-[#263445] pointer-events-auto"
                       style="background: #304156"
                     >
-                      <div class="px-4 py-2.5 text-[12px] text-[#909399] border-b border-[#263445] font-medium">
+                      <div
+                        class="px-4 py-2.5 text-[12px] text-[#909399] border-b border-[#263445] font-medium"
+                      >
                         {item.label.startsWith('menu.') ? $t(item.label) : item.label}
                       </div>
                       {#each item.children as child}
@@ -172,10 +207,21 @@
                           <button
                             type="button"
                             onclick={() => navigate(child.path!)}
-                            class="w-full flex items-center px-4 py-3 text-[13px] transition-all {$currentPath === child.path ? 'bg-[#409eff] text-white' : 'text-[#bfcbd9] hover:bg-[#263445] hover:pl-5'}"
+                            class="w-full flex items-center px-4 py-3 text-[13px] transition-all {$currentPath ===
+                            child.path
+                              ? 'bg-[#409eff] text-white'
+                              : 'text-[#bfcbd9] hover:bg-[#263445] hover:pl-5'}"
                           >
-                            <i class="{child.icon} text-[16px] mr-3"></i>
-                            <span>{child.label.startsWith('menu.') ? $t(child.label) : child.label}</span>
+                            <Icon
+                              name={child.icon?.replace('pi pi-', '') || 'file'}
+                              size={16}
+                              class="mr-3"
+                            />
+                            <span
+                              >{child.label.startsWith('menu.')
+                                ? $t(child.label)
+                                : child.label}</span
+                            >
                           </button>
                         {/if}
                       {/each}
@@ -189,11 +235,25 @@
                 <button
                   type="button"
                   onclick={() => navigate(item.path!)}
-                  class="w-full flex items-center h-[50px] text-[14px] transition-colors {collapsed ? 'justify-center' : ''} {$currentPath === item.path ? 'bg-[#409eff] text-white' : 'text-[#bfcbd9] hover:bg-[#263445]'}"
-                  style="padding-left: {collapsed ? 0 : 20}px; padding-right: {collapsed ? 0 : 20}px"
-                  title={collapsed ? (item.label.startsWith('menu.') ? $t(item.label) : item.label) : undefined}
+                  class="w-full flex items-center h-[50px] text-[14px] transition-colors {collapsed
+                    ? 'justify-center'
+                    : ''} {$currentPath === item.path
+                    ? 'bg-[#409eff] text-white'
+                    : 'text-[#bfcbd9] hover:bg-[#263445]'}"
+                  style="padding-left: {collapsed ? 0 : 20}px; padding-right: {collapsed
+                    ? 0
+                    : 20}px"
+                  title={collapsed
+                    ? item.label.startsWith('menu.')
+                      ? $t(item.label)
+                      : item.label
+                    : undefined}
                 >
-                  <i class="{item.icon} text-[18px] {collapsed ? '' : 'mr-3'}"></i>
+                  <Icon
+                    name={item.icon?.replace('pi pi-', '') || 'file'}
+                    size={18}
+                    class={collapsed ? '' : 'mr-3'}
+                  />
                   {#if !collapsed}
                     <span>{item.label.startsWith('menu.') ? $t(item.label) : item.label}</span>
                   {/if}

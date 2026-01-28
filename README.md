@@ -47,7 +47,7 @@
 - Tailwind CSS 4
 - Bits UI 2 (无障碍组件库)
 - Svelte Stores (状态管理)
-- PrimeIcons (图标)
+- Lucide (图标库)
 
 ## 快速开始
 
@@ -102,6 +102,7 @@ pnpm create-module
 ```
 
 **完成！** 系统自动生成：
+
 - 模块配置文件 (`src/config/modules/products.config.ts`)
 - 菜单结构更新 (`src/config/menu-structure.config.ts`)
 - 国际化翻译 (中英文)
@@ -257,14 +258,14 @@ VITE_PORT=7052
 
 ```typescript
 const module: AppModule = {
-  id: 'users',              // 模块唯一标识
-  label: 'menu.users',      // 菜单名称（国际化 key）
-  icon: 'pi pi-users',      // 菜单图标
-  path: '/users',           // 路由路径
-  hidden: false,            // 是否隐藏菜单
+  id: 'users', // 模块唯一标识
+  label: 'menu.users', // 菜单名称（国际化 key）
+  icon: 'pi pi-users', // 菜单图标
+  path: '/users', // 路由路径
+  hidden: false, // 是否隐藏菜单
 
   // 权限控制
-  roles: ['admin'],         // 允许访问的角色
+  roles: ['admin'], // 允许访问的角色
   permissions: ['user:view'], // 允许访问的权限
 };
 ```
@@ -390,7 +391,7 @@ const module: AppModule = {
   label: 'menu.dashboard',
   icon: 'pi pi-home',
   path: '/',
-  customPage: 'Dashboard',  // 使用 src/components/Dashboard.svelte
+  customPage: 'Dashboard', // 使用 src/components/Dashboard.svelte
 };
 ```
 
@@ -458,12 +459,7 @@ const module: AppModule = {
 import { permissionStore } from '@/stores/permissionStore';
 
 // 登录成功后设置权限
-permissionStore.setPermissions([
-  'user:view',
-  'user:add',
-  'user:edit',
-  'user:delete',
-]);
+permissionStore.setPermissions(['user:view', 'user:add', 'user:edit', 'user:delete']);
 
 // 设置角色
 permissionStore.setRoles(['admin']);
@@ -523,7 +519,7 @@ export default {
 import { settingsStore } from '@/stores/settingsStore';
 
 // 切换主题
-settingsStore.setTheme('dark');  // 'light' | 'dark' | 'system'
+settingsStore.setTheme('dark'); // 'light' | 'dark' | 'system'
 
 // 切换主题色
 settingsStore.setPrimaryColor('#409eff');
@@ -608,8 +604,6 @@ scripts/                     # 脚本工具
 └── remove-module.cjs       # 删除模块 CLI
 
 public/                      # 静态资源
-└── assets/
-    └── fonts/              # 字体文件
 ```
 
 ---
@@ -622,7 +616,7 @@ public/                      # 静态资源
 - [Vite](https://vitejs.dev/) - 下一代前端构建工具
 - [Tailwind CSS](https://tailwindcss.com/) - 实用优先的 CSS 框架
 - [Bits UI](https://bits-ui.com/) - 无障碍 Svelte 组件库
-- [PrimeIcons](https://primereact.org/icons/) - 图标库
+- [Lucide](https://lucide.dev/) - 图标库
 
 ---
 

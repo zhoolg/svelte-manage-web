@@ -6,7 +6,7 @@ import type { AppModule } from '../app.modules';
 const articlesModule: AppModule = {
   id: 'articles',
   label: 'menu.articles',
-  icon: 'pi pi-file-edit',
+  icon: 'file-edit',
   path: '/articles',
   crud: {
     title: '文章管理',
@@ -61,8 +61,8 @@ const articlesModule: AppModule = {
     ],
 
     actions: [
-      { label: '编辑', type: 'primary', icon: 'pi pi-pencil' },
-      { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除吗？' },
+      { label: '编辑', type: 'primary', icon: 'pencil' },
+      { label: '删除', type: 'danger', icon: 'trash', confirm: '确定删除吗？' },
     ],
 
     showAdd: true,

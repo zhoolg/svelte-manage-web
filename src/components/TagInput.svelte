@@ -9,6 +9,7 @@
    * - 点击删除标签
    * - 自动去除空白
    */
+  import { X } from 'lucide-svelte';
 
   export let value: string = '';
   export let placeholder: string = '输入后按回车或逗号添加标签';
@@ -20,7 +21,10 @@
   // 初始化标签列表
   $: {
     if (value) {
-      tags = value.split(',').map(t => t.trim()).filter(t => t);
+      tags = value
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t);
     } else {
       tags = [];
     }
@@ -69,17 +73,24 @@
 </script>
 
 <div class="w-full">
-  <div class="min-h-[36px] px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus-within:border-[#409eff] flex flex-wrap gap-1.5 items-center {disabled ? 'opacity-50 cursor-not-allowed' : ''}">
+  <div
+    class="min-h-[36px] px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus-within:border-[#409eff] flex flex-wrap gap-1.5 items-center {disabled
+      ? 'opacity-50 cursor-not-allowed'
+      : ''}"
+  >
     {#each tags as tag, index}
-      <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+      <span
+        class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
+      >
         {tag}
         {#if !disabled}
           <button
             type="button"
             onclick={() => removeTag(index)}
             class="hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
+            aria-label="删除标签"
           >
-            <i class="pi pi-times text-[10px]"></i>
+            <X size={10} />
           </button>
         {/if}
       </span>
@@ -90,7 +101,7 @@
         bind:value={inputValue}
         onkeydown={handleKeydown}
         oninput={handleInput}
-        placeholder={placeholder}
+        {placeholder}
         class="flex-1 min-w-[120px] outline-none bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400"
       />
     {/if}

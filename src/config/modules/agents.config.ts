@@ -7,7 +7,7 @@ import { ALL_PERMISSIONS } from '../permissions';
 const agentsModule: AppModule = {
   id: 'agents',
   label: 'menu.agents',
-  icon: 'pi pi-briefcase',
+  icon: 'briefcase',
   path: '/agents',
   permissions: [ALL_PERMISSIONS.AGENT.VIEW],
   crud: {
@@ -50,9 +50,27 @@ const agentsModule: AppModule = {
     ],
 
     form: [
-      { field: 'name', label: '代理商名称', type: 'input', required: true, placeholder: '请输入代理商名称' },
-      { field: 'contact', label: '联系人', type: 'input', required: true, placeholder: '请输入联系人' },
-      { field: 'phone', label: '联系电话', type: 'input', required: true, placeholder: '请输入联系电话' },
+      {
+        field: 'name',
+        label: '代理商名称',
+        type: 'input',
+        required: true,
+        placeholder: '请输入代理商名称',
+      },
+      {
+        field: 'contact',
+        label: '联系人',
+        type: 'input',
+        required: true,
+        placeholder: '请输入联系人',
+      },
+      {
+        field: 'phone',
+        label: '联系电话',
+        type: 'input',
+        required: true,
+        placeholder: '请输入联系电话',
+      },
       {
         field: 'level',
         label: '代理等级',
@@ -79,8 +97,19 @@ const agentsModule: AppModule = {
     ],
 
     actions: [
-      { label: '编辑', type: 'primary', icon: 'pi pi-pencil', permission: ALL_PERMISSIONS.AGENT.EDIT },
-      { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除该代理商吗？', permission: ALL_PERMISSIONS.AGENT.DELETE },
+      {
+        label: '编辑',
+        type: 'primary',
+        icon: 'pencil',
+        permission: ALL_PERMISSIONS.AGENT.EDIT,
+      },
+      {
+        label: '删除',
+        type: 'danger',
+        icon: 'trash',
+        confirm: '确定删除该代理商吗？',
+        permission: ALL_PERMISSIONS.AGENT.DELETE,
+      },
     ],
 
     actionPermissions: {

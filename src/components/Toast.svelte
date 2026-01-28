@@ -9,6 +9,7 @@
 <script lang="ts">
   import { writable } from 'svelte/store';
   import { onDestroy } from 'svelte';
+  import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-svelte';
   import { getTranslator } from '../lib/locales';
 
   // Toast store
@@ -42,23 +43,33 @@
     toasts.update(items => items.filter(t => t.id !== id));
   }
 
-  function getIcon(type: string) {
+  function getIconComponent(type: string) {
     switch (type) {
-      case 'success': return 'pi-check-circle';
-      case 'error': return 'pi-times-circle';
-      case 'warning': return 'pi-exclamation-triangle';
-      case 'info': return 'pi-info-circle';
-      default: return 'pi-info-circle';
+      case 'success':
+        return CheckCircle;
+      case 'error':
+        return XCircle;
+      case 'warning':
+        return AlertTriangle;
+      case 'info':
+        return Info;
+      default:
+        return Info;
     }
   }
 
   function getStyle(type: string) {
     switch (type) {
-      case 'success': return 'bg-[#67c23a]';
-      case 'error': return 'bg-[#f56c6c]';
-      case 'warning': return 'bg-[#e6a23c]';
-      case 'info': return 'bg-[#909399]';
-      default: return 'bg-[#909399]';
+      case 'success':
+        return 'bg-[#67c23a]';
+      case 'error':
+        return 'bg-[#f56c6c]';
+      case 'warning':
+        return 'bg-[#e6a23c]';
+      case 'info':
+        return 'bg-[#909399]';
+      default:
+        return 'bg-[#909399]';
     }
   }
 
@@ -68,19 +79,23 @@
   }
 </script>
 
-<div class="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2 pointer-events-none">
-  {#each $toasts as toast (toast.id)}
+<div
+  class="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2 pointer-events-none"
+>
+  {#each $toasts as toastItem (toastItem.id)}
     <div
-      class="{getStyle(toast.type)} text-white px-4 py-2.5 rounded-md shadow-md flex items-center gap-2 pointer-events-auto animate-[slideDown_0.3s_ease-out]"
+      class="{getStyle(
+        toastItem.type
+      )} text-white px-4 py-2.5 rounded-md shadow-md flex items-center gap-2 pointer-events-auto animate-[slideDown_0.3s_ease-out]"
     >
-      <i class="pi {getIcon(toast.type)} text-base"></i>
-      <span class="text-sm">{toast.message}</span>
+      <svelte:component this={getIconComponent(toastItem.type)} size={16} />
+      <span class="text-sm">{toastItem.message}</span>
       <button
-        onclick={() => removeToast(toast.id)}
+        onclick={() => removeToast(toastItem.id)}
         class="ml-2 text-white/70 hover:text-white transition-colors"
         aria-label={t('common.close')}
       >
-        <i class="pi pi-times text-xs"></i>
+        <X size={12} />
       </button>
     </div>
   {/each}

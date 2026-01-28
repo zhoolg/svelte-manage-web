@@ -71,7 +71,7 @@ export const organizationApi = {
         data: {
           list: members,
           total: backendData?.count || 0,
-        }
+        },
       };
     }),
 
@@ -101,7 +101,14 @@ export const organizationApi = {
 
   // 后台登录
   login: (payload: { accountNo: string; password: string }) =>
-    post('/organization/login', payload),
+    post<{
+      token?: string;
+      id?: number;
+      username?: string;
+      accountNo?: string;
+      roleId?: number;
+      roleName?: string;
+    }>('/organization/login', payload),
 
   // 后台退出
   quit: () => post('/organization/quit'),

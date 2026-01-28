@@ -1,0 +1,20 @@
+# Package managers
+node_modules
+pnpm-lock.yaml
+
+# Build output
+dist
+build
+.svelte-kit
+
+# Cache
+.cache
+*.log
+
+# IDE
+.idea
+.vscode
+
+# OS
+.DS_Store
+Thumbs.db

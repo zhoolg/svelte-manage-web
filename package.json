@@ -22,17 +22,23 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "prettier --write . && vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsgo -p tsconfig.node.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "create-module": "node scripts/create-module.cjs",
     "remove-module": "node scripts/remove-module.cjs"
   },
   "dependencies": {
     "@internationalized/date": "^3.10.1",
     "bits-ui": "^2.15.4",
+    "d3-array": "^3.2.4",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
     "jsencrypt": "^3.5.4",
-    "primeicons": "^7.0.0",
+    "layerchart": "^1.0.13",
+    "lucide-svelte": "^0.563.0",
     "tailwindcss-primeui": "^0.6.1"
   },
   "devDependencies": {
@@ -40,17 +46,19 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@tsconfig/svelte": "^5.0.6",
     "@types/node": "^24.10.9",
-    "@typescript/native-preview": "7.0.0-dev.20260120.1",
+    "@typescript/native-preview": "7.0.0-dev.20260127.1",
     "autoprefixer": "^10.4.23",
     "flowbite": "^4.0.1",
     "flowbite-svelte": "^1.31.0",
     "postcss": "^8.5.6",
-    "svelte": "^5.47.1",
+    "prettier": "^3.8.1",
+    "prettier-plugin-svelte": "^3.4.1",
+    "svelte": "^5.48.5",
     "svelte-check": "^4.3.5",
     "tailwindcss": "^4.1.18",
     "vite": "^7.3.1"
   },
   "optionalDependencies": {
-    "@rollup/rollup-win32-x64-msvc": "^4.55.3"
+    "@rollup/rollup-win32-x64-msvc": "^4.57.0"
   }
 }

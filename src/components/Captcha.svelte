@@ -12,7 +12,7 @@
     getCanvasFingerprint,
     validateFingerprint,
     calculateSimilarity,
-    checkIntegrity
+    checkIntegrity,
   } from '../lib/captchaUtils';
   import { t } from '$lib/locales';
 
@@ -167,7 +167,8 @@
   export function validate(input: string): { valid: boolean; reason?: string } {
     // 1. 检测自动化工具（提高阈值，降低误判）
     const automationScore = detectAutomation();
-    if (automationScore > 80) { // 从 50 提高到 80
+    if (automationScore > 80) {
+      // 从 50 提高到 80
       return { valid: false, reason: $t('captcha.automationDetected') };
     }
 

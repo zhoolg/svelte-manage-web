@@ -6,7 +6,7 @@ import type { AppModule } from '../app.modules';
 const homeModule: AppModule = {
   id: 'home',
   label: 'menu.home',
-  icon: 'pi pi-home',
+  icon: 'home',
   path: '/',
   crud: {
     title: '首页',

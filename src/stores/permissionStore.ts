@@ -72,7 +72,7 @@ function createPermissionStore() {
 
     // 设置角色
     setRoles: (roles: Role[]) => {
-      update((state) => {
+      update(state => {
         const newState = { ...state, roles };
         saveToStorage(newState);
         return newState;
@@ -81,7 +81,7 @@ function createPermissionStore() {
 
     // 设置权限
     setPermissions: (permissions: string[]) => {
-      update((state) => {
+      update(state => {
         const isAdmin = permissions.includes('*');
         const newState = { ...state, permissions, isAdmin };
         saveToStorage(newState);
@@ -91,7 +91,7 @@ function createPermissionStore() {
 
     // 设置管理员状态
     setIsAdmin: (isAdmin: boolean) => {
-      update((state) => {
+      update(state => {
         const newState = { ...state, isAdmin };
         saveToStorage(newState);
         return newState;
@@ -126,21 +126,21 @@ function createPermissionStore() {
     hasAnyPermission: (permissionList: string[]): boolean => {
       const state = get(permissionStore);
       if (state.isAdmin) return true;
-      return permissionList.some((p) => permissionStore.hasPermission(p));
+      return permissionList.some(p => permissionStore.hasPermission(p));
     },
 
     // 检查是否有所有权限
     hasAllPermissions: (permissionList: string[]): boolean => {
       const state = get(permissionStore);
       if (state.isAdmin) return true;
-      return permissionList.every((p) => permissionStore.hasPermission(p));
+      return permissionList.every(p => permissionStore.hasPermission(p));
     },
 
     // 检查是否有某个角色
     hasRole: (roleCode: string): boolean => {
       const state = get(permissionStore);
       if (state.isAdmin) return true;
-      return state.roles.some((r) => r.code === roleCode);
+      return state.roles.some(r => r.code === roleCode);
     },
   };
 }
@@ -148,12 +148,12 @@ function createPermissionStore() {
 export const permissionStore = createPermissionStore();
 
 // 派生 stores
-export const permissions = derived(permissionStore, ($store) => $store.permissions);
-export const roles = derived(permissionStore, ($store) => $store.roles);
-export const isAdmin = derived(permissionStore, ($store) => $store.isAdmin);
+export const permissions = derived(permissionStore, $store => $store.permissions);
+export const roles = derived(permissionStore, $store => $store.roles);
+export const isAdmin = derived(permissionStore, $store => $store.isAdmin);
 
 // 创建响应式权限检查函数
-export const hasPermission = derived(permissionStore, ($store) => {
+export const hasPermission = derived(permissionStore, $store => {
   return (permission: string): boolean => {
     // 超级管理员拥有所有权限
     if ($store.isAdmin) return true;

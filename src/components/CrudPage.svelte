@@ -13,6 +13,18 @@
    */
   import { onMount } from 'svelte';
   import { Dialog, Button, Checkbox, Switch } from 'bits-ui';
+  import {
+    Search,
+    Plus,
+    Trash2,
+    Download,
+    RefreshCw,
+    ChevronLeft,
+    ChevronRight,
+    X,
+    Loader2,
+    Image,
+  } from 'lucide-svelte';
   import { toast } from '../utils/toast';
   import { confirm } from '../utils/confirm';
   import { get, post } from '../api/request';
@@ -21,13 +33,17 @@
   import type { ModuleConfig, TableColumn, SearchField, FormField } from '../config/module';
   import FormSelect from './FormSelect.svelte';
   import TagInput from './TagInput.svelte';
+  import DatePicker from './DatePicker.svelte';
+  import DateRangePicker from './DateRangePicker.svelte';
+  import Icon from './Icon.svelte';
 
   // 获取翻译函数（用于函数调用）
   const translate = getTranslator();
 
   // Props
   export let config: ModuleConfig;
-  export let onAction: ((action: string, row: Record<string, unknown>) => void) | undefined = undefined;
+  export let onAction: ((action: string, row: Record<string, unknown>) => void) | undefined =
+    undefined;
   export const title: string | undefined = undefined;
   export const showTitle: boolean = true;
 
@@ -110,13 +126,16 @@
         ...searchForm,
       };
       // 过滤空值
-      Object.keys(params).forEach((key) => {
+      Object.keys(params).forEach(key => {
         if (params[key] === '' || params[key] === undefined) {
           delete params[key];
         }
       });
 
-      const res = await get<{ list: Record<string, unknown>[]; total: number }>(config.api.list, params);
+      const res = await get<{ list: Record<string, unknown>[]; total: number }>(
+        config.api.list,
+        params
+      );
       data = res.data?.list || [];
       total = res.data?.total || 0;
     } catch (err) {
@@ -162,15 +181,15 @@
     }
 
     const columns = config.table.columns;
-    const headers = columns.map((col) => col.label);
-    const rows = exportData.map((row) =>
-      columns.map((col) => {
+    const headers = columns.map(col => col.label);
+    const rows = exportData.map(row =>
+      columns.map(col => {
         const value = row[col.field as string];
         return typeof value === 'string' ? `"${value.replace(/"/g, '""')}"` : String(value ?? '');
       })
     );
 
-    const csv = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+    const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -190,11 +209,15 @@
     const columns = config.table.columns;
     let html = '<html><head><meta charset="UTF-8"></head><body>';
     html += '<table border="1"><thead><tr>';
-    columns.forEach((col) => { html += `<th>${col.label}</th>`; });
+    columns.forEach(col => {
+      html += `<th>${col.label}</th>`;
+    });
     html += '</tr></thead><tbody>';
-    exportData.forEach((row) => {
+    exportData.forEach(row => {
       html += '<tr>';
-      columns.forEach((col) => { html += `<td>${row[col.field as string] ?? ''}</td>`; });
+      columns.forEach(col => {
+        html += `<td>${row[col.field as string] ?? ''}</td>`;
+      });
       html += '</tr>';
     });
     html += '</tbody></table></body></html>';
@@ -222,7 +245,7 @@
     if (!confirmed) return;
 
     try {
-      const ids = selectedRows.map((row) => row[rowKey]);
+      const ids = selectedRows.map(row => row[rowKey]);
       await post(`${config.api.delete}/batch`, { ids });
       toast.success(translate('table.batchDeleteSuccess'));
       selectedRows = [];
@@ -237,7 +260,7 @@
     if (checked) {
       selectedRows = [...selectedRows, row];
     } else {
-      selectedRows = selectedRows.filter((r) => r[rowKey] !== row[rowKey]);
+      selectedRows = selectedRows.filter(r => r[rowKey] !== row[rowKey]);
     }
   }
 
@@ -251,7 +274,11 @@
   }
 
   // 状态切换 (Switch)
-  async function handleSwitchChange(row: Record<string, unknown>, col: TableColumn, checked: boolean) {
+  async function handleSwitchChange(
+    row: Record<string, unknown>,
+    col: TableColumn,
+    checked: boolean
+  ) {
     if (!col.switchConfig?.api) return;
 
     const {
@@ -261,7 +288,7 @@
       idField = 'id',
       statusField = col.field as string,
       successMessage,
-      errorMessage
+      errorMessage,
     } = col.switchConfig;
 
     const newValue = checked ? activeValue : inactiveValue;
@@ -274,19 +301,19 @@
     try {
       await post(api, {
         [idField]: row[rowKey] || row[idField],
-        [statusField]: newValue
+        [statusField]: newValue,
       });
       toast.success(successMessage || translate('common.success'));
     } catch (err) {
       // 失败时回滚
       row[col.field as string] = oldValue;
       data = [...data];
-      toast.error(err instanceof Error ? err.message : (errorMessage || translate('common.failed')));
+      toast.error(err instanceof Error ? err.message : errorMessage || translate('common.failed'));
     }
   }
 
   function isRowSelected(row: Record<string, unknown>) {
-    return selectedRows.some((r) => r[rowKey] === row[rowKey]);
+    return selectedRows.some(r => r[rowKey] === row[rowKey]);
   }
 
   // 新增
@@ -294,7 +321,7 @@
     dialogMode = 'add';
     // 设置默认值
     const defaultValues: Record<string, unknown> = {};
-    config.form?.fields.forEach((field) => {
+    config.form?.fields.forEach(field => {
       if (field.defaultValue !== undefined) {
         defaultValues[field.field] = field.defaultValue;
       }
@@ -331,7 +358,7 @@
   // 提交表单
   async function handleSubmit() {
     // 验证必填字段
-    const requiredFields = config.form?.fields.filter((f) => f.required) || [];
+    const requiredFields = config.form?.fields.filter(f => f.required) || [];
     for (const field of requiredFields) {
       if (!formData[field.field]) {
         toast.warning(translate('table.pleaseFill', { field: field.label }));
@@ -347,7 +374,9 @@
         return;
       }
       await post(api, formData);
-      toast.success(dialogMode === 'add' ? translate('table.addSuccess') : translate('table.editSuccess'));
+      toast.success(
+        dialogMode === 'add' ? translate('table.addSuccess') : translate('table.editSuccess')
+      );
       dialogVisible = false;
       fetchData();
     } catch (err) {
@@ -358,7 +387,10 @@
   }
 
   // 操作按钮点击（带确认）
-  async function handleActionClick(action: { label: string; confirm?: string }, row: Record<string, unknown>) {
+  async function handleActionClick(
+    action: { label: string; confirm?: string },
+    row: Record<string, unknown>
+  ) {
     if (action.confirm) {
       const confirmed = await confirm({
         title: translate('table.operationConfirmTitle'),
@@ -384,11 +416,16 @@
   // 获取操作按钮颜色
   function getActionColor(type?: string) {
     switch (type) {
-      case 'primary': return 'text-[#409eff]';
-      case 'success': return 'text-[#67c23a]';
-      case 'warning': return 'text-[#e6a23c]';
-      case 'danger': return 'text-[#f56c6c]';
-      default: return 'text-[#409eff]';
+      case 'primary':
+        return 'text-[#409eff]';
+      case 'success':
+        return 'text-[#67c23a]';
+      case 'warning':
+        return 'text-[#e6a23c]';
+      case 'danger':
+        return 'text-[#f56c6c]';
+      default:
+        return 'text-[#409eff]';
     }
   }
 
@@ -419,7 +456,7 @@
         };
         return {
           label: status.label,
-          class: colorClass[status.color] || 'bg-gray-100 text-gray-800'
+          class: colorClass[status.color] || 'bg-gray-100 text-gray-800',
         };
       }
     }
@@ -457,14 +494,30 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {#each config.search.fields as field}
           <div>
-            <label for="search-{field.field}" class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
+            <label
+              for="search-{field.field}"
+              class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5"
+            >
               {$t(field.label)}
             </label>
             {#if field.type === 'select'}
               <FormSelect
                 bind:value={searchForm[field.field] as string | number}
                 options={field.options || []}
-                placeholder={field.placeholder ? $t(field.placeholder) : $t('table.selectPlaceholder')}
+                placeholder={field.placeholder
+                  ? $t(field.placeholder)
+                  : $t('table.selectPlaceholder')}
+              />
+            {:else if field.type === 'date'}
+              <DatePicker
+                bind:value={searchForm[field.field] as string}
+                placeholder={field.placeholder ? $t(field.placeholder) : ''}
+              />
+            {:else if field.type === 'dateRange'}
+              <DateRangePicker
+                bind:startValue={searchForm[`${field.field}Start`] as string}
+                bind:endValue={searchForm[`${field.field}End`] as string}
+                placeholder={field.placeholder ? $t(field.placeholder) : ''}
               />
             {:else}
               <input
@@ -482,7 +535,7 @@
             onclick={handleSearch}
             class="h-9 px-4 bg-[#409eff] hover:bg-[#66b1ff] text-white text-sm rounded transition-colors flex items-center gap-1"
           >
-            <i class="pi pi-search text-xs"></i>
+            <Search size={12} />
             {$t('common.search')}
           </Button.Root>
           <Button.Root
@@ -499,7 +552,9 @@
   <!-- 表格区域 -->
   <div class="el-card bg-white dark:bg-[#1d1d1d] rounded-lg">
     <!-- 工具栏 -->
-    <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-4">
+    <div
+      class="p-4 border-b border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-4"
+    >
       <div class="flex items-center gap-4">
         {#if selectedRows.length > 0}
           <div class="flex items-center gap-2">
@@ -511,12 +566,12 @@
                 onclick={handleBatchDelete}
                 class="h-8 px-3 bg-[#f56c6c] hover:bg-[#f78989] text-white text-sm rounded transition-colors flex items-center gap-1"
               >
-                <i class="pi pi-trash text-xs"></i>
+                <Trash2 size={12} />
                 {$t('table.batchDelete')}
               </Button.Root>
             {/if}
             <Button.Root
-              onclick={() => selectedRows = []}
+              onclick={() => (selectedRows = [])}
               class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors"
             >
               {$t('table.cancelSelect')}
@@ -534,17 +589,21 @@
             onclick={handleAdd}
             class="h-8 px-3 bg-[#409eff] hover:bg-[#66b1ff] text-white text-sm rounded transition-colors flex items-center gap-1"
           >
-            <i class="pi pi-plus text-xs"></i>
+            <Plus size={12} />
             {config.toolbar.addText || $t('common.add')}
           </Button.Root>
         {/if}
         {#if canExport}
           <div class="relative group">
-            <Button.Root class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1">
-              <i class="pi pi-download text-xs"></i>
+            <Button.Root
+              class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1"
+            >
+              <Download size={12} />
               {$t('common.export')}
             </Button.Root>
-            <div class="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 hidden group-hover:block z-10">
+            <div
+              class="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 hidden group-hover:block z-10"
+            >
               <Button.Root
                 onclick={handleExportCsv}
                 class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -562,10 +621,13 @@
         {/if}
         {#if config.toolbar?.showRefresh}
           <Button.Root
-            onclick={() => { selectedRows = []; fetchData(); }}
+            onclick={() => {
+              selectedRows = [];
+              fetchData();
+            }}
             class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1"
           >
-            <i class="pi pi-refresh text-xs"></i>
+            <RefreshCw size={12} />
             {$t('common.refresh')}
           </Button.Root>
         {/if}
@@ -581,7 +643,7 @@
               <th class="w-12 px-4 py-3">
                 <Checkbox.Root
                   checked={isAllSelected}
-                  onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                  onCheckedChange={checked => handleSelectAll(!!checked)}
                   class="w-4 h-4 text-[#409eff] border-gray-300 rounded focus:ring-[#409eff]"
                 />
               </th>
@@ -609,17 +671,21 @@
           {#if loading}
             <tr>
               <td
-                colspan={config.table.columns.length + (config.table.actions?.length ? 1 : 0) + (config.table.showSelection ? 1 : 0)}
+                colspan={config.table.columns.length +
+                  (config.table.actions?.length ? 1 : 0) +
+                  (config.table.showSelection ? 1 : 0)}
                 class="px-4 py-8 text-center text-gray-500"
               >
-                <i class="pi pi-spin pi-spinner mr-2"></i>
+                <Loader2 size={16} class="inline-block mr-2 animate-spin" />
                 {$t('common.loading')}
               </td>
             </tr>
           {:else if data.length === 0}
             <tr>
               <td
-                colspan={config.table.columns.length + (config.table.actions?.length ? 1 : 0) + (config.table.showSelection ? 1 : 0)}
+                colspan={config.table.columns.length +
+                  (config.table.actions?.length ? 1 : 0) +
+                  (config.table.showSelection ? 1 : 0)}
                 class="px-4 py-8 text-center text-gray-500"
               >
                 {$t('common.noData')}
@@ -627,12 +693,18 @@
             </tr>
           {:else}
             {#each data as row, index (row[rowKey] || index)}
-              <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors {isRowSelected(row) ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}">
+              <tr
+                class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors {isRowSelected(
+                  row
+                )
+                  ? 'bg-blue-50/50 dark:bg-blue-900/10'
+                  : ''}"
+              >
                 {#if config.table.showSelection}
                   <td class="px-4 py-3">
                     <Checkbox.Root
                       checked={isRowSelected(row)}
-                      onCheckedChange={(checked) => handleSelectRow(row, !!checked)}
+                      onCheckedChange={checked => handleSelectRow(row, !!checked)}
                       class="w-4 h-4 text-[#409eff] border-gray-300 rounded focus:ring-[#409eff]"
                     />
                   </td>
@@ -647,16 +719,21 @@
                     {:else if col.format === 'switch' && col.switchConfig}
                       <div class="flex items-center">
                         <Switch.Root
-                          checked={row[col.field as string] === (col.switchConfig.activeValue ?? true)}
-                          onCheckedChange={(checked) => handleSwitchChange(row, col, checked)}
+                          checked={row[col.field as string] ===
+                            (col.switchConfig.activeValue ?? true)}
+                          onCheckedChange={checked => handleSwitchChange(row, col, checked)}
                           class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#409eff] focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#409eff] data-[state=unchecked]:bg-gray-200 dark:data-[state=unchecked]:bg-gray-700 dark:focus-visible:ring-offset-gray-950"
                         >
-                          <Switch.Thumb class="pointer-events-none block h-4 w-4 rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0" />
+                          <Switch.Thumb
+                            class="pointer-events-none block h-4 w-4 rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+                          />
                         </Switch.Root>
                       </div>
                     {:else if col.format === 'image'}
                       {#if row[col.field as string]}
-                        <div class="h-10 w-10 rounded overflow-hidden border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                        <div
+                          class="h-10 w-10 rounded overflow-hidden border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
+                        >
                           <img
                             src={String(row[col.field as string])}
                             alt={col.label}
@@ -664,15 +741,21 @@
                           />
                         </div>
                       {:else}
-                        <div class="h-10 w-10 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center border border-gray-100 dark:border-gray-700">
-                          <i class="pi pi-image text-gray-400"></i>
+                        <div
+                          class="h-10 w-10 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center border border-gray-100 dark:border-gray-700"
+                        >
+                          <Image size={16} class="text-gray-400" />
                         </div>
                       {/if}
                     {:else if col.format === 'tags'}
                       {#if row[col.field as string]}
                         <div class="flex flex-wrap gap-1">
-                          {#each String(row[col.field as string]).split(',').filter(Boolean) as tag}
-                            <span class="inline-flex items-center px-2 py-0.5 text-xs rounded bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+                          {#each String(row[col.field as string])
+                            .split(',')
+                            .filter(Boolean) as tag}
+                            <span
+                              class="inline-flex items-center px-2 py-0.5 text-xs rounded bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
+                            >
                               {tag.trim()}
                             </span>
                           {/each}
@@ -689,7 +772,10 @@
                   <td class="px-4 py-3 text-sm">
                     <div class="flex items-center gap-2">
                       {#each config.table.actions as action}
-                        {@const show = typeof action.show === 'function' ? action.show(row) : action.show !== false}
+                        {@const show =
+                          typeof action.show === 'function'
+                            ? action.show(row)
+                            : action.show !== false}
                         {@const hasPermission = hasActionPermission(action)}
                         {#if show && hasPermission}
                           <Button.Root
@@ -697,7 +783,7 @@
                             class="text-sm hover:underline {getActionColor(action.type)}"
                           >
                             {#if action.icon}
-                              <i class="{action.icon} mr-1 text-xs"></i>
+                              <Icon name={action.icon.replace('pi pi-', '')} size={12} class="inline-block mr-1" />
                             {/if}
                             {action.label}
                           </Button.Root>
@@ -715,9 +801,15 @@
 
     <!-- 分页 -->
     {#if totalPages > 0}
-      <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-4">
+      <div
+        class="p-4 border-t border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-4"
+      >
         <div class="text-sm text-gray-500">
-          {$t('table.showRange', { start: (currentPage - 1) * pageSize + 1, end: Math.min(currentPage * pageSize, total), total })}
+          {$t('table.showRange', {
+            start: (currentPage - 1) * pageSize + 1,
+            end: Math.min(currentPage * pageSize, total),
+            total,
+          })}
         </div>
         <div class="flex items-center gap-1">
           <Button.Root
@@ -726,12 +818,15 @@
             class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             aria-label="上一页"
           >
-            <i class="pi pi-angle-left text-sm"></i>
+            <ChevronLeft size={14} />
           </Button.Root>
           {#each pageButtons as page}
             <Button.Root
               onclick={() => setPage(page)}
-              class="w-8 h-8 flex items-center justify-center rounded text-sm transition-colors {currentPage === page ? 'bg-[#409eff] text-white' : 'border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff]'}"
+              class="w-8 h-8 flex items-center justify-center rounded text-sm transition-colors {currentPage ===
+              page
+                ? 'bg-[#409eff] text-white'
+                : 'border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff]'}"
             >
               {page}
             </Button.Root>
@@ -742,7 +837,7 @@
             class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             aria-label="下一页"
           >
-            <i class="pi pi-angle-right text-sm"></i>
+            <ChevronRight size={14} />
           </Button.Root>
           <span class="ml-2 text-sm text-gray-500">跳至</span>
           <input
@@ -770,18 +865,25 @@
         class="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-xl flex flex-col"
         style="width: {config.form.width || 500}px; max-height: 90vh"
       >
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between flex-shrink-0">
+        <div
+          class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between flex-shrink-0"
+        >
           <Dialog.Title class="text-lg font-medium">
-            {dialogMode === 'add' ? $t('table.addTitle', { title: $t(config.title) }) : $t('table.editTitle', { title: $t(config.title) })}
+            {dialogMode === 'add'
+              ? $t('table.addTitle', { title: $t(config.title) })
+              : $t('table.editTitle', { title: $t(config.title) })}
           </Dialog.Title>
           <Dialog.Close class="text-gray-400 hover:text-gray-600 transition-colors">
-            <i class="pi pi-times"></i>
+            <X size={16} />
           </Dialog.Close>
         </div>
         <div class="p-6 space-y-4 overflow-y-auto flex-1">
           {#each config.form.fields as field}
             <div>
-              <label for="form-{field.field}" class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
+              <label
+                for="form-{field.field}"
+                class="block text-sm text-gray-600 dark:text-gray-400 mb-1.5"
+              >
                 {#if field.required}
                   <span class="text-red-500 mr-1">*</span>
                 {/if}
@@ -810,13 +912,29 @@
                 <FormSelect
                   bind:value={formData[field.field] as string | number}
                   options={field.options || []}
-                  placeholder={field.placeholder ? $t(field.placeholder) : $t('table.selectPlaceholder')}
+                  placeholder={field.placeholder
+                    ? $t(field.placeholder)
+                    : $t('table.selectPlaceholder')}
                   disabled={field.disabled}
                 />
               {:else if field.type === 'tags'}
                 <TagInput
                   bind:value={formData[field.field] as string}
-                  placeholder={field.placeholder ? $t(field.placeholder) : '输入后按回车或逗号添加标签'}
+                  placeholder={field.placeholder
+                    ? $t(field.placeholder)
+                    : '输入后按回车或逗号添加标签'}
+                  disabled={field.disabled}
+                />
+              {:else if field.type === 'date'}
+                <DatePicker
+                  bind:value={formData[field.field] as string}
+                  placeholder={field.placeholder ? $t(field.placeholder) : ''}
+                  disabled={field.disabled}
+                />
+              {:else if field.type === 'datetime'}
+                <DatePicker
+                  bind:value={formData[field.field] as string}
+                  placeholder={field.placeholder ? $t(field.placeholder) : ''}
                   disabled={field.disabled}
                 />
               {:else}
@@ -836,8 +954,12 @@
             </div>
           {/each}
         </div>
-        <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-2 flex-shrink-0">
-          <Dialog.Close class="h-9 px-4 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors">
+        <div
+          class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-2 flex-shrink-0"
+        >
+          <Dialog.Close
+            class="h-9 px-4 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors"
+          >
             {$t('common.cancel')}
           </Dialog.Close>
           <button

@@ -4,6 +4,7 @@
    */
   import { writable } from 'svelte/store';
   import { Button } from 'bits-ui';
+  import { Plus, Book } from 'lucide-svelte';
   import { t } from '../lib/locales';
 
   interface DictType {
@@ -27,9 +28,30 @@
 
   // 模拟数据
   const mockDictTypes: DictType[] = [
-    { id: 1, name: '用户状态', code: 'user_status', status: 'enabled', remark: '用户账号状态', createTime: '2024-01-01 10:00:00' },
-    { id: 2, name: '性别', code: 'gender', status: 'enabled', remark: '性别选项', createTime: '2024-01-01 10:00:00' },
-    { id: 3, name: '代理商等级', code: 'agent_level', status: 'enabled', remark: '代理商等级分类', createTime: '2024-01-01 10:00:00' },
+    {
+      id: 1,
+      name: '用户状态',
+      code: 'user_status',
+      status: 'enabled',
+      remark: '用户账号状态',
+      createTime: '2024-01-01 10:00:00',
+    },
+    {
+      id: 2,
+      name: '性别',
+      code: 'gender',
+      status: 'enabled',
+      remark: '性别选项',
+      createTime: '2024-01-01 10:00:00',
+    },
+    {
+      id: 3,
+      name: '代理商等级',
+      code: 'agent_level',
+      status: 'enabled',
+      remark: '代理商等级分类',
+      createTime: '2024-01-01 10:00:00',
+    },
   ];
 
   const mockDictItems: Record<number, DictItem[]> = {
@@ -58,8 +80,8 @@
     dictItems = mockDictItems[type.id] || [];
   }
 
-  $: filteredTypes = dictTypes.filter(t =>
-    t.name.includes(searchKeyword) || t.code.includes(searchKeyword)
+  $: filteredTypes = dictTypes.filter(
+    t => t.name.includes(searchKeyword) || t.code.includes(searchKeyword)
   );
 </script>
 
@@ -85,14 +107,21 @@
           {#each filteredTypes as type}
             <Button.Root
               onclick={() => handleSelectType(type)}
-              class="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-[#262626] transition-colors {selectedType?.id === type.id ? 'bg-[#409eff]/10 border-l-4 border-[#409eff]' : ''}"
+              class="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-[#262626] transition-colors {selectedType?.id ===
+              type.id
+                ? 'bg-[#409eff]/10 border-l-4 border-[#409eff]'
+                : ''}"
             >
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm font-medium text-gray-800 dark:text-white">{type.name}</p>
                   <p class="text-xs text-gray-500 mt-0.5">{type.code}</p>
                 </div>
-                <span class="px-2 py-1 text-xs rounded {type.status === 'enabled' ? 'bg-green-50 text-green-600 dark:bg-green-900/30' : 'bg-gray-50 text-gray-600 dark:bg-gray-900/30'}">
+                <span
+                  class="px-2 py-1 text-xs rounded {type.status === 'enabled'
+                    ? 'bg-green-50 text-green-600 dark:bg-green-900/30'
+                    : 'bg-gray-50 text-gray-600 dark:bg-gray-900/30'}"
+                >
                   {type.status === 'enabled' ? $t('common.enable') : $t('common.disable')}
                 </span>
               </div>
@@ -106,12 +135,16 @@
     <div class="col-span-8">
       {#if selectedType}
         <div class="bg-white dark:bg-[#1d1d1d] rounded-lg shadow-sm">
-          <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+          <div
+            class="px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between"
+          >
             <h3 class="text-base font-medium text-gray-800 dark:text-white">
               {selectedType.name} - {$t('dict.dictItems')}
             </h3>
-            <Button.Root class="h-8 px-3 bg-[#409eff] text-white text-sm rounded hover:bg-[#66b1ff] transition-colors">
-              <i class="pi pi-plus mr-1"></i>
+            <Button.Root
+              class="h-8 px-3 bg-[#409eff] text-white text-sm rounded hover:bg-[#66b1ff] transition-colors flex items-center gap-1"
+            >
+              <Plus size={14} />
               {$t('common.add')}
             </Button.Root>
           </div>
@@ -119,27 +152,52 @@
             <table class="w-full">
               <thead>
                 <tr class="bg-gray-50 dark:bg-[#262626]">
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{$t('dict.label')}</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{$t('dict.value')}</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{$t('dict.sort')}</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{$t('common.status')}</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{$t('common.action')}</th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"
+                    >{$t('dict.label')}</th
+                  >
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"
+                    >{$t('dict.value')}</th
+                  >
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"
+                    >{$t('dict.sort')}</th
+                  >
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"
+                    >{$t('common.status')}</th
+                  >
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"
+                    >{$t('common.action')}</th
+                  >
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                 {#each dictItems as item}
                   <tr class="hover:bg-gray-50 dark:hover:bg-[#262626] transition-colors">
                     <td class="px-4 py-3 text-sm text-gray-800 dark:text-white">{item.label}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 font-mono">{item.value}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 font-mono"
+                      >{item.value}</td
+                    >
                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{item.sort}</td>
                     <td class="px-4 py-3 text-sm">
-                      <span class="px-2 py-1 text-xs rounded {item.status === 'enabled' ? 'bg-green-50 text-green-600 dark:bg-green-900/30' : 'bg-gray-50 text-gray-600 dark:bg-gray-900/30'}">
+                      <span
+                        class="px-2 py-1 text-xs rounded {item.status === 'enabled'
+                          ? 'bg-green-50 text-green-600 dark:bg-green-900/30'
+                          : 'bg-gray-50 text-gray-600 dark:bg-gray-900/30'}"
+                      >
                         {item.status === 'enabled' ? $t('common.enable') : $t('common.disable')}
                       </span>
                     </td>
                     <td class="px-4 py-3 text-sm">
-                      <Button.Root class="text-[#409eff] hover:text-[#66b1ff] mr-3">{$t('common.edit')}</Button.Root>
-                      <Button.Root class="text-red-500 hover:text-red-600">{$t('common.delete')}</Button.Root>
+                      <Button.Root class="text-[#409eff] hover:text-[#66b1ff] mr-3"
+                        >{$t('common.edit')}</Button.Root
+                      >
+                      <Button.Root class="text-red-500 hover:text-red-600"
+                        >{$t('common.delete')}</Button.Root
+                      >
                     </td>
                   </tr>
                 {/each}
@@ -149,7 +207,7 @@
         </div>
       {:else}
         <div class="bg-white dark:bg-[#1d1d1d] rounded-lg shadow-sm p-12 text-center">
-          <i class="pi pi-book text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+          <Book size={48} class="text-gray-300 dark:text-gray-600 mx-auto mb-4" />
           <p class="text-gray-500 dark:text-gray-400">{$t('dict.selectTypePrompt')}</p>
         </div>
       {/if}

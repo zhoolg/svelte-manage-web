@@ -69,21 +69,18 @@ export function recordVisit(path: string) {
 }
 
 // 获取访问次数最多的路径列表
-export const topVisitedPaths = derived(
-  visitHistoryStore,
-  $history => {
-    return Object.values($history)
-      .sort((a, b) => {
-        // 先按访问次数降序
-        if (b.count !== a.count) {
-          return b.count - a.count;
-        }
-        // 次数相同则按最后访问时间降序
-        return b.lastVisit - a.lastVisit;
-      })
-      .map(record => record.path);
-  }
-);
+export const topVisitedPaths = derived(visitHistoryStore, $history => {
+  return Object.values($history)
+    .sort((a, b) => {
+      // 先按访问次数降序
+      if (b.count !== a.count) {
+        return b.count - a.count;
+      }
+      // 次数相同则按最后访问时间降序
+      return b.lastVisit - a.lastVisit;
+    })
+    .map(record => record.path);
+});
 
 // 获取指定路径的访问次数
 export function getVisitCount(path: string): number {

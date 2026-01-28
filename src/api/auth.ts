@@ -28,18 +28,15 @@ export const authApi = {
   /**
    * 用户登录
    */
-  login: (params: LoginParams) =>
-    post<LoginResponse>('/auth/login', params),
+  login: (params: LoginParams) => post<LoginResponse>('/auth/login', params),
 
   /**
    * 用户登出
    */
-  logout: () =>
-    post('/auth/logout'),
+  logout: () => post('/auth/logout'),
 
   /**
    * 刷新 Token
    */
-  refreshToken: () =>
-    post('/auth/refresh'),
+  refreshToken: () => post('/auth/refresh'),
 };

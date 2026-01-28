@@ -16,8 +16,10 @@
 
   // 监听设置变化，应用暗色模式
   $: if (typeof document !== 'undefined') {
-    const isDark = $settingsStore.theme === 'dark' ||
-      ($settingsStore.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const isDark =
+      $settingsStore.theme === 'dark' ||
+      ($settingsStore.theme === 'system' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches);
     if (isDark) {
       document.documentElement.classList.add('dark');
     } else {
@@ -33,10 +35,10 @@
   <!-- 主内容区域 -->
   <div
     class="flex-1 flex flex-col transition-all duration-300"
-    style:margin-left="{collapsed ? '64px' : '210px'}"
+    style:margin-left={collapsed ? '64px' : '210px'}
   >
     <!-- 顶部导航 -->
-    <Header {collapsed} onToggle={handleToggleSidebar} />
+    <Header onToggle={handleToggleSidebar} />
 
     <!-- 标签页 -->
     <TagsView />

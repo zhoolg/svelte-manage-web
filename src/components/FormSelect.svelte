@@ -11,6 +11,7 @@
    * - 完整的可访问性支持
    */
   import { Select } from 'bits-ui';
+  import { ChevronDown, Check } from 'lucide-svelte';
   import { t } from '$lib/locales';
 
   export let value: string | number = '';
@@ -24,17 +25,14 @@
   $: displayValue = selectedOption ? $t(selectedOption.label) : displayPlaceholder;
 </script>
 
-<Select.Root
-  type="single"
-  {disabled}
->
+<Select.Root type="single" {disabled}>
   <Select.Trigger
     class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff] flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed"
   >
     <span class="text-gray-900 dark:text-white {!selectedOption ? 'text-gray-400' : ''}">
       {displayValue}
     </span>
-    <i class="pi pi-chevron-down text-xs text-gray-400"></i>
+    <ChevronDown size={12} class="text-gray-400" />
   </Select.Trigger>
 
   <Select.Portal>
@@ -55,12 +53,14 @@
         <Select.Item
           value={String(option.value)}
           label={$t(option.label)}
-          onclick={() => { value = option.value; }}
+          onclick={() => {
+            value = option.value;
+          }}
           class="px-3 py-2 text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors data-[highlighted]:bg-gray-100 data-[highlighted]:dark:bg-gray-700 data-[selected]:bg-[#409eff] data-[selected]:text-white flex items-center justify-between"
         >
           <span>{$t(option.label)}</span>
           {#if value === option.value}
-            <i class="pi pi-check text-xs"></i>
+            <Check size={12} />
           {/if}
         </Select.Item>
       {/each}

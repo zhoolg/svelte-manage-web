@@ -1,7 +1,7 @@
 /**
  * 图片 URL 工具函数
  */
-import { APP_CONFIG } from '$config';
+import { APP_CONFIG } from '../config';
 
 /**
  * 获取完整的图片 URL

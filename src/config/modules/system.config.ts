@@ -6,7 +6,7 @@ import type { AppModule } from '../app.modules';
 const systemModule: AppModule = {
   id: 'system',
   label: 'menu.system',
-  icon: 'pi pi-cog',
+  icon: 'cog',
   path: '/system',
 };
 

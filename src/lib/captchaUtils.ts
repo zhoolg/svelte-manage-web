@@ -2,7 +2,6 @@
  * 增强型验证码安全工具函数
  */
 
-
 // 检测开发者工具是否打开
 export function detectDevTools(): boolean {
   const threshold = 160;
@@ -10,16 +9,19 @@ export function detectDevTools(): boolean {
   const heightThreshold = window.outerHeight - window.innerHeight > threshold;
 
   // 检测 Firebug
-  const firebug = (window as any).Firebug && (window as any).Firebug.chrome && (window as any).Firebug.chrome.isInitialized;
+  const firebug =
+    (window as any).Firebug &&
+    (window as any).Firebug.chrome &&
+    (window as any).Firebug.chrome.isInitialized;
 
   // 检测控制台
   let devtoolsOpen = false;
   const element = new Image();
   Object.defineProperty(element, 'id', {
-    get: function() {
+    get: function () {
       devtoolsOpen = true;
       return 'detect';
-    }
+    },
   });
 
   return widthThreshold || heightThreshold || firebug || devtoolsOpen;
@@ -33,7 +35,7 @@ export function detectDebuggerByTiming(): boolean {
   const end = performance.now();
 
   // 如果执行时间超过100ms，可能被调试
-  return (end - start) > 100;
+  return end - start > 100;
 }
 
 // 检测虚拟机环境
@@ -65,7 +67,7 @@ export function detectVM(): number {
 function _0x4a2b(str: string, seed: number = 5381): number {
   let _0x8c = seed;
   for (let _0x1f = 0; _0x1f < str.length; _0x1f++) {
-    _0x8c = ((_0x8c << 5) + _0x8c) + str.charCodeAt(_0x1f);
+    _0x8c = (_0x8c << 5) + _0x8c + str.charCodeAt(_0x1f);
   }
   return _0x8c >>> 0;
 }
@@ -92,24 +94,30 @@ function _0x2f8a(str: string): number {
 
 // ROT13 变体加密
 function _0x5c19(str: string, shift: number): string {
-  return str.split('').map(char => {
-    const code = char.charCodeAt(0);
-    if (code >= 65 && code <= 90) {
-      return String.fromCharCode(((code - 65 + shift) % 26) + 65);
-    } else if (code >= 97 && code <= 122) {
-      return String.fromCharCode(((code - 97 + shift) % 26) + 97);
-    } else if (code >= 48 && code <= 57) {
-      return String.fromCharCode(((code - 48 + shift) % 10) + 48);
-    }
-    return char;
-  }).join('');
+  return str
+    .split('')
+    .map(char => {
+      const code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) {
+        return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+      } else if (code >= 97 && code <= 122) {
+        return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+      } else if (code >= 48 && code <= 57) {
+        return String.fromCharCode(((code - 48 + shift) % 10) + 48);
+      }
+      return char;
+    })
+    .join('');
 }
 
 // XOR 加密
 function _0x9b2e(str: string, key: number): string {
-  return str.split('').map((char, i) => {
-    return String.fromCharCode(char.charCodeAt(0) ^ ((key + i) % 256));
-  }).join('');
+  return str
+    .split('')
+    .map((char, i) => {
+      return String.fromCharCode(char.charCodeAt(0) ^ ((key + i) % 256));
+    })
+    .join('');
 }
 
 // Base64 变体编码
@@ -140,10 +148,10 @@ function _0x3d7f(str: string): string {
 function _0xAlgoSelector(timestamp: number): number[] {
   const seed = timestamp % 1000;
   const combo = [
-    seed % 3,           // 第一层
-    (seed * 7) % 4,     // 第二层
-    (seed * 13) % 3,    // 第三层
-    (seed * 17) % 2     // 第四层
+    seed % 3, // 第一层
+    (seed * 7) % 4, // 第二层
+    (seed * 13) % 3, // 第三层
+    (seed * 17) % 2, // 第四层
   ];
   return combo;
 }
@@ -179,7 +187,12 @@ export function obfuscate(text: string, salt: string): string {
 }
 
 // 验证混淆值（需要相同的盐和时间戳范围）
-export function validateObfuscated(input: string, hash: string, salt: string, timestamp: number): boolean {
+export function validateObfuscated(
+  input: string,
+  hash: string,
+  salt: string,
+  timestamp: number
+): boolean {
   // 允许时间误差（±2秒）
   for (let offset = -2000; offset <= 2000; offset += 100) {
     const testTime = timestamp + offset;
@@ -328,8 +341,8 @@ export function calculateSimilarity(str1: string, str2: string): number {
     for (let j = 1; j <= len2; j++) {
       const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
       matrix[i][j] = Math.min(
-        matrix[i - 1][j] + 1,      // 删除
-        matrix[i][j - 1] + 1,      // 插入
+        matrix[i - 1][j] + 1, // 删除
+        matrix[i][j - 1] + 1, // 插入
         matrix[i - 1][j - 1] + cost // 替换
       );
     }
@@ -344,7 +357,11 @@ export function calculateSimilarity(str1: string, str2: string): number {
 }
 
 // 验证Canvas指纹相似度
-export function validateFingerprint(fingerprint1: string, fingerprint2: string, threshold: number = 70): boolean {
+export function validateFingerprint(
+  fingerprint1: string,
+  fingerprint2: string,
+  threshold: number = 70
+): boolean {
   if (!fingerprint1 || !fingerprint2) return true; // 如果没有指纹，允许通过
 
   const similarity = calculateSimilarity(fingerprint1, fingerprint2);
@@ -369,7 +386,7 @@ export class MouseTracker {
     this.movements.push({
       x: Math.floor(x),
       y: Math.floor(y),
-      time: now - this.startTime
+      time: now - this.startTime,
     });
 
     // 限制存储数量，防止内存占用
@@ -427,7 +444,7 @@ export class MouseTracker {
       const dy1 = this.movements[i - 1].y - this.movements[i - 2].y;
       const dy2 = this.movements[i].y - this.movements[i - 1].y;
 
-      if ((dx1 * dx2 < 0) || (dy1 * dy2 < 0)) {
+      if (dx1 * dx2 < 0 || dy1 * dy2 < 0) {
         directionChanges++;
       }
     }

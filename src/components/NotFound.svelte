@@ -9,6 +9,7 @@
    * - 显示当前访问的路径
    * - 响应式设计
    */
+  import { AlertCircle, ChevronRight, ArrowLeft, Home } from 'lucide-svelte';
   import { navigate } from '../stores/routerStore';
   import { APP_CONFIG } from '../config';
   import { t } from '$lib/locales';
@@ -28,13 +29,15 @@
   <div class="max-w-2xl w-full text-center">
     <!-- 404 大标题 -->
     <div class="mb-8">
-      <h1 class="text-9xl font-bold text-[#409eff] dark:text-[#66b1ff] mb-4 animate-pulse">
-        404
-      </h1>
+      <h1 class="text-9xl font-bold text-[#409eff] dark:text-[#66b1ff] mb-4 animate-pulse">404</h1>
       <div class="flex items-center justify-center gap-2 text-gray-400 dark:text-gray-500 mb-2">
-        <div class="h-px flex-1 bg-gradient-to-r from-transparent to-gray-300 dark:to-gray-600"></div>
-        <i class="pi pi-exclamation-circle text-2xl"></i>
-        <div class="h-px flex-1 bg-gradient-to-l from-transparent to-gray-300 dark:to-gray-600"></div>
+        <div
+          class="h-px flex-1 bg-gradient-to-r from-transparent to-gray-300 dark:to-gray-600"
+        ></div>
+        <AlertCircle size={24} />
+        <div
+          class="h-px flex-1 bg-gradient-to-l from-transparent to-gray-300 dark:to-gray-600"
+        ></div>
       </div>
     </div>
 
@@ -65,19 +68,19 @@
         </p>
         <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
           <li class="flex items-start gap-2">
-            <i class="pi pi-angle-right text-xs mt-1"></i>
+            <ChevronRight size={12} class="mt-1" />
             <span>{$t('notFound.reason1')}</span>
           </li>
           <li class="flex items-start gap-2">
-            <i class="pi pi-angle-right text-xs mt-1"></i>
+            <ChevronRight size={12} class="mt-1" />
             <span>{$t('notFound.reason2')}</span>
           </li>
           <li class="flex items-start gap-2">
-            <i class="pi pi-angle-right text-xs mt-1"></i>
+            <ChevronRight size={12} class="mt-1" />
             <span>{$t('notFound.reason3')}</span>
           </li>
           <li class="flex items-start gap-2">
-            <i class="pi pi-angle-right text-xs mt-1"></i>
+            <ChevronRight size={12} class="mt-1" />
             <span>{$t('notFound.reason4')}</span>
           </li>
         </ul>
@@ -89,14 +92,14 @@
           on:click={goBack}
           class="px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-[#2d2d2d] dark:hover:bg-[#3d3d3d] text-gray-700 dark:text-gray-300 rounded-lg transition-colors flex items-center justify-center gap-2"
         >
-          <i class="pi pi-arrow-left"></i>
+          <ArrowLeft size={16} />
           <span>{$t('notFound.back')}</span>
         </button>
         <button
           on:click={goHome}
           class="px-6 py-3 bg-[#409eff] hover:bg-[#66b1ff] text-white rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
         >
-          <i class="pi pi-home"></i>
+          <Home size={16} />
           <span>{$t('notFound.home')}</span>
         </button>
       </div>
@@ -105,10 +108,7 @@
     <!-- 底部提示 -->
     <p class="text-sm text-gray-500 dark:text-gray-400">
       {$t('notFound.footer')}
-      <a
-        href="mailto:op@zhoolg.com"
-        class="text-[#409eff] hover:text-[#66b1ff] transition-colors"
-      >
+      <a href="mailto:op@zhoolg.com" class="text-[#409eff] hover:text-[#66b1ff] transition-colors">
         {$t('notFound.support')}
       </a>
     </p>
@@ -117,7 +117,8 @@
 
 <style>
   @keyframes pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {

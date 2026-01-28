@@ -11,7 +11,7 @@ const readline = require('readline');
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 function question(query) {
@@ -20,7 +20,7 @@ function question(query) {
 
 // 将 kebab-case 转换为 camelCase
 function toCamelCase(str) {
-  return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+  return str.replace(/-([a-z])/g, g => g[1].toUpperCase());
 }
 
 // 将 kebab-case 转换为 PascalCase
@@ -100,7 +100,12 @@ function findMenuReferences(moduleId, filePath) {
  */
 function removeMenuReferences(moduleId, filePath) {
   if (!fileExists(filePath)) {
-    return { updated: false, removedTopLevel: false, removedChildren: false, error: '菜单文件不存在' };
+    return {
+      updated: false,
+      removedTopLevel: false,
+      removedChildren: false,
+      error: '菜单文件不存在',
+    };
   }
 
   let content = fs.readFileSync(filePath, 'utf-8');
@@ -115,7 +120,7 @@ function removeMenuReferences(moduleId, filePath) {
     'g'
   );
 
-  content = content.replace(topLevelPattern, (match) => {
+  content = content.replace(topLevelPattern, match => {
     removedTopLevel = true;
     console.log(`  删除一级菜单: { id: '${moduleId}' }`);
     return '';
@@ -495,8 +500,8 @@ async function main() {
     console.log(`\n✨ 成功删除 ${deletedCount} 个文件并清理了配置\n`);
 
     // 显示后续操作提示(仅针对自动化失败的项)
-    const remainingWarnings = warnings.filter(w =>
-      w.type === 'menu-reference' || w.type === 'app-reference'
+    const remainingWarnings = warnings.filter(
+      w => w.type === 'menu-reference' || w.type === 'app-reference'
     );
 
     if (componentRefs.length > 0 || remainingWarnings.length > 0) {
@@ -525,7 +530,6 @@ async function main() {
     }
 
     console.log('\n💡 提示: 路由名称会自动同步，无需手动处理！\n');
-
   } catch (error) {
     console.error('\n❌ 删除失败:', error.message);
   } finally {

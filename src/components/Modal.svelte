@@ -19,6 +19,7 @@
    * - 提升可访问性（ARIA、键盘导航）
    */
   import { Dialog, Button } from 'bits-ui';
+  import { AlertTriangle, XCircle, Info } from 'lucide-svelte';
   import { writable } from 'svelte/store';
   import { getTranslator } from '../lib/locales';
 
@@ -31,7 +32,7 @@
 
   // 导出confirm函数
   export const confirm = (options: ConfirmOptions): Promise<boolean> => {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       confirmState.set({ ...options, visible: true, resolve });
     });
   };
@@ -46,11 +47,11 @@
   function getTypeConfig(type?: string) {
     switch (type) {
       case 'warning':
-        return { icon: 'pi-exclamation-triangle', color: '#e6a23c' };
+        return { icon: AlertTriangle, color: '#e6a23c' };
       case 'danger':
-        return { icon: 'pi-times-circle', color: '#f56c6c' };
+        return { icon: XCircle, color: '#f56c6c' };
       default:
-        return { icon: 'pi-info-circle', color: '#409eff' };
+        return { icon: Info, color: '#409eff' };
     }
   }
 
@@ -66,7 +67,7 @@
   const t = getTranslator();
 </script>
 
-<Dialog.Root open={$confirmState.visible} onOpenChange={(open) => !open && handleClose(false)}>
+<Dialog.Root open={$confirmState.visible} onOpenChange={open => !open && handleClose(false)}>
   <Dialog.Portal>
     <!-- 背景遮罩 -->
     <Dialog.Overlay
@@ -80,10 +81,7 @@
       <!-- 内容区域 -->
       <div class="px-5 py-6">
         <div class="flex items-start gap-3">
-          <i
-            class="pi {typeConfig.icon} text-2xl mt-0.5"
-            style="color: {typeConfig.color}"
-          ></i>
+          <svelte:component this={typeConfig.icon} size={24} class="mt-0.5" style="color: {typeConfig.color}" />
           <div class="flex-1">
             {#if $confirmState.title}
               <Dialog.Title class="text-base font-medium text-gray-900 dark:text-white mb-2">
@@ -98,7 +96,9 @@
       </div>
 
       <!-- 底部按钮 -->
-      <div class="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-100 dark:border-gray-800">
+      <div
+        class="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-100 dark:border-gray-800"
+      >
         <Button.Root
           type="button"
           onclick={() => handleClose(false)}

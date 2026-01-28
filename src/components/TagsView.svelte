@@ -13,6 +13,7 @@
    * - 移除手动的 clickOutside 逻辑
    */
   import { ContextMenu } from 'bits-ui';
+  import { X, RefreshCw, Minus, XCircle } from 'lucide-svelte';
   import { currentPath, navigate, routeNames } from '../stores/routerStore';
   import { t } from '../lib/locales';
 
@@ -22,9 +23,7 @@
     closable: boolean;
   }
 
-  let tags: Tag[] = [
-    { path: '/', title: 'menu.home', closable: false },
-  ];
+  let tags: Tag[] = [{ path: '/', title: 'menu.home', closable: false }];
 
   let contextMenuPath = '';
 
@@ -67,8 +66,8 @@
   function handleCloseOthers() {
     const currentTag = tags.find(tag => tag.path === contextMenuPath);
     const homeTag = tags.find(tag => tag.path === '/');
-    const newTags = [homeTag!, currentTag!].filter((tag, index, self) =>
-      tag && self.findIndex(t => t?.path === tag.path) === index
+    const newTags = [homeTag!, currentTag!].filter(
+      (tag, index, self) => tag && self.findIndex(t => t?.path === tag.path) === index
     );
     tags = newTags;
     if (!newTags.find(tag => tag.path === $currentPath)) {
@@ -82,14 +81,19 @@
   }
 </script>
 
-<div class="h-[34px] bg-white dark:bg-[#141414] border-b border-[#d8dce5] dark:border-[#303030] flex items-center px-[10px] shadow-sm">
+<div
+  class="h-[34px] bg-white dark:bg-[#141414] border-b border-[#d8dce5] dark:border-[#303030] flex items-center px-[10px] shadow-sm"
+>
   <div class="flex-1 flex items-center gap-[4px] overflow-x-auto scrollbar-hide">
     {#each tags as tag}
       <!-- 使用 Bits UI ContextMenu 包裹每个标签 -->
-      <ContextMenu.Root onOpenChange={() => contextMenuPath = tag.path}>
+      <ContextMenu.Root onOpenChange={() => (contextMenuPath = tag.path)}>
         <ContextMenu.Trigger
           onclick={() => navigate(tag.path)}
-          class="group flex items-center gap-[6px] px-[8px] h-[26px] border rounded-[3px] cursor-pointer text-[12px] transition-all select-none {$currentPath === tag.path ? 'bg-[#409eff] text-white border-[#409eff]' : 'bg-white dark:bg-[#1d1d1d] text-[#495060] dark:text-[#ccc] border-[#e6e6e6] dark:border-[#303030] hover:border-[#409eff]'}"
+          class="group flex items-center gap-[6px] px-[8px] h-[26px] border rounded-[3px] cursor-pointer text-[12px] transition-all select-none {$currentPath ===
+          tag.path
+            ? 'bg-[#409eff] text-white border-[#409eff]'
+            : 'bg-white dark:bg-[#1d1d1d] text-[#495060] dark:text-[#ccc] border-[#e6e6e6] dark:border-[#303030] hover:border-[#409eff]'}"
         >
           {#if $currentPath === tag.path}
             <span class="w-[8px] h-[8px] bg-white rounded-full"></span>
@@ -97,11 +101,14 @@
           <span>{$t(tag.title)}</span>
           {#if tag.closable}
             <button
-              onclick={(e) => handleClose(tag.path, e)}
-              class="w-[16px] h-[16px] rounded-full flex items-center justify-center transition-colors {$currentPath === tag.path ? 'hover:bg-white/20' : 'hover:bg-[#409eff] hover:text-white'}"
+              onclick={e => handleClose(tag.path, e)}
+              class="w-[16px] h-[16px] rounded-full flex items-center justify-center transition-colors {$currentPath ===
+              tag.path
+                ? 'hover:bg-white/20'
+                : 'hover:bg-[#409eff] hover:text-white'}"
               aria-label={$t('tagsView.closeTag')}
             >
-              <i class="pi pi-times text-[10px]"></i>
+              <X size={10} />
             </button>
           {/if}
         </ContextMenu.Trigger>
@@ -115,7 +122,7 @@
               onselect={handleRefresh}
               class="w-full flex items-center px-4 py-2 text-[13px] text-[#606266] dark:text-[#ccc] hover:bg-[#ecf5ff] hover:text-[#409eff] transition-colors cursor-pointer outline-none"
             >
-              <i class="pi pi-refresh mr-2 text-[12px]"></i>
+              <RefreshCw size={12} class="mr-2" />
               {$t('tagsView.refresh')}
             </ContextMenu.Item>
 
@@ -124,7 +131,7 @@
                 onselect={handleCloseCurrent}
                 class="w-full flex items-center px-4 py-2 text-[13px] text-[#606266] dark:text-[#ccc] hover:bg-[#ecf5ff] hover:text-[#409eff] transition-colors cursor-pointer outline-none"
               >
-                <i class="pi pi-times mr-2 text-[12px]"></i>
+                <X size={12} class="mr-2" />
                 {$t('tagsView.closeCurrent')}
               </ContextMenu.Item>
             {/if}
@@ -133,7 +140,7 @@
               onselect={handleCloseOthers}
               class="w-full flex items-center px-4 py-2 text-[13px] text-[#606266] dark:text-[#ccc] hover:bg-[#ecf5ff] hover:text-[#409eff] transition-colors cursor-pointer outline-none"
             >
-              <i class="pi pi-minus mr-2 text-[12px]"></i>
+              <Minus size={12} class="mr-2" />
               {$t('tagsView.closeOthers')}
             </ContextMenu.Item>
 
@@ -141,7 +148,7 @@
               onselect={handleCloseAll}
               class="w-full flex items-center px-4 py-2 text-[13px] text-[#606266] dark:text-[#ccc] hover:bg-[#ecf5ff] hover:text-[#409eff] transition-colors cursor-pointer outline-none"
             >
-              <i class="pi pi-times-circle mr-2 text-[12px]"></i>
+              <XCircle size={12} class="mr-2" />
               {$t('tagsView.closeAll')}
             </ContextMenu.Item>
           </ContextMenu.Content>

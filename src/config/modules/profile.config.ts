@@ -6,7 +6,7 @@ import type { AppModule } from '../app.modules';
 const profileModule: AppModule = {
   id: 'profile',
   label: 'menu.profile',
-  icon: 'pi pi-user',
+  icon: 'user',
   path: '/profile',
   hidden: true,
   crud: {
@@ -23,7 +23,13 @@ const profileModule: AppModule = {
 
     form: [
       { field: 'username', label: '用户名', type: 'input', disabled: true },
-      { field: 'nickname', label: '昵称', type: 'input', required: true, placeholder: '请输入昵称' },
+      {
+        field: 'nickname',
+        label: '昵称',
+        type: 'input',
+        required: true,
+        placeholder: '请输入昵称',
+      },
       { field: 'email', label: '邮箱', type: 'input', placeholder: '请输入邮箱' },
       { field: 'phone', label: '手机号', type: 'input', placeholder: '请输入手机号' },
       { field: 'avatar', label: '头像URL', type: 'input', placeholder: '请输入头像URL' },

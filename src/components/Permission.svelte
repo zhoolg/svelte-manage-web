@@ -84,13 +84,16 @@
 
     if (mode === 'AND') {
       // AND 模式：需要满足所有条件
-      const hasAllPerms = permsToCheck.length === 0 || permissionStore.hasAllPermissions(permsToCheck);
-      const hasAllRoles = rolesToCheck.length === 0 || rolesToCheck.every(r => permissionStore.hasRole(r));
+      const hasAllPerms =
+        permsToCheck.length === 0 || permissionStore.hasAllPermissions(permsToCheck);
+      const hasAllRoles =
+        rolesToCheck.length === 0 || rolesToCheck.every(r => permissionStore.hasRole(r));
       result = hasAllPerms && hasAllRoles;
     } else {
       // OR 模式：满足任一条件即可
       const hasAnyPerm = permsToCheck.length > 0 && permissionStore.hasAnyPermission(permsToCheck);
-      const hasAnyRole = rolesToCheck.length > 0 && rolesToCheck.some(r => permissionStore.hasRole(r));
+      const hasAnyRole =
+        rolesToCheck.length > 0 && rolesToCheck.some(r => permissionStore.hasRole(r));
 
       if (permsToCheck.length > 0 && rolesToCheck.length > 0) {
         // 同时设置了权限和角色，满足任一即可

@@ -6,7 +6,7 @@ import type { AppModule } from '../app.modules';
 const contentModule: AppModule = {
   id: 'content',
   label: 'menu.content',
-  icon: 'pi pi-file',
+  icon: 'file',
   path: '/content',
 };
 

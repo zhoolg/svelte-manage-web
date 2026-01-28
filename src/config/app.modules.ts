@@ -20,7 +20,7 @@
  * const mypageModule: AppModule = {
  *   id: 'mypage',
  *   label: 'menu.mypage',
- *   icon: 'pi pi-star',
+ *   icon: 'star',  // Lucide 图标名称
  *   path: '/mypage',
  *   crud: { ... }
  * };
@@ -32,7 +32,9 @@ import type { ModuleConfig, TableColumn, SearchField, FormField } from './module
 import { MENU_STRUCTURE } from './menu-structure.config';
 
 // 🔥 自动导入所有模块配置文件
-const moduleFiles = import.meta.glob<{ default: AppModule }>('./modules/*.config.ts', { eager: true });
+const moduleFiles = import.meta.glob<{ default: AppModule }>('./modules/*.config.ts', {
+  eager: true,
+});
 
 // 提取所有模块配置
 const allModules = Object.values(moduleFiles).map(module => module.default);

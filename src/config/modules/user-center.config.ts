@@ -6,7 +6,7 @@ import type { AppModule } from '../app.modules';
 const userCenterModule: AppModule = {
   id: 'user-center',
   label: 'menu.userCenter',
-  icon: 'pi pi-users',
+  icon: 'users',
   path: '/user-center',
 };
 

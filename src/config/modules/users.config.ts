@@ -7,7 +7,7 @@ import { ALL_PERMISSIONS } from '../permissions';
 const usersModule: AppModule = {
   id: 'users',
   label: 'menu.users',
-  icon: 'pi pi-user',
+  icon: 'user',
   path: '/users',
   permissions: [ALL_PERMISSIONS.USER.VIEW],
   crud: {
@@ -28,13 +28,30 @@ const usersModule: AppModule = {
 
     form: [
       { field: 'name', label: '姓名', type: 'input', required: true, placeholder: '请输入姓名' },
-      { field: 'phone', label: '手机号码', type: 'input', required: true, placeholder: '请输入手机号码' },
+      {
+        field: 'phone',
+        label: '手机号码',
+        type: 'input',
+        required: true,
+        placeholder: '请输入手机号码',
+      },
       { field: 'email', label: '邮箱', type: 'input', placeholder: '请输入邮箱' },
     ],
 
     actions: [
-      { label: '编辑', type: 'primary', icon: 'pi pi-pencil', permission: ALL_PERMISSIONS.USER.EDIT },
-      { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除该用户吗？', permission: ALL_PERMISSIONS.USER.DELETE },
+      {
+        label: '编辑',
+        type: 'primary',
+        icon: 'pencil',
+        permission: ALL_PERMISSIONS.USER.EDIT,
+      },
+      {
+        label: '删除',
+        type: 'danger',
+        icon: 'trash',
+        confirm: '确定删除该用户吗？',
+        permission: ALL_PERMISSIONS.USER.DELETE,
+      },
     ],
 
     actionPermissions: {

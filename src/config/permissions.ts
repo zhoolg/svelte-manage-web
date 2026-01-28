@@ -308,9 +308,9 @@ export const MOCK_USERS = [
 export function getPermissionsByRoles(roles: string[]): string[] {
   const permissions = new Set<string>();
 
-  roles.forEach((role) => {
+  roles.forEach(role => {
     const rolePermissions = ROLE_PERMISSIONS_MAP[role] || [];
-    rolePermissions.forEach((permission) => permissions.add(permission));
+    rolePermissions.forEach(permission => permissions.add(permission));
   });
 
   return Array.from(permissions);
@@ -322,7 +322,7 @@ export function getPermissionsByRoles(roles: string[]): string[] {
  * @returns 用户信息和权限
  */
 export function getUserPermissions(username: string) {
-  const user = MOCK_USERS.find((u) => u.username === username);
+  const user = MOCK_USERS.find(u => u.username === username);
 
   if (!user) {
     return null;
@@ -350,7 +350,7 @@ export function getUserPermissions(username: string) {
  * @returns 用户信息和权限，如果验证失败返回 null
  */
 export function validateUser(username: string, password: string) {
-  const user = MOCK_USERS.find((u) => u.username === username && u.password === password);
+  const user = MOCK_USERS.find(u => u.username === username && u.password === password);
 
   if (!user) {
     return null;
@@ -363,13 +363,13 @@ export function validateUser(username: string, password: string) {
  * 获取所有用户列表（用于显示测试账号）
  */
 export function getAllMockUsers() {
-  return MOCK_USERS.map((user) => ({
+  return MOCK_USERS.map(user => ({
     username: user.username,
     password: user.password,
     name: user.name,
     description: user.description,
-    roles: user.roles.map((code) => {
-      const role = Object.values(ALL_ROLES).find((r) => r.code === code);
+    roles: user.roles.map(code => {
+      const role = Object.values(ALL_ROLES).find(r => r.code === code);
       return role?.name || code;
     }),
   }));
@@ -381,8 +381,8 @@ export function getAllMockUsers() {
 export function getAllPermissionsList(): string[] {
   const permissions: string[] = [];
 
-  Object.values(ALL_PERMISSIONS).forEach((module) => {
-    Object.values(module).forEach((permission) => {
+  Object.values(ALL_PERMISSIONS).forEach(module => {
+    Object.values(module).forEach(permission => {
       if (permission !== '*' && !permissions.includes(permission)) {
         permissions.push(permission);
       }

@@ -1,6 +1,6 @@
-import { defineConfig, loadEnv, type Plugin } from 'vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
-import path from 'path'
+import { defineConfig, loadEnv, type Plugin } from 'vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import path from 'path';
 
 // HTML 转换插件 - 替换环境变量占位符
 function htmlPlugin(env: Record<string, string>): Plugin {
@@ -8,32 +8,29 @@ function htmlPlugin(env: Record<string, string>): Plugin {
     name: 'html-transform',
     transformIndexHtml(html) {
       return html.replace(/%(\w+)%/g, (match, key) => {
-        return env[key] || match
-      })
+        return env[key] || match;
+      });
     },
-  }
+  };
 }
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   // 加载环境变量
-  const env = loadEnv(mode, process.cwd(), '')
+  const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    plugins: [
-      svelte(),
-      htmlPlugin(env),
-    ],
+    plugins: [svelte(), htmlPlugin(env)],
 
     // 路径别名配置
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-        '$lib': path.resolve(__dirname, './src/lib'),
-        '$config': path.resolve(__dirname, './src/config'),
-        '$components': path.resolve(__dirname, './src/components'),
-        '$stores': path.resolve(__dirname, './src/stores'),
-        '$utils': path.resolve(__dirname, './src/utils'),
+        $lib: path.resolve(__dirname, './src/lib'),
+        $config: path.resolve(__dirname, './src/config'),
+        $components: path.resolve(__dirname, './src/components'),
+        $stores: path.resolve(__dirname, './src/stores'),
+        $utils: path.resolve(__dirname, './src/utils'),
       },
     },
 
@@ -47,7 +44,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_APP_TARGET_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: path => path.replace(/^\/api/, ''),
           // 配置代理日志
           configure: (proxy, _options) => {
             proxy.on('error', (err, _req, _res) => {
@@ -73,7 +70,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            'vendor': ['svelte'],
+            vendor: ['svelte'],
           },
         },
       },
@@ -93,5 +90,5 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       include: ['svelte'],
     },
-  }
-})
+  };
+});

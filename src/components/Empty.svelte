@@ -4,16 +4,17 @@
    * 用于显示无数据状态
    */
   import { t } from '$lib/locales';
+  import Icon from './Icon.svelte';
 
   export let text: string = '';
-  export let icon: string = 'pi-inbox';
+  export let icon: string = 'inbox';
   export let description: string = '';
 
   $: displayText = text || $t('common.noData');
 </script>
 
 <div class="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
-  <i class="pi {icon} text-5xl mb-3 opacity-50"></i>
+  <Icon name={icon} size={48} class="mb-3 opacity-50" />
   <p class="text-sm">{displayText}</p>
   {#if description}
     <p class="text-xs mt-1 opacity-70">{description}</p>

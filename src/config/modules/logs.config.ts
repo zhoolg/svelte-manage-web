@@ -6,7 +6,7 @@ import type { AppModule } from '../app.modules';
 const logsModule: AppModule = {
   id: 'logs',
   label: 'menu.logs',
-  icon: 'pi pi-history',
+  icon: 'history',
   path: '/logs',
   crud: {
     title: '操作日志',

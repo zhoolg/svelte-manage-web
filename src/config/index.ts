@@ -25,8 +25,8 @@ export const APP_CONFIG = {
   /** 应用描述 */
   description: import.meta.env.VITE_APP_DESCRIPTION || '后台管理系统',
 
-  /** Logo 图标（PrimeIcons） */
-  logoIcon: import.meta.env.VITE_APP_LOGO_ICON || 'pi-briefcase',
+  /** Logo 图标（Lucide 图标名称） */
+  logoIcon: import.meta.env.VITE_APP_LOGO_ICON || 'briefcase',
 
   /** 版本号 */
   version: import.meta.env.VITE_APP_VERSION || 'v1.0.0',

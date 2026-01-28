@@ -6,7 +6,7 @@ import type { AppModule } from '../app.modules';
 const faqModule: AppModule = {
   id: 'faq',
   label: 'menu.faq',
-  icon: 'pi pi-question-circle',
+  icon: 'question-circle',
   path: '/faq',
   crud: {
     title: '问答管理',
@@ -28,9 +28,7 @@ const faqModule: AppModule = {
       { field: 'createTime', label: '创建时间', minWidth: 180, format: 'datetime' },
     ],
 
-    search: [
-      { field: 'question', label: '问题', type: 'input', placeholder: '请输入问题关键词' },
-    ],
+    search: [{ field: 'question', label: '问题', type: 'input', placeholder: '请输入问题关键词' }],
 
     form: [
       {
@@ -59,8 +57,8 @@ const faqModule: AppModule = {
     ],
 
     actions: [
-      { label: '编辑', type: 'primary', icon: 'pi pi-pencil' },
-      { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除该问答吗？' },
+      { label: '编辑', type: 'primary', icon: 'pencil' },
+      { label: '删除', type: 'danger', icon: 'trash', confirm: '确定删除该问答吗？' },
     ],
 
     showAdd: true,

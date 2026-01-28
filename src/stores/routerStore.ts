@@ -17,7 +17,7 @@ export const routeHistory = writable<string[]>(['/']);
 // 导航函数
 export function navigate(path: string) {
   currentPath.set(path);
-  routeHistory.update((history) => [...history, path]);
+  routeHistory.update(history => [...history, path]);
 
   // 记录访问
   recordVisit(path);
@@ -25,7 +25,7 @@ export function navigate(path: string) {
 
 // 返回上一页
 export function goBack() {
-  routeHistory.update((history) => {
+  routeHistory.update(history => {
     if (history.length > 1) {
       history.pop();
       const previousPath = history[history.length - 1] || '/';
@@ -53,7 +53,7 @@ export const routeNames: Record<string, string> = (() => {
 })();
 
 // 获取当前路由名称（翻译后的）
-export const currentRouteName = derived(currentPath, ($path) => {
+export const currentRouteName = derived(currentPath, $path => {
   const t = getTranslator();
   // 移除 query 参数和 hash，只保留路径部分
   const cleanPath = $path.split('?')[0].split('#')[0];

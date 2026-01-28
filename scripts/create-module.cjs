@@ -18,7 +18,7 @@ const readline = require('readline');
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 function question(query) {
@@ -54,7 +54,7 @@ async function readMultilineInput(prompt, endToken = 'END') {
 
 // 将 kebab-case 转换为 camelCase
 function toCamelCase(str) {
-  return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+  return str.replace(/-([a-z])/g, g => g[1].toUpperCase());
 }
 
 // 将 kebab-case 转换为 PascalCase
@@ -99,11 +99,21 @@ function generateFieldsFromJson(jsonData, moduleName = 'module') {
           activeValue: 1,
           inactiveValue: 0,
         };
-      } else if (key.includes('Time') || key.includes('Date') || key.includes('time') || key.includes('date')) {
+      } else if (
+        key.includes('Time') ||
+        key.includes('Date') ||
+        key.includes('time') ||
+        key.includes('date')
+      ) {
         field.width = 180;
         field.format = 'datetime';
         field.sortable = true;
-      } else if (key.includes('image') || key.includes('img') || key.includes('avatar') || key.includes('photo')) {
+      } else if (
+        key.includes('image') ||
+        key.includes('img') ||
+        key.includes('avatar') ||
+        key.includes('photo')
+      ) {
         field.width = 80;
         field.format = 'image';
       } else if (key.includes('name') || key.includes('title')) {
@@ -218,15 +228,17 @@ function formatArrayField(key, items, baseIndent = 4) {
 
   const itemIndent = ' '.repeat(baseIndent + 2);
 
-  const formattedItems = items.map(item => {
-    const json = JSON.stringify(item, null, 2);
-    // 为每行添加缩进
-    const indentedJson = json
-      .split('\n')
-      .map((line, idx) => (idx === 0 ? line : itemIndent + line))
-      .join('\n');
-    return itemIndent + indentedJson;
-  }).join(',\n');
+  const formattedItems = items
+    .map(item => {
+      const json = JSON.stringify(item, null, 2);
+      // 为每行添加缩进
+      const indentedJson = json
+        .split('\n')
+        .map((line, idx) => (idx === 0 ? line : itemIndent + line))
+        .join('\n');
+      return itemIndent + indentedJson;
+    })
+    .join(',\n');
 
   return `${indent}${key}: [\n${formattedItems},\n${indent}]`;
 }
@@ -257,11 +269,11 @@ export default ${camelName}Module;
 
   // 检查是否有自动生成的字段配置
   const hasAutoFields = !!(
-    autoFields
-    && Array.isArray(autoFields.columns)
-    && autoFields.columns.length > 0
-    && Array.isArray(autoFields.searchFields)
-    && Array.isArray(autoFields.formFields)
+    autoFields &&
+    Array.isArray(autoFields.columns) &&
+    autoFields.columns.length > 0 &&
+    Array.isArray(autoFields.searchFields) &&
+    Array.isArray(autoFields.formFields)
   );
 
   // CRUD页面配置 - 使用自动生成或默认字段
@@ -511,7 +523,10 @@ function addToMenuStructure(moduleName, parentMenu) {
         const trimmed = line.trimEnd();
         // 如果这行以 } 结尾（可能带注释），且结尾没有逗号，则添加逗号
         // 匹配: }  或  } // comment  或  } /* comment */
-        if (trimmed.match(/\}\s*(\/\/.*|\/\*.*\*\/)?$/) && !trimmed.match(/,\s*(\/\/.*|\/\*.*\*\/)?$/)) {
+        if (
+          trimmed.match(/\}\s*(\/\/.*|\/\*.*\*\/)?$/) &&
+          !trimmed.match(/,\s*(\/\/.*|\/\*.*\*\/)?$/)
+        ) {
           // 在 } 后、注释前插入逗号
           lines[lastMenuItemIndex] = line.replace(/(\})\s*(\/\/.*|\/\*.*\*\/)?$/, '$1,$2');
         }
@@ -536,10 +551,7 @@ function addTranslations(moduleName, chineseName, isCustom) {
   let zhContent = fs.readFileSync(zhPath, 'utf-8');
 
   // 在menu对象中添加
-  zhContent = zhContent.replace(
-    /(menu:\s*\{[^}]*)/,
-    `$1\n    ${camelName}: '${chineseName}',`
-  );
+  zhContent = zhContent.replace(/(menu:\s*\{[^}]*)/, `$1\n    ${camelName}: '${chineseName}',`);
 
   // 如果是CRUD页面,添加模块翻译对象
   if (!isCustom) {
@@ -555,10 +567,7 @@ function addTranslations(moduleName, chineseName, isCustom) {
   const enPath = path.join(__dirname, '../src/lib/locales/en-US.ts');
   let enContent = fs.readFileSync(enPath, 'utf-8');
 
-  enContent = enContent.replace(
-    /(menu:\s*\{[^}]*)/,
-    `$1\n    ${camelName}: '${pascalName}',`
-  );
+  enContent = enContent.replace(/(menu:\s*\{[^}]*)/, `$1\n    ${camelName}: '${pascalName}',`);
 
   if (!isCustom) {
     enContent = enContent.replace(
@@ -590,10 +599,7 @@ function registerCustomComponent(componentName) {
 
   // 2. 添加路由渲染（在NotFound之前）
   const routeBlock = `  {:else if currentModule?.customPage === '${componentName}'}\n    <${componentName} />`;
-  content = content.replace(
-    /(\{:else\}[\s\S]*?<NotFound \/>)/,
-    `${routeBlock}\n$1`
-  );
+  content = content.replace(/(\{:else\}[\s\S]*?<NotFound \/>)/, `${routeBlock}\n$1`);
 
   fs.writeFileSync(appPath, content, 'utf-8');
   return true;
@@ -667,9 +673,13 @@ async function main() {
       if (fieldChoice.trim() === '2') {
         try {
           console.log('\n💡 示例JSON格式:');
-          console.log('   [{"id":1,"name":"测试","price":99.9,"status":1,"createTime":"2024-01-01"}]');
+          console.log(
+            '   [{"id":1,"name":"测试","price":99.9,"status":1,"createTime":"2024-01-01"}]'
+          );
           console.log('   或');
-          console.log('   {"id":1,"name":"测试","price":99.9,"status":1,"createTime":"2024-01-01"}\n');
+          console.log(
+            '   {"id":1,"name":"测试","price":99.9,"status":1,"createTime":"2024-01-01"}\n'
+          );
 
           const jsonText = await readMultilineInput('📋 请粘贴后端返回的JSON数据:');
 
@@ -824,7 +834,6 @@ async function main() {
     console.log('\n✨ 模块创建完成！');
     console.log('💡 提示: 所有配置已自动完成，路由和面包屑会自动生效！');
     console.log('🚀 运行 npm run dev 查看效果\n');
-
   } catch (error) {
     console.error('\n❌ 创建失败:', error.message);
     console.error(error.stack);

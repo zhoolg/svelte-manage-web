@@ -6,7 +6,7 @@ import type { AppModule } from '../app.modules';
 const dictModule: AppModule = {
   id: 'dict',
   label: 'menu.dict',
-  icon: 'pi pi-book',
+  icon: 'book',
   path: '/dict',
   crud: {
     title: '数据字典',
@@ -37,9 +37,27 @@ const dictModule: AppModule = {
     ],
 
     form: [
-      { field: 'dictType', label: '字典类型', type: 'input', required: true, placeholder: '请输入字典类型' },
-      { field: 'dictLabel', label: '字典标签', type: 'input', required: true, placeholder: '请输入字典标签' },
-      { field: 'dictValue', label: '字典值', type: 'input', required: true, placeholder: '请输入字典值' },
+      {
+        field: 'dictType',
+        label: '字典类型',
+        type: 'input',
+        required: true,
+        placeholder: '请输入字典类型',
+      },
+      {
+        field: 'dictLabel',
+        label: '字典标签',
+        type: 'input',
+        required: true,
+        placeholder: '请输入字典标签',
+      },
+      {
+        field: 'dictValue',
+        label: '字典值',
+        type: 'input',
+        required: true,
+        placeholder: '请输入字典值',
+      },
       { field: 'sortOrder', label: '排序', type: 'number', defaultValue: 0 },
       {
         field: 'status',
@@ -55,8 +73,8 @@ const dictModule: AppModule = {
     ],
 
     actions: [
-      { label: '编辑', type: 'primary', icon: 'pi pi-pencil' },
-      { label: '删除', type: 'danger', icon: 'pi pi-trash', confirm: '确定删除该字典吗？' },
+      { label: '编辑', type: 'primary', icon: 'pencil' },
+      { label: '删除', type: 'danger', icon: 'trash', confirm: '确定删除该字典吗？' },
     ],
 
     showAdd: true,

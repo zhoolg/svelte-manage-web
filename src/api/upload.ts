@@ -20,7 +20,7 @@ export async function uploadImage(file: File): Promise<string> {
   const response = await fetch(`${BASE_URL}/file/uploadImg`, {
     method: 'POST',
     headers: {
-      'Authorization': token ? `Bearer ${token}` : '',
+      Authorization: token ? `Bearer ${token}` : '',
     },
     body: formData,
   });

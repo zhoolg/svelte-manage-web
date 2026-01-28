@@ -4,6 +4,7 @@
    * 支持单图和多图上传，带预览功能
    */
   import { Button } from 'bits-ui';
+  import { PlayCircle, Play, ArrowLeft, ArrowRight, RefreshCw, Trash2, Plus, Loader2 } from 'lucide-svelte';
   import { uploadImage } from '../api/upload';
   import { toast } from '../utils/toast';
   import { getImageUrl } from '../utils/image';
@@ -21,7 +22,7 @@
   let fileInput: HTMLInputElement;
 
   // 解析图片列表（多图模式下 value 为逗号分隔字符串）
-  $: imageList = multiple && value ? value.split(',').filter(Boolean) : (value ? [value] : []);
+  $: imageList = multiple && value ? value.split(',').filter(Boolean) : value ? [value] : [];
 
   /**
    * 处理文件选择
@@ -142,7 +143,9 @@
     <!-- 图片预览列表 -->
     {#each imageList as url, index (url + index)}
       <div class="relative inline-block group">
-        <div class="w-32 h-32 border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-gray-50 dark:bg-gray-800">
+        <div
+          class="w-32 h-32 border border-gray-200 dark:border-gray-700 rounded overflow-hidden bg-gray-50 dark:bg-gray-800"
+        >
           {#if isVideo(url)}
             <!-- 视频预览（无控制条，避免与操作按钮重叠） -->
             <video
@@ -154,8 +157,10 @@
               <track kind="captions" />
             </video>
             <!-- 视频标识 -->
-            <div class="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center gap-1 pointer-events-none">
-              <i class="pi pi-play-circle"></i>
+            <div
+              class="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center gap-1 pointer-events-none"
+            >
+              <PlayCircle size={12} />
               <span>视频</span>
             </div>
           {:else}
@@ -164,9 +169,10 @@
               src={getImageUrl(url)}
               alt={$t('imageUpload.previewAlt')}
               class="w-full h-full object-cover"
-              onerror={(e) => {
+              onerror={e => {
                 const placeholderText = encodeURIComponent($t('imageUpload.previewFailed'));
-                (e.currentTarget as HTMLImageElement).src = `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128"%3E%3Crect fill="%23ddd" width="128" height="128"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14"%3E${placeholderText}%3C/text%3E%3C/svg%3E`;
+                (e.currentTarget as HTMLImageElement).src =
+                  `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128"%3E%3Crect fill="%23ddd" width="128" height="128"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14"%3E${placeholderText}%3C/text%3E%3C/svg%3E`;
               }}
             />
           {/if}
@@ -174,7 +180,9 @@
 
         <!-- 悬浮操作按钮 -->
         {#if !disabled}
-          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 pointer-events-none">
+          <div
+            class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 pointer-events-none"
+          >
             <div class="pointer-events-auto flex flex-col items-center gap-2">
               {#if isVideo(url)}
                 <!-- 视频预览按钮 -->
@@ -183,7 +191,7 @@
                   class="h-8 px-3 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors flex items-center gap-1"
                   title="预览视频"
                 >
-                  <i class="pi pi-play"></i>
+                  <Play size={12} />
                   <span>预览</span>
                 </Button.Root>
               {/if}
@@ -196,7 +204,7 @@
                     class="h-8 w-8 bg-white hover:bg-gray-100 text-gray-900 text-xs rounded transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     title="左移"
                   >
-                    <i class="pi pi-arrow-left"></i>
+                    <ArrowLeft size={14} />
                   </Button.Root>
                   <Button.Root
                     onclick={() => moveImage(index, 1)}
@@ -204,7 +212,7 @@
                     class="h-8 w-8 bg-white hover:bg-gray-100 text-gray-900 text-xs rounded transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     title="右移"
                   >
-                    <i class="pi pi-arrow-right"></i>
+                    <ArrowRight size={14} />
                   </Button.Root>
                 </div>
               {:else}
@@ -215,7 +223,7 @@
                   class="h-8 px-3 bg-white hover:bg-gray-100 text-gray-900 text-xs rounded transition-colors"
                   title={$t('common.edit')}
                 >
-                  <i class="pi pi-refresh"></i>
+                  <RefreshCw size={14} />
                 </Button.Root>
               {/if}
               <!-- 删除按钮 -->
@@ -224,7 +232,7 @@
                 class="h-8 px-3 bg-red-500 hover:bg-red-600 text-white text-xs rounded transition-colors"
                 title={$t('common.delete')}
               >
-                <i class="pi pi-trash"></i>
+                <Trash2 size={14} />
               </Button.Root>
             </div>
           </div>
@@ -241,10 +249,10 @@
         aria-label={$t('imageUpload.button')}
       >
         {#if uploading}
-          <i class="pi pi-spin pi-spinner text-2xl"></i>
+          <Loader2 size={24} class="animate-spin" />
           <span class="text-xs">{$t('imageUpload.loading')}</span>
         {:else}
-          <i class="pi pi-plus text-2xl"></i>
+          <Plus size={24} />
           <span class="text-xs">{$t('imageUpload.button')}</span>
         {/if}
       </button>

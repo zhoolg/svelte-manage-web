@@ -64,7 +64,7 @@ export function getFlatMenus(menus: MenuItem[] = menuConfig): MenuItem[] {
  * 根据路径获取菜单项
  */
 export function getMenuByPath(path: string): MenuItem | undefined {
-  return getFlatMenus().find((menu) => menu.path === path);
+  return getFlatMenus().find(menu => menu.path === path);
 }
 
 /**
@@ -73,7 +73,7 @@ export function getMenuByPath(path: string): MenuItem | undefined {
 export function getParentMenu(path: string, menus: MenuItem[] = menuConfig): MenuItem | undefined {
   for (const menu of menus) {
     if (menu.children) {
-      const child = menu.children.find((c) => c.path === path);
+      const child = menu.children.find(c => c.path === path);
       if (child) return menu;
       const parent = getParentMenu(path, menu.children);
       if (parent) return parent;
@@ -88,6 +88,6 @@ export function getParentMenu(path: string, menus: MenuItem[] = menuConfig): Men
 export function hasActiveChild(menu: MenuItem, currentPath: string): boolean {
   if (!menu.children) return false;
   return menu.children.some(
-    (child) => child.path === currentPath || hasActiveChild(child, currentPath)
+    child => child.path === currentPath || hasActiveChild(child, currentPath)
   );
 }

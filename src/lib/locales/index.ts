@@ -153,10 +153,10 @@ function createTranslator(currentLocale: Locale) {
 }
 
 // 派生翻译函数 store
-export const t = derived(locale, ($locale) => createTranslator($locale));
+export const t = derived(locale, $locale => createTranslator($locale));
 
 // 当前语言的消息
-export const currentMessages = derived(locale, ($locale) => messages[$locale]);
+export const currentMessages = derived(locale, $locale => messages[$locale]);
 
 // ============================================================
 // 便捷函数

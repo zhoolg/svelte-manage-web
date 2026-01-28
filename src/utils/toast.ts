@@ -17,10 +17,10 @@ function getToast(): ToastApi {
   }
   // 返回空实现，避免报错
   return {
-    success: (msg) => console.log('[Toast Success]', msg),
-    error: (msg) => console.error('[Toast Error]', msg),
-    warning: (msg) => console.warn('[Toast Warning]', msg),
-    info: (msg) => console.info('[Toast Info]', msg),
+    success: msg => console.log('[Toast Success]', msg),
+    error: msg => console.error('[Toast Error]', msg),
+    warning: msg => console.warn('[Toast Warning]', msg),
+    info: msg => console.info('[Toast Info]', msg),
   };
 }
 

@@ -25,20 +25,31 @@ export interface TableColumn<T = Record<string, unknown>> {
   /** 自定义渲染组件 */
   render?: typeof SvelteComponent;
   /** 格式化类型 */
-  format?: 'date' | 'datetime' | 'money' | 'percent' | 'status';
+  format?: 'date' | 'datetime' | 'money' | 'percent' | 'status' | 'switch' | 'image' | 'tags';
   /** 状态映射（当 format 为 status 时使用） */
   statusMap?: Record<string | number, { label: string; color: string }>;
+  /** Switch 配置（当 format 为 switch 时使用） */
+  switchConfig?: {
+    /** 状态切换 API */
+    api: string;
+    /** 激活值 */
+    activeValue?: unknown;
+    /** 非激活值 */
+    inactiveValue?: unknown;
+    /** ID 字段名 */
+    idField?: string;
+    /** 状态字段名 */
+    statusField?: string;
+    /** 成功消息 */
+    successMessage?: string;
+    /** 错误消息 */
+    errorMessage?: string;
+  };
 }
 
 // ==================== 搜索字段配置 ====================
 
-export type SearchFieldType =
-  | 'input'
-  | 'select'
-  | 'date'
-  | 'dateRange'
-  | 'number'
-  | 'radio';
+export type SearchFieldType = 'input' | 'select' | 'date' | 'dateRange' | 'number' | 'radio';
 
 export interface SearchField {
   /** 字段名 */
@@ -70,7 +81,8 @@ export type FormFieldType =
   | 'date'
   | 'datetime'
   | 'upload'
-  | 'editor';
+  | 'editor'
+  | 'tags';
 
 export interface FormField {
   /** 字段名 */

@@ -360,7 +360,8 @@ export default {
   browserCompatibility: {
     unsupported: {
       title: '浏览器版本过低',
-      description: '您正在使用 {browser} {version}，该浏览器版本过低，可能无法正常使用本系统的所有功能。',
+      description:
+        '您正在使用 {browser} {version}，该浏览器版本过低，可能无法正常使用本系统的所有功能。',
       upgradeHint: '请升级到以下浏览器的最新版本以获得更好的体验：',
       downloadChrome: '下载 Chrome',
       downloadFirefox: '下载 Firefox',

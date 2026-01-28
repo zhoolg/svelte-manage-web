@@ -4,6 +4,7 @@
    */
   import { writable } from 'svelte/store';
   import { Button } from 'bits-ui';
+  import { Search, RefreshCw, Download, X } from 'lucide-svelte';
   import { t } from '../lib/locales';
 
   interface LogItem {
@@ -22,14 +23,110 @@
 
   // 模拟日志数据
   const mockLogs: LogItem[] = [
-    { id: 1, username: 'admin', module: '用户管理', action: '新增用户', ip: '192.168.1.100', location: '北京市', browser: 'Chrome 120', os: 'Windows 10', status: 'success', message: '操作成功', createTime: '2024-01-15 14:30:25' },
-    { id: 2, username: 'admin', module: '系统登录', action: '用户登录', ip: '192.168.1.100', location: '北京市', browser: 'Chrome 120', os: 'Windows 10', status: 'success', message: '登录成功', createTime: '2024-01-15 14:25:10' },
-    { id: 3, username: 'zhangsan', module: '代理商管理', action: '编辑代理商', ip: '192.168.1.101', location: '上海市', browser: 'Firefox 121', os: 'macOS 14', status: 'success', message: '操作成功', createTime: '2024-01-15 13:45:30' },
-    { id: 4, username: 'lisi', module: '问答管理', action: '删除问答', ip: '192.168.1.102', location: '广州市', browser: 'Safari 17', os: 'macOS 14', status: 'error', message: '权限不足', createTime: '2024-01-15 12:20:15' },
-    { id: 5, username: 'admin', module: '系统设置', action: '修改配置', ip: '192.168.1.100', location: '北京市', browser: 'Chrome 120', os: 'Windows 10', status: 'success', message: '操作成功', createTime: '2024-01-15 11:10:45' },
-    { id: 6, username: 'wangwu', module: '用户管理', action: '重置密码', ip: '192.168.1.103', location: '深圳市', browser: 'Edge 120', os: 'Windows 11', status: 'success', message: '操作成功', createTime: '2024-01-15 10:30:20' },
-    { id: 7, username: 'admin', module: '系统登录', action: '用户登出', ip: '192.168.1.100', location: '北京市', browser: 'Chrome 120', os: 'Windows 10', status: 'success', message: '登出成功', createTime: '2024-01-14 18:00:00' },
-    { id: 8, username: 'zhangsan', module: '代理商管理', action: '新增代理商', ip: '192.168.1.101', location: '上海市', browser: 'Firefox 121', os: 'macOS 14', status: 'error', message: '数据验证失败', createTime: '2024-01-14 16:45:30' },
+    {
+      id: 1,
+      username: 'admin',
+      module: '用户管理',
+      action: '新增用户',
+      ip: '192.168.1.100',
+      location: '北京市',
+      browser: 'Chrome 120',
+      os: 'Windows 10',
+      status: 'success',
+      message: '操作成功',
+      createTime: '2024-01-15 14:30:25',
+    },
+    {
+      id: 2,
+      username: 'admin',
+      module: '系统登录',
+      action: '用户登录',
+      ip: '192.168.1.100',
+      location: '北京市',
+      browser: 'Chrome 120',
+      os: 'Windows 10',
+      status: 'success',
+      message: '登录成功',
+      createTime: '2024-01-15 14:25:10',
+    },
+    {
+      id: 3,
+      username: 'zhangsan',
+      module: '代理商管理',
+      action: '编辑代理商',
+      ip: '192.168.1.101',
+      location: '上海市',
+      browser: 'Firefox 121',
+      os: 'macOS 14',
+      status: 'success',
+      message: '操作成功',
+      createTime: '2024-01-15 13:45:30',
+    },
+    {
+      id: 4,
+      username: 'lisi',
+      module: '问答管理',
+      action: '删除问答',
+      ip: '192.168.1.102',
+      location: '广州市',
+      browser: 'Safari 17',
+      os: 'macOS 14',
+      status: 'error',
+      message: '权限不足',
+      createTime: '2024-01-15 12:20:15',
+    },
+    {
+      id: 5,
+      username: 'admin',
+      module: '系统设置',
+      action: '修改配置',
+      ip: '192.168.1.100',
+      location: '北京市',
+      browser: 'Chrome 120',
+      os: 'Windows 10',
+      status: 'success',
+      message: '操作成功',
+      createTime: '2024-01-15 11:10:45',
+    },
+    {
+      id: 6,
+      username: 'wangwu',
+      module: '用户管理',
+      action: '重置密码',
+      ip: '192.168.1.103',
+      location: '深圳市',
+      browser: 'Edge 120',
+      os: 'Windows 11',
+      status: 'success',
+      message: '操作成功',
+      createTime: '2024-01-15 10:30:20',
+    },
+    {
+      id: 7,
+      username: 'admin',
+      module: '系统登录',
+      action: '用户登出',
+      ip: '192.168.1.100',
+      location: '北京市',
+      browser: 'Chrome 120',
+      os: 'Windows 10',
+      status: 'success',
+      message: '登出成功',
+      createTime: '2024-01-14 18:00:00',
+    },
+    {
+      id: 8,
+      username: 'zhangsan',
+      module: '代理商管理',
+      action: '新增代理商',
+      ip: '192.168.1.101',
+      location: '上海市',
+      browser: 'Firefox 121',
+      os: 'macOS 14',
+      status: 'error',
+      message: '数据验证失败',
+      createTime: '2024-01-14 16:45:30',
+    },
   ];
 
   let logs = mockLogs;
@@ -37,7 +134,7 @@
     username: '',
     module: '',
     status: '',
-    dateRange: ''
+    dateRange: '',
   };
   let selectedLog: LogItem | null = null;
 
@@ -69,7 +166,9 @@
   <div class="bg-white dark:bg-[#1d1d1d] rounded-lg shadow-sm p-4">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div>
-        <label for="username-input" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">{$t('logs.operator')}</label>
+        <label for="username-input" class="block text-sm text-gray-600 dark:text-gray-400 mb-1"
+          >{$t('logs.operator')}</label
+        >
         <input
           id="username-input"
           type="text"
@@ -79,7 +178,9 @@
         />
       </div>
       <div>
-        <label for="module-select" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">{$t('logs.module')}</label>
+        <label for="module-select" class="block text-sm text-gray-600 dark:text-gray-400 mb-1"
+          >{$t('logs.module')}</label
+        >
         <select
           id="module-select"
           bind:value={searchForm.module}
@@ -92,7 +193,9 @@
         </select>
       </div>
       <div>
-        <label for="status-select" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">{$t('common.status')}</label>
+        <label for="status-select" class="block text-sm text-gray-600 dark:text-gray-400 mb-1"
+          >{$t('common.status')}</label
+        >
         <select
           id="status-select"
           bind:value={searchForm.status}
@@ -106,23 +209,23 @@
       <div class="flex items-end gap-2">
         <Button.Root
           onclick={handleSearch}
-          class="h-9 px-4 bg-[#409eff] text-white text-sm rounded-lg hover:bg-[#66b1ff] transition-colors"
+          class="h-9 px-4 bg-[#409eff] text-white text-sm rounded-lg hover:bg-[#66b1ff] transition-colors flex items-center gap-1"
         >
-          <i class="pi pi-search mr-1"></i>
+          <Search size={14} />
           {$t('common.search')}
         </Button.Root>
         <Button.Root
           onclick={handleReset}
-          class="h-9 px-4 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 text-sm rounded-lg hover:border-[#409eff] hover:text-[#409eff] transition-colors"
+          class="h-9 px-4 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 text-sm rounded-lg hover:border-[#409eff] hover:text-[#409eff] transition-colors flex items-center gap-1"
         >
-          <i class="pi pi-refresh mr-1"></i>
+          <RefreshCw size={14} />
           {$t('common.reset')}
         </Button.Root>
         <Button.Root
           onclick={handleExport}
-          class="h-9 px-4 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 text-sm rounded-lg hover:border-[#67c23a] hover:text-[#67c23a] transition-colors"
+          class="h-9 px-4 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 text-sm rounded-lg hover:border-[#67c23a] hover:text-[#67c23a] transition-colors flex items-center gap-1"
         >
-          <i class="pi pi-download mr-1"></i>
+          <Download size={14} />
           {$t('common.export')}
         </Button.Root>
       </div>
@@ -135,15 +238,42 @@
       <table class="w-full">
         <thead>
           <tr class="bg-gray-50 dark:bg-[#262626]">
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{$t('logs.logId')}</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{$t('logs.operator')}</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{$t('logs.module')}</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{$t('logs.action')}</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{$t('logs.ip')}</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{$t('logs.location')}</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{$t('common.status')}</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{$t('logs.time')}</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{$t('common.action')}</th>
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >{$t('logs.logId')}</th
+            >
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >{$t('logs.operator')}</th
+            >
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >{$t('logs.module')}</th
+            >
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >{$t('logs.action')}</th
+            >
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >{$t('logs.ip')}</th
+            >
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >{$t('logs.location')}</th
+            >
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >{$t('common.status')}</th
+            >
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >{$t('logs.time')}</th
+            >
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+              >{$t('common.action')}</th
+            >
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -152,7 +282,9 @@
               <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{log.id}</td>
               <td class="px-4 py-3 text-sm text-gray-800 dark:text-white">{log.username}</td>
               <td class="px-4 py-3 text-sm">
-                <span class="px-2 py-1 text-xs rounded bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                <span
+                  class="px-2 py-1 text-xs rounded bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                >
                   {log.module}
                 </span>
               </td>
@@ -160,16 +292,18 @@
               <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 font-mono">{log.ip}</td>
               <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{log.location}</td>
               <td class="px-4 py-3 text-sm">
-                <span class="px-2 py-1 text-xs rounded {log.status === 'success'
-                  ? 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400'
-                  : 'bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400'}">
+                <span
+                  class="px-2 py-1 text-xs rounded {log.status === 'success'
+                    ? 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400'
+                    : 'bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400'}"
+                >
                   {log.status === 'success' ? $t('common.success') : $t('common.failed')}
                 </span>
               </td>
               <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{log.createTime}</td>
               <td class="px-4 py-3 text-sm">
                 <Button.Root
-                  onclick={() => selectedLog = log}
+                  onclick={() => (selectedLog = log)}
                   class="text-[#409eff] hover:text-[#66b1ff] transition-colors"
                 >
                   {$t('common.detail')}
@@ -182,16 +316,24 @@
     </div>
 
     <!-- 分页 -->
-    <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+    <div
+      class="px-4 py-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between"
+    >
       <div class="text-sm text-gray-500">
         {$t('table.total', { total: logs.length })}
       </div>
       <div class="flex items-center gap-2">
-        <Button.Root class="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded hover:border-[#409eff] hover:text-[#409eff] transition-colors disabled:opacity-50" disabled>
+        <Button.Root
+          class="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded hover:border-[#409eff] hover:text-[#409eff] transition-colors disabled:opacity-50"
+          disabled
+        >
           {$t('table.prev')}
         </Button.Root>
         <span class="px-3 py-1 text-sm bg-[#409eff] text-white rounded">1</span>
-        <Button.Root class="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded hover:border-[#409eff] hover:text-[#409eff] transition-colors disabled:opacity-50" disabled>
+        <Button.Root
+          class="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded hover:border-[#409eff] hover:text-[#409eff] transition-colors disabled:opacity-50"
+          disabled
+        >
           {$t('table.next')}
         </Button.Root>
       </div>
@@ -203,21 +345,23 @@
     <div class="fixed inset-0 z-50 flex items-center justify-center">
       <div
         class="absolute inset-0 bg-black/50"
-        onclick={() => selectedLog = null}
-        onkeydown={(e) => e.key === 'Enter' && (selectedLog = null)}
+        onclick={() => (selectedLog = null)}
+        onkeydown={e => e.key === 'Enter' && (selectedLog = null)}
         role="button"
         tabindex="0"
         aria-label={$t('logs.closeDialog')}
       ></div>
       <div class="relative w-full max-w-lg mx-4 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-xl">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+        <div
+          class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800"
+        >
           <h3 class="text-lg font-medium text-gray-800 dark:text-white">{$t('logs.detail')}</h3>
           <Button.Root
-            onclick={() => selectedLog = null}
+            onclick={() => (selectedLog = null)}
             class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             aria-label={$t('common.close')}
           >
-            <i class="pi pi-times"></i>
+            <X size={16} />
           </Button.Root>
         </div>
         <div class="p-6 space-y-4">
@@ -256,7 +400,7 @@
             </div>
             <div>
               <div class="text-sm text-gray-500">{$t('common.status')}</div>
-              <p class="{selectedLog.status === 'success' ? 'text-green-600' : 'text-red-600'}">
+              <p class={selectedLog.status === 'success' ? 'text-green-600' : 'text-red-600'}>
                 {selectedLog.status === 'success' ? $t('common.success') : $t('common.failed')}
               </p>
             </div>
@@ -272,7 +416,7 @@
         </div>
         <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex justify-end">
           <Button.Root
-            onclick={() => selectedLog = null}
+            onclick={() => (selectedLog = null)}
             class="px-4 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg hover:border-[#409eff] hover:text-[#409eff] transition-colors"
           >
             {$t('common.close')}

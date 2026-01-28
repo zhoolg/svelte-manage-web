@@ -75,10 +75,7 @@ const responseInterceptor = async <T>(response: Response): Promise<ApiResponse<T
 };
 
 // 统一请求方法
-export async function request<T>(
-  url: string,
-  config: RequestConfig = {}
-): Promise<ApiResponse<T>> {
+export async function request<T>(url: string, config: RequestConfig = {}): Promise<ApiResponse<T>> {
   const { timeout = 15000, ...restConfig } = config;
 
   // 应用请求拦截器
@@ -142,7 +139,8 @@ export async function request<T>(
 // GET 请求
 export function get<T>(url: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
   const queryString = params
-    ? '?' + new URLSearchParams(
+    ? '?' +
+      new URLSearchParams(
         Object.entries(params)
           .filter(([, v]) => v !== undefined && v !== null && v !== '')
           .map(([k, v]) => [k, String(v)])
@@ -159,7 +157,8 @@ export function post<T>(
 ): Promise<ApiResponse<T>> {
   // 如果有 query 参数，添加到 URL
   const queryString = options?.params
-    ? '?' + new URLSearchParams(
+    ? '?' +
+      new URLSearchParams(
         Object.entries(options.params)
           .filter(([, v]) => v !== undefined && v !== null && v !== '')
           .map(([k, v]) => [k, String(v)])

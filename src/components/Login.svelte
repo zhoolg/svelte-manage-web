@@ -3,6 +3,7 @@
   import { permissionStore } from '../stores/permissionStore';
   import { onMount } from 'svelte';
   import { Toggle, Button, Label } from 'bits-ui';
+  import { User, Lock, Eye, EyeOff, Loader2, ArrowRight } from 'lucide-svelte';
   import { t } from '../lib/locales';
   import { APP_CONFIG } from '../config';
   import { organizationApi } from '../api/organization';
@@ -46,10 +47,7 @@
 
     try {
       // RSA 加密账号和密码
-      const encrypted = encryptLoginCredentials(
-        username.trim(),
-        password.trim()
-      );
+      const encrypted = encryptLoginCredentials(username.trim(), password.trim());
 
       // 调用后端登录 API（发送加密后的数据）
       const response = await organizationApi.login({
@@ -93,7 +91,6 @@
       } else {
         throw new Error(response.msg || '登录失败');
       }
-
     } catch (error: any) {
       // 登录失败处理
       if (typeof window !== 'undefined' && (window as any).toast) {
@@ -122,17 +119,22 @@
 
   <div class="w-full max-w-md px-6 relative z-10">
     <!-- 升级后的卡片：更强的阴影层次 -->
-    <div class="bg-white dark:bg-[#1a1a1a] backdrop-blur-xl rounded-3xl shadow-[0_8px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgb(0,0,0,0.5)] overflow-hidden border border-gray-100/20 dark:border-gray-800/50">
+    <div
+      class="bg-white dark:bg-[#1a1a1a] backdrop-blur-xl rounded-3xl shadow-[0_8px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgb(0,0,0,0.5)] overflow-hidden border border-gray-100/20 dark:border-gray-800/50"
+    >
       <!-- 头部 -->
       <div class="pt-12 pb-6 text-center relative">
-
         <!-- 标题组 -->
         <div class="space-y-3 px-6">
-          <h1 class="text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent tracking-tight animate-[fadeIn_0.6s_ease-out]">
+          <h1
+            class="text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent tracking-tight animate-[fadeIn_0.6s_ease-out]"
+          >
             {APP_CONFIG.title}
           </h1>
 
-          <p class="text-sm text-gray-500 dark:text-gray-400 font-medium tracking-wide animate-[fadeIn_0.8s_ease-out]">
+          <p
+            class="text-sm text-gray-500 dark:text-gray-400 font-medium tracking-wide animate-[fadeIn_0.8s_ease-out]"
+          >
             {$t('dashboard.welcome')}
           </p>
         </div>
@@ -150,8 +152,10 @@
               {$t('login.username')}
             </Label.Root>
             <div class="relative">
-              <span class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#409eff] transition-all duration-300">
-                <i class="pi pi-user text-lg"></i>
+              <span
+                class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#409eff] transition-all duration-300"
+              >
+                <User size={18} />
               </span>
               <input
                 id="username-input"
@@ -162,7 +166,9 @@
                 placeholder={$t('login.accountPlaceholder')}
               />
               <!-- 底线动画 -->
-              <div class="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-[#409eff] to-[#66b1ff] group-focus-within:w-full transition-all duration-500"></div>
+              <div
+                class="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-[#409eff] to-[#66b1ff] group-focus-within:w-full transition-all duration-500"
+              ></div>
             </div>
           </div>
 
@@ -175,8 +181,10 @@
               {$t('login.password')}
             </Label.Root>
             <div class="relative">
-              <span class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#409eff] transition-all duration-300">
-                <i class="pi pi-lock text-lg"></i>
+              <span
+                class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#409eff] transition-all duration-300"
+              >
+                <Lock size={18} />
               </span>
               <input
                 id="password-input"
@@ -187,14 +195,20 @@
                 placeholder={$t('login.passwordPlaceholder')}
               />
               <!-- 底线动画 -->
-              <div class="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-[#409eff] to-[#66b1ff] group-focus-within:w-full transition-all duration-500"></div>
+              <div
+                class="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-[#409eff] to-[#66b1ff] group-focus-within:w-full transition-all duration-500"
+              ></div>
 
               <!-- 密码显示/隐藏切换 - bits-ui Toggle -->
               <Toggle.Root
                 bind:pressed={showPassword}
                 class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#409eff] hover:scale-110 transition-all duration-200 cursor-pointer outline-none p-1"
               >
-                <i class="pi {showPassword ? 'pi-eye' : 'pi-eye-slash'} text-lg"></i>
+                {#if showPassword}
+                  <Eye size={18} />
+                {:else}
+                  <EyeOff size={18} />
+                {/if}
               </Toggle.Root>
             </div>
           </div>
@@ -202,7 +216,9 @@
           <!-- 登录按钮 - 升级版 with bits-ui Button -->
           <div class="relative mt-8 group/btn">
             <!-- 按钮光晕背景 -->
-            <div class="absolute -inset-1 bg-gradient-to-r from-[#409eff] via-[#5dade2] to-[#66b1ff] rounded-2xl opacity-0 group-hover/btn:opacity-100 blur-xl transition-all duration-500"></div>
+            <div
+              class="absolute -inset-1 bg-gradient-to-r from-[#409eff] via-[#5dade2] to-[#66b1ff] rounded-2xl opacity-0 group-hover/btn:opacity-100 blur-xl transition-all duration-500"
+            ></div>
 
             <Button.Root
               type="button"
@@ -211,15 +227,20 @@
               class="relative w-full h-14 bg-gradient-to-r from-[#409eff] via-[#5dade2] to-[#66b1ff] hover:from-[#66b1ff] hover:via-[#5dade2] hover:to-[#409eff] active:scale-[0.97] text-white text-base font-semibold rounded-2xl transition-all duration-500 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center shadow-xl shadow-[#409eff]/30 hover:shadow-2xl hover:shadow-[#409eff]/50 overflow-hidden"
             >
               <!-- 按钮波纹效果背景 -->
-              <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"
+              ></div>
 
               <span class="relative z-10 flex items-center">
                 {#if loading}
-                  <i class="pi pi-spin pi-spinner mr-2 text-lg"></i>
+                  <Loader2 size={18} class="mr-2 animate-spin" />
                   {$t('login.logging')}
                 {:else}
                   <span class="tracking-wide">{$t('login.loginButton')}</span>
-                  <i class="pi pi-arrow-right ml-2 text-sm group-hover/btn:translate-x-1 transition-transform duration-300"></i>
+                  <ArrowRight
+                    size={14}
+                    class="ml-2 group-hover/btn:translate-x-1 transition-transform duration-300"
+                  />
                 {/if}
               </span>
             </Button.Root>
@@ -229,7 +250,9 @@
     </div>
 
     <!-- 底部版权 -->
-    <p class="text-center text-xs text-white dark:text-gray-400 mt-8 opacity-60 hover:opacity-100 transition-opacity duration-300">
+    <p
+      class="text-center text-xs text-white dark:text-gray-400 mt-8 opacity-60 hover:opacity-100 transition-opacity duration-300"
+    >
       {APP_CONFIG.copyright}
     </p>
   </div>

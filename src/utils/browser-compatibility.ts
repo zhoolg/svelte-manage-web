@@ -78,11 +78,11 @@ export function detectBrowser(): BrowserInfo {
  */
 function checkBrowserSupport(name: string, version: number): boolean {
   const minVersions: Record<string, number> = {
-    'Firefox': 110,  // 最低支持 Firefox 90
-    'Chrome': 100,   // 最低支持 Chrome 90
-    'Edge': 100,     // 最低支持 Edge 90
-    'Safari': 20,   // 最低支持 Safari 14
-    'IE': 0,        // 不支持 IE
+    Firefox: 110, // 最低支持 Firefox 90
+    Chrome: 100, // 最低支持 Chrome 90
+    Edge: 100, // 最低支持 Edge 90
+    Safari: 20, // 最低支持 Safari 14
+    IE: 0, // 不支持 IE
   };
 
   const minVersion = minVersions[name];
@@ -97,10 +97,10 @@ function checkBrowserSupport(name: string, version: number): boolean {
  */
 function checkIsOldVersion(name: string, version: number): boolean {
   const recommendedVersions: Record<string, number> = {
-    'Firefox': 120, // 建议使用 Firefox 120+
-    'Chrome': 120,  // 建议使用 Chrome 120+
-    'Edge': 120,    // 建议使用 Edge 120+
-    'Safari': 20,   // 建议使用 Safari 20+
+    Firefox: 120, // 建议使用 Firefox 120+
+    Chrome: 120, // 建议使用 Chrome 120+
+    Edge: 120, // 建议使用 Edge 120+
+    Safari: 20, // 建议使用 Safari 20+
   };
 
   const recommendedVersion = recommendedVersions[name];
@@ -181,12 +181,14 @@ function showUnsupportedWarning(browserInfo: BrowserInfo): void {
             opacity: 0.15;
             filter: blur(12px);
           "></div>
-          <i class="pi pi-exclamation-triangle" style="
+          <span style="
             position: relative;
             z-index: 1;
-            font-size: 36px;
             color: white;
-          "></i>
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
         </div>
 
         <!-- 标题 -->
@@ -297,7 +299,7 @@ function showUnsupportedWarning(browserInfo: BrowserInfo): void {
             this.style.transform='translateY(0)';
             this.style.boxShadow='0 4px 12px rgba(64, 158, 255, 0.3)';
           ">
-            <i class="pi pi-download" style="margin-right: 8px;"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
             ${currentT('browserCompatibility.unsupported.downloadChrome')}
           </a>
           <a href="https://www.mozilla.org/firefox/" target="_blank" style="
@@ -322,7 +324,7 @@ function showUnsupportedWarning(browserInfo: BrowserInfo): void {
             this.style.borderColor='rgba(64, 158, 255, 0.2)';
             this.style.transform='translateY(0)';
           ">
-            <i class="pi pi-download" style="margin-right: 8px;"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
             ${currentT('browserCompatibility.unsupported.downloadFirefox')}
           </a>
         </div>

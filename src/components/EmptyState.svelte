@@ -11,6 +11,7 @@
    */
   import { navigate } from '../stores/routerStore';
   import { t } from '$lib/locales';
+  import Icon from './Icon.svelte';
 
   // 组件属性
   export let type: 'empty' | 'developing' | 'error' | 'noPermission' | 'custom' = 'empty';
@@ -19,37 +20,37 @@
   export let description: string = '';
   export let showButton: boolean = true;
   export let buttonText: string = '';
-  export let buttonIcon: string = 'pi-home';
+  export let buttonIcon: string = 'home';
   export let onButtonClick: (() => void) | null = null;
 
   // 预设配置
   $: presets = {
     empty: {
-      icon: 'pi-inbox',
+      icon: 'inbox',
       iconColor: 'text-gray-400',
       title: $t('emptyState.empty.title'),
       description: $t('emptyState.empty.desc'),
     },
     developing: {
-      icon: 'pi-wrench',
+      icon: 'wrench',
       iconColor: 'text-yellow-500',
       title: $t('emptyState.developing.title'),
       description: $t('emptyState.developing.desc'),
     },
     error: {
-      icon: 'pi-exclamation-triangle',
+      icon: 'alert-triangle',
       iconColor: 'text-red-500',
       title: $t('emptyState.error.title'),
       description: $t('emptyState.error.desc'),
     },
     noPermission: {
-      icon: 'pi-lock',
+      icon: 'lock',
       iconColor: 'text-orange-500',
       title: $t('emptyState.noPermission.title'),
       description: $t('emptyState.noPermission.desc'),
     },
     custom: {
-      icon: 'pi-info-circle',
+      icon: 'info',
       iconColor: 'text-blue-500',
       title: $t('emptyState.custom.title'),
       description: '',
@@ -77,7 +78,7 @@
   <div class="text-center max-w-md">
     <!-- 图标 -->
     <div class="mb-6">
-      <i class="pi {finalIcon} text-6xl {currentConfig.iconColor}"></i>
+      <Icon name={finalIcon} size={64} class={currentConfig.iconColor} />
     </div>
 
     <!-- 标题 -->
@@ -101,7 +102,7 @@
         on:click={handleButtonClick}
         class="px-6 py-2.5 bg-[#409eff] hover:bg-[#66b1ff] text-white rounded-lg transition-colors inline-flex items-center gap-2"
       >
-        <i class="pi {buttonIcon}"></i>
+        <Icon name={buttonIcon} size={16} />
         <span>{finalButtonText}</span>
       </button>
     {/if}
