@@ -36,6 +36,7 @@
   import DatePicker from './DatePicker.svelte';
   import DateRangePicker from './DateRangePicker.svelte';
   import Icon from './Icon.svelte';
+  import { exportToXlsx } from '../utils/export';
 
   // 获取翻译函数（用于函数调用）
   const translate = getTranslator();
@@ -60,6 +61,7 @@
   let submitting = false;
   let selectedRows: Record<string, unknown>[] = [];
   let jumpToPage = '';
+  let isExporting = false;
 
   $: totalPages = Math.ceil(total / pageSize);
   $: rowKey = config.table.rowKey || 'id';
@@ -199,35 +201,99 @@
   }
 
   // 导出 Excel
-  function handleExportExcel() {
+  // 获取导出用的单元格值（处理各种格式）
+  function getExportCellValue(row: Record<string, unknown>, col: TableColumn): string {
+    const rawValue = row[col.field as string];
+
+    // status：使用 statusMap 的文案
+    if (col.format === 'status' && col.statusMap) {
+      const status = col.statusMap[String(rawValue)];
+      return status?.label || status?.text || String(rawValue ?? '');
+    }
+
+    // switch：导出为"开启/关闭"或自定义文案
+    if (col.format === 'switch' && col.switchConfig) {
+      const activeValue = col.switchConfig.activeValue ?? true;
+      const inactiveValue = col.switchConfig.inactiveValue ?? false;
+      const activeText = col.switchConfig.activeText || '开启';
+      const inactiveText = col.switchConfig.inactiveText || '关闭';
+      return rawValue === activeValue ? activeText : inactiveText;
+    }
+
+    // image：导出为 URL 文本，支持对象数组
+    if (col.format === 'image') {
+      if (Array.isArray(rawValue)) {
+        return rawValue
+          .map(v => (typeof v === 'object' && v !== null ? (v as any).url || '' : String(v)))
+          .filter(Boolean)
+          .join(', ');
+      }
+      if (typeof rawValue === 'object' && rawValue !== null) {
+        return (rawValue as any).url || '';
+      }
+      return String(rawValue ?? '');
+    }
+
+    // tags：导出为逗号分隔的文本，支持对象数组
+    if (col.format === 'tags') {
+      if (Array.isArray(rawValue)) {
+        return rawValue
+          .map(v =>
+            typeof v === 'object' && v !== null
+              ? (v as any).label || (v as any).name || String(v)
+              : String(v)
+          )
+          .filter(Boolean)
+          .join(', ');
+      }
+      if (typeof rawValue === 'string') {
+        return rawValue
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean)
+          .join(', ');
+      }
+      return String(rawValue ?? '');
+    }
+
+    // datetime：使用 renderCellValue 的格式化逻辑
+    if (col.format === 'datetime') {
+      return renderCellValue(col, rawValue, row);
+    }
+
+    // 默认：原值或空字符串
+    return rawValue != null ? String(rawValue) : '';
+  }
+
+  async function handleExportExcel() {
+    if (isExporting) return;
+
     const exportData = selectedRows.length > 0 ? selectedRows : data;
     if (exportData.length === 0) {
       toast.warning(translate('common.noData'));
       return;
     }
 
-    const columns = config.table.columns;
-    let html = '<html><head><meta charset="UTF-8"></head><body>';
-    html += '<table border="1"><thead><tr>';
-    columns.forEach(col => {
-      html += `<th>${col.label}</th>`;
-    });
-    html += '</tr></thead><tbody>';
-    exportData.forEach(row => {
-      html += '<tr>';
-      columns.forEach(col => {
-        html += `<td>${row[col.field as string] ?? ''}</td>`;
-      });
-      html += '</tr>';
-    });
-    html += '</tbody></table></body></html>';
+    isExporting = true;
+    try {
+      const columns = config.table.columns;
+      const headers = columns.map(col => col.label);
+      const rows = exportData.map(row =>
+        columns.map(col => getExportCellValue(row, col))
+      );
 
-    const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${config.title}_${new Date().toISOString().slice(0, 10)}.xls`;
-    link.click();
-    toast.success(translate('common.success'));
+      await exportToXlsx({
+        filename: `${config.title}_${new Date().toISOString().slice(0, 10)}.xlsx`,
+        headers,
+        rows,
+      });
+
+      toast.success(translate('common.success'));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : translate('common.failed'));
+    } finally {
+      isExporting = false;
+    }
   }
 
   // 批量删除
@@ -596,27 +662,35 @@
         {#if canExport}
           <div class="relative group">
             <Button.Root
-              class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1"
+              disabled={isExporting}
+              class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Download size={12} />
-              {$t('common.export')}
+              {#if isExporting}
+                <Loader2 size={12} class="animate-spin" />
+                {$t('common.exporting')}
+              {:else}
+                <Download size={12} />
+                {$t('common.export')}
+              {/if}
             </Button.Root>
-            <div
-              class="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 hidden group-hover:block z-10"
-            >
-              <Button.Root
-                onclick={handleExportCsv}
-                class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+            {#if !isExporting}
+              <div
+                class="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 hidden group-hover:block z-10"
               >
-                {$t('table.exportCsv')}
-              </Button.Root>
-              <Button.Root
-                onclick={handleExportExcel}
-                class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-              >
-                {$t('table.exportExcel')}
-              </Button.Root>
-            </div>
+                <Button.Root
+                  onclick={handleExportCsv}
+                  class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  {$t('table.exportCsv')}
+                </Button.Root>
+                <Button.Root
+                  onclick={handleExportExcel}
+                  class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  {$t('table.exportExcel')}
+                </Button.Root>
+              </div>
+            {/if}
           </div>
         {/if}
         {#if config.toolbar?.showRefresh}
