@@ -4,7 +4,16 @@
    * 支持单图和多图上传，带预览功能
    */
   import { Button } from 'bits-ui';
-  import { PlayCircle, Play, ArrowLeft, ArrowRight, RefreshCw, Trash2, Plus, Loader2 } from 'lucide-svelte';
+  import {
+    PlayCircle,
+    Play,
+    ArrowLeft,
+    ArrowRight,
+    RefreshCw,
+    Trash2,
+    Plus,
+    Loader2,
+  } from 'lucide-svelte';
   import { uploadImage } from '../api/upload';
   import { toast } from '../utils/toast';
   import { getImageUrl } from '../utils/image';

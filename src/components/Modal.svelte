@@ -81,7 +81,12 @@
       <!-- 内容区域 -->
       <div class="px-5 py-6">
         <div class="flex items-start gap-3">
-          <svelte:component this={typeConfig.icon} size={24} class="mt-0.5" style="color: {typeConfig.color}" />
+          <svelte:component
+            this={typeConfig.icon}
+            size={24}
+            class="mt-0.5"
+            style="color: {typeConfig.color}"
+          />
           <div class="flex-1">
             {#if $confirmState.title}
               <Dialog.Title class="text-base font-medium text-gray-900 dark:text-white mb-2">

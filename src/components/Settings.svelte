@@ -9,7 +9,28 @@
    * - 提升可访问性和键盘导航
    */
   import { Tabs, Switch } from 'bits-ui';
-  import { Palette, Settings as SettingsIcon, Cog, Sun, Moon, Monitor, Check, Bookmark, LayoutDashboard, ArrowUpDown, Minus, Trash2, RefreshCw, Info, Box, Tag, Code, Paintbrush, Zap, Database } from 'lucide-svelte';
+  import {
+    Palette,
+    Settings as SettingsIcon,
+    Cog,
+    Sun,
+    Moon,
+    Monitor,
+    Check,
+    Bookmark,
+    LayoutDashboard,
+    ArrowUpDown,
+    Minus,
+    Trash2,
+    RefreshCw,
+    Info,
+    Box,
+    Tag,
+    Code,
+    Paintbrush,
+    Zap,
+    Database,
+  } from 'lucide-svelte';
   import { settingsStore } from '../stores/settingsStore';
   import { t, locale, setLocale, localeOptions } from '../lib/locales';
   import { APP_CONFIG } from '../config';
@@ -105,7 +126,9 @@
                     <svelte:component
                       this={item.iconComponent}
                       size={16}
-                      class={$settingsStore.theme === item.value ? 'text-[#409eff]' : 'text-gray-400'}
+                      class={$settingsStore.theme === item.value
+                        ? 'text-[#409eff]'
+                        : 'text-gray-400'}
                     />
                     <span
                       class="text-sm {$settingsStore.theme === item.value
@@ -172,7 +195,11 @@
                     <div
                       class="w-10 h-10 rounded-lg bg-[#409eff]/10 flex items-center justify-center"
                     >
-                      <svelte:component this={item.iconComponent} size={18} class="text-[#409eff]" />
+                      <svelte:component
+                        this={item.iconComponent}
+                        size={18}
+                        class="text-[#409eff]"
+                      />
                     </div>
                     <div>
                       <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -263,7 +290,11 @@
                     class="w-9 h-9 rounded-lg flex items-center justify-center"
                     style="background-color: {item.color}15"
                   >
-                    <svelte:component this={item.iconComponent} size={16} style="color: {item.color}" />
+                    <svelte:component
+                      this={item.iconComponent}
+                      size={16}
+                      style="color: {item.color}"
+                    />
                   </div>
                   <div>
                     <p class="text-xs text-gray-500">{item.label}</p>

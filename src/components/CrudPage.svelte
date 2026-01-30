@@ -278,9 +278,7 @@
     try {
       const columns = config.table.columns;
       const headers = columns.map(col => col.label);
-      const rows = exportData.map(row =>
-        columns.map(col => getExportCellValue(row, col))
-      );
+      const rows = exportData.map(row => columns.map(col => getExportCellValue(row, col)));
 
       await exportToXlsx({
         filename: `${config.title}_${new Date().toISOString().slice(0, 10)}.xlsx`,
@@ -857,7 +855,11 @@
                             class="text-sm hover:underline {getActionColor(action.type)}"
                           >
                             {#if action.icon}
-                              <Icon name={action.icon.replace('pi pi-', '')} size={12} class="inline-block mr-1" />
+                              <Icon
+                                name={action.icon.replace('pi pi-', '')}
+                                size={12}
+                                class="inline-block mr-1"
+                              />
                             {/if}
                             {action.label}
                           </Button.Root>

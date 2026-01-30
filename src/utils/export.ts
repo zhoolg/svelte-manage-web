@@ -39,9 +39,7 @@ export async function exportToXlsx(options: ExportXlsxOptions): Promise<void> {
     // 自动计算列宽
     const colWidths = headers.map((header, colIndex) => {
       const headerWidth = String(header).length;
-      const maxDataWidth = Math.max(
-        ...rows.map(row => String(row[colIndex] ?? '').length)
-      );
+      const maxDataWidth = Math.max(...rows.map(row => String(row[colIndex] ?? '').length));
       return Math.max(headerWidth, maxDataWidth, 10); // 最小宽度 10
     });
     worksheet['!cols'] = colWidths.map(width => ({ wch: width }));

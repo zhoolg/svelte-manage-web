@@ -81,7 +81,11 @@
           <div
             class="w-10 h-10 rounded-lg bg-[#409eff]/10 flex items-center justify-center mb-3 group-hover:bg-[#409eff] transition-colors"
           >
-            <Icon name={link.icon?.replace('pi pi-', '') || 'file'} size={18} class="text-[#409eff] group-hover:text-white" />
+            <Icon
+              name={link.icon?.replace('pi pi-', '') || 'file'}
+              size={18}
+              class="text-[#409eff] group-hover:text-white"
+            />
           </div>
           <h3 class="font-medium text-gray-800 dark:text-white text-sm mb-1">{$t(link.title)}</h3>
           <p class="text-xs text-gray-500 dark:text-gray-400">{link.desc}</p>
