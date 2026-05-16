@@ -12,12 +12,13 @@
    * - 支持权限控制
    */
   import { onMount } from 'svelte';
-  import { Dialog, Button, Checkbox, Switch } from 'bits-ui';
+  import { Dialog, Checkbox, Switch } from 'bits-ui';
   import {
     Search,
     Plus,
     Trash2,
     Download,
+    Inbox,
     RefreshCw,
     ChevronLeft,
     ChevronRight,
@@ -172,32 +173,6 @@
     searchForm = {};
     currentPage = 1;
     fetchData();
-  }
-
-  // 导出 CSV
-  function handleExportCsv() {
-    const exportData = selectedRows.length > 0 ? selectedRows : data;
-    if (exportData.length === 0) {
-      toast.warning(translate('common.noData'));
-      return;
-    }
-
-    const columns = config.table.columns;
-    const headers = columns.map(col => col.label);
-    const rows = exportData.map(row =>
-      columns.map(col => {
-        const value = row[col.field as string];
-        return typeof value === 'string' ? `"${value.replace(/"/g, '""')}"` : String(value ?? '');
-      })
-    );
-
-    const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
-    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${config.title}_${new Date().toISOString().slice(0, 10)}.csv`;
-    link.click();
-    toast.success(translate('common.success'));
   }
 
   // 导出 Excel
@@ -423,11 +398,16 @@
   async function handleSubmit() {
     // 验证必填字段
     const requiredFields = config.form?.fields.filter(f => f.required) || [];
+    const errors: string[] = [];
     for (const field of requiredFields) {
-      if (!formData[field.field]) {
-        toast.warning(translate('table.pleaseFill', { field: field.label }));
-        return;
+      const val = formData[field.field];
+      if (val === undefined || val === null || val === '') {
+        errors.push(translate('table.pleaseFill', { field: field.label }));
       }
+    }
+    if (errors.length > 0) {
+      toast.warning(errors[0]);
+      return;
     }
 
     submitting = true;
@@ -468,9 +448,9 @@
 
   // 操作按钮点击
   function handleAction(action: string, row: Record<string, unknown>) {
-    if (action === '编辑' || action === 'Edit') {
+    if (action === translate('common.edit')) {
       handleEdit(row);
-    } else if (action === '删除' || action === 'Delete') {
+    } else if (action === translate('common.delete')) {
       handleDelete(row);
     } else if (onAction) {
       onAction(action, row);
@@ -513,10 +493,10 @@
       const status = col.statusMap[value as string | number];
       if (status) {
         const colorClass: Record<string, string> = {
-          success: 'bg-green-100 text-green-800',
-          warning: 'bg-yellow-100 text-yellow-800',
-          danger: 'bg-red-100 text-red-800',
-          info: 'bg-blue-100 text-blue-800',
+          success: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+          warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+          danger: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+          info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
         };
         return {
           label: status.label,
@@ -554,7 +534,7 @@
 <div class="space-y-4 fade-in">
   <!-- 搜索区域 -->
   {#if config.search?.fields.length}
-    <div class="el-card bg-white dark:bg-[#1d1d1d] rounded-lg p-5">
+    <div class="el-card bg-white dark:bg-[#1d1d1d] rounded-lg p-4">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {#each config.search.fields as field}
           <div>
@@ -589,25 +569,27 @@
                 type="text"
                 bind:value={searchForm[field.field]}
                 placeholder={field.placeholder ? $t(field.placeholder) : ''}
-                class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff]"
+                class="w-full h-9 px-3 text-sm border-0 rounded-md bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#409eff]/30 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               />
             {/if}
           </div>
         {/each}
         <div class="flex items-end gap-2">
-          <Button.Root
+          <button
+            type="button"
             onclick={handleSearch}
-            class="h-9 px-4 bg-[#409eff] hover:bg-[#66b1ff] text-white text-sm rounded transition-colors flex items-center gap-1"
+            class="h-9 px-4 bg-[#409eff] hover:bg-[#66b1ff] text-white text-sm font-medium rounded-md transition-colors flex items-center gap-1"
           >
             <Search size={12} />
             {$t('common.search')}
-          </Button.Root>
-          <Button.Root
+          </button>
+          <button
+            type="button"
             onclick={handleReset}
-            class="h-9 px-4 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors"
+            class="h-9 px-4 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded-md transition-colors"
           >
             {$t('common.reset')}
-          </Button.Root>
+          </button>
         </div>
       </div>
     </div>
@@ -626,20 +608,22 @@
               {$t('table.selected', { count: selectedRows.length })}
             </span>
             {#if canDelete && config.api.delete}
-              <Button.Root
+              <button
+                type="button"
                 onclick={handleBatchDelete}
-                class="h-8 px-3 bg-[#f56c6c] hover:bg-[#f78989] text-white text-sm rounded transition-colors flex items-center gap-1"
+                class="h-8 px-3 bg-[#f56c6c] hover:bg-[#f78989] text-white text-sm rounded-md transition-colors flex items-center gap-1"
               >
                 <Trash2 size={12} />
                 {$t('table.batchDelete')}
-              </Button.Root>
+              </button>
             {/if}
-            <Button.Root
+            <button
+              type="button"
               onclick={() => (selectedRows = [])}
-              class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors"
+              class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded-md transition-colors"
             >
               {$t('table.cancelSelect')}
-            </Button.Root>
+            </button>
           </div>
         {:else}
           <div class="text-sm text-gray-500">
@@ -649,59 +633,43 @@
       </div>
       <div class="flex items-center gap-2">
         {#if config.toolbar?.showAdd && config.api.add && canAdd}
-          <Button.Root
+          <button
+            type="button"
             onclick={handleAdd}
-            class="h-8 px-3 bg-[#409eff] hover:bg-[#66b1ff] text-white text-sm rounded transition-colors flex items-center gap-1"
+            class="h-8 px-3 bg-[#409eff] hover:bg-[#66b1ff] text-white text-sm rounded-md transition-colors flex items-center gap-1"
           >
             <Plus size={12} />
             {config.toolbar.addText || $t('common.add')}
-          </Button.Root>
+          </button>
         {/if}
         {#if canExport}
-          <div class="relative group">
-            <Button.Root
-              disabled={isExporting}
-              class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {#if isExporting}
-                <Loader2 size={12} class="animate-spin" />
-                {$t('common.exporting')}
-              {:else}
-                <Download size={12} />
-                {$t('common.export')}
-              {/if}
-            </Button.Root>
-            {#if !isExporting}
-              <div
-                class="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 hidden group-hover:block z-10"
-              >
-                <Button.Root
-                  onclick={handleExportCsv}
-                  class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                  {$t('table.exportCsv')}
-                </Button.Root>
-                <Button.Root
-                  onclick={handleExportExcel}
-                  class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                  {$t('table.exportExcel')}
-                </Button.Root>
-              </div>
+          <button
+            type="button"
+            disabled={isExporting}
+            onclick={handleExportExcel}
+            class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {#if isExporting}
+              <Loader2 size={12} class="animate-spin" />
+              {$t('common.exporting')}
+            {:else}
+              <Download size={12} />
+              {$t('common.export')}
             {/if}
-          </div>
+          </button>
         {/if}
         {#if config.toolbar?.showRefresh}
-          <Button.Root
+          <button
+            type="button"
             onclick={() => {
               selectedRows = [];
               fetchData();
             }}
-            class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded transition-colors flex items-center gap-1"
+            class="h-8 px-3 border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] text-sm rounded-md transition-colors flex items-center gap-1"
           >
             <RefreshCw size={12} />
             {$t('common.refresh')}
-          </Button.Root>
+          </button>
         {/if}
       </div>
     </div>
@@ -714,8 +682,7 @@
             {#if config.table.showSelection}
               <th class="w-12 px-4 py-3">
                 <Checkbox.Root
-                  checked={isAllSelected}
-                  onCheckedChange={checked => handleSelectAll(!!checked)}
+                  bind:checked={() => isAllSelected, (v) => handleSelectAll(v)}
                   class="w-4 h-4 text-[#409eff] border-gray-300 rounded focus:ring-[#409eff]"
                 />
               </th>
@@ -748,8 +715,10 @@
                   (config.table.showSelection ? 1 : 0)}
                 class="px-4 py-8 text-center text-gray-500"
               >
-                <Loader2 size={16} class="inline-block mr-2 animate-spin" />
-                {$t('common.loading')}
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <Loader2 size={24} class="animate-spin text-[#409eff]" />
+                  <span>{$t('common.loading')}</span>
+                </div>
               </td>
             </tr>
           {:else if data.length === 0}
@@ -760,7 +729,12 @@
                   (config.table.showSelection ? 1 : 0)}
                 class="px-4 py-8 text-center text-gray-500"
               >
-                {$t('common.noData')}
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                    <Inbox size={32} class="text-gray-300 dark:text-gray-600" />
+                  </div>
+                  <span>{$t('common.noData')}</span>
+                </div>
               </td>
             </tr>
           {:else}
@@ -775,8 +749,7 @@
                 {#if config.table.showSelection}
                   <td class="px-4 py-3">
                     <Checkbox.Root
-                      checked={isRowSelected(row)}
-                      onCheckedChange={checked => handleSelectRow(row, !!checked)}
+                      bind:checked={() => isRowSelected(row), (v) => handleSelectRow(row, v)}
                       class="w-4 h-4 text-[#409eff] border-gray-300 rounded focus:ring-[#409eff]"
                     />
                   </td>
@@ -785,7 +758,7 @@
                   <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                     {#if getStatusConfig(col, row[col.field as string])}
                       {@const status = getStatusConfig(col, row[col.field as string])}
-                      <span class="px-2 py-1 text-xs rounded {status?.class}">
+                      <span class="px-2 py-0.5 text-xs rounded {status?.class}">
                         {status?.label}
                       </span>
                     {:else if col.format === 'switch' && col.switchConfig}
@@ -850,9 +823,10 @@
                             : action.show !== false}
                         {@const hasPermission = hasActionPermission(action)}
                         {#if show && hasPermission}
-                          <Button.Root
+                          <button
+                            type="button"
                             onclick={() => handleActionClick(action, row)}
-                            class="text-sm hover:underline {getActionColor(action.type)}"
+                            class="text-sm hover:underline transition-colors {getActionColor(action.type)}"
                           >
                             {#if action.icon}
                               <Icon
@@ -862,7 +836,7 @@
                               />
                             {/if}
                             {action.label}
-                          </Button.Root>
+                          </button>
                         {/if}
                       {/each}
                     </div>
@@ -888,34 +862,37 @@
           })}
         </div>
         <div class="flex items-center gap-1">
-          <Button.Root
+          <button
+            type="button"
             onclick={() => setPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             aria-label="上一页"
           >
             <ChevronLeft size={14} />
-          </Button.Root>
+          </button>
           {#each pageButtons as page}
-            <Button.Root
+            <button
+              type="button"
               onclick={() => setPage(page)}
-              class="w-8 h-8 flex items-center justify-center rounded text-sm transition-colors {currentPage ===
+              class="w-8 h-8 flex items-center justify-center rounded-md text-sm transition-all duration-200 {currentPage ===
               page
-                ? 'bg-[#409eff] text-white'
+                ? 'bg-[#409eff] text-white shadow-sm'
                 : 'border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff]'}"
             >
               {page}
-            </Button.Root>
+            </button>
           {/each}
-          <Button.Root
+          <button
+            type="button"
             onclick={() => setPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
-            class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 dark:border-gray-700 hover:border-[#409eff] hover:text-[#409eff] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             aria-label="下一页"
           >
             <ChevronRight size={14} />
-          </Button.Root>
-          <span class="ml-2 text-sm text-gray-500">跳至</span>
+          </button>
+          <span class="ml-2 text-sm text-gray-500">{$t('pagination.jumpTo')}</span>
           <input
             type="number"
             bind:value={jumpToPage}
@@ -925,7 +902,7 @@
             class="w-12 h-8 px-2 text-sm text-center border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             placeholder=""
           />
-          <span class="text-sm text-gray-500">页，共 {totalPages} 页</span>
+          <span class="text-sm text-gray-500">{$t('pagination.pageTotal', {total: totalPages})}</span>
         </div>
       </div>
     {/if}
@@ -973,7 +950,7 @@
                   rows={field.rows || 3}
                   maxlength={field.maxLength}
                   disabled={field.disabled}
-                  class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff] resize-none"
+                  class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff] focus:ring-1 focus:ring-[#409eff]/20 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                 ></textarea>
               {:else if field.type === 'number'}
                 <input
@@ -982,7 +959,7 @@
                   bind:value={formData[field.field]}
                   placeholder={field.placeholder ? $t(field.placeholder) : ''}
                   disabled={field.disabled}
-                  class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff]"
+                  class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff] focus:ring-1 focus:ring-[#409eff]/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               {:else if field.type === 'select'}
                 <FormSelect
@@ -1021,7 +998,7 @@
                   placeholder={field.placeholder ? $t(field.placeholder) : ''}
                   maxlength={field.maxLength}
                   disabled={field.disabled}
-                  class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff]"
+                  class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff] focus:ring-1 focus:ring-[#409eff]/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               {/if}
               {#if field.tip}

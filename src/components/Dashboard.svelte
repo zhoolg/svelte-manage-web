@@ -58,7 +58,7 @@
 
 <div class="space-y-6 fade-in">
   <!-- 欢迎信息 -->
-  <div class="bg-gradient-to-r from-[#409eff] to-[#66b1ff] rounded-lg p-6 text-white">
+  <div class="bg-linear-to-r from-[#409eff] to-[#66b1ff] rounded-lg p-6 text-white">
     <h1 class="text-2xl font-bold mb-2">
       {$t('dashboard.welcome')}, {$authStore.user?.name || 'Admin'}!
     </h1>
@@ -76,7 +76,7 @@
         <button
           type="button"
           onclick={() => navigate(link.path)}
-          class="group p-4 rounded-lg border border-gray-100 dark:border-gray-800 hover:border-[#409eff] hover:bg-[#409eff]/5 transition-all cursor-pointer text-left w-full"
+          class="group p-4 rounded-lg border border-gray-100 dark:border-gray-800 hover:border-[#409eff] hover:bg-[#409eff]/5 active:scale-[0.98] transition-all cursor-pointer text-left w-full"
         >
           <div
             class="w-10 h-10 rounded-lg bg-[#409eff]/10 flex items-center justify-center mb-3 group-hover:bg-[#409eff] transition-colors"

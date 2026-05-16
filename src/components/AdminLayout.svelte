@@ -28,14 +28,14 @@
   }
 </script>
 
-<div class="min-h-screen bg-[#f5f7fa] dark:bg-[#0a0a0a] flex">
+<div class="min-h-screen bg-[#f5f7fa] dark:bg-[#121212] flex">
   <!-- 侧边栏 -->
   <Sidebar {collapsed} />
 
   <!-- 主内容区域 -->
   <div
     class="flex-1 flex flex-col transition-all duration-300"
-    style:margin-left={collapsed ? '64px' : '210px'}
+    style:margin-left={collapsed ? '54px' : '210px'}
   >
     <!-- 顶部导航 -->
     <Header onToggle={handleToggleSidebar} />

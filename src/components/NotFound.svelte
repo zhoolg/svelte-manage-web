@@ -89,14 +89,14 @@
       <!-- 操作按钮 -->
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
         <button
-          on:click={goBack}
+          onclick={goBack}
           class="px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-[#2d2d2d] dark:hover:bg-[#3d3d3d] text-gray-700 dark:text-gray-300 rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <ArrowLeft size={16} />
           <span>{$t('notFound.back')}</span>
         </button>
         <button
-          on:click={goHome}
+          onclick={goHome}
           class="px-6 py-3 bg-[#409eff] hover:bg-[#66b1ff] text-white rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
         >
           <Home size={16} />

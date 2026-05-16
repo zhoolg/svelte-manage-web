@@ -99,7 +99,7 @@
     <!-- 操作按钮 -->
     {#if showButton}
       <button
-        on:click={handleButtonClick}
+        onclick={handleButtonClick}
         class="px-6 py-2.5 bg-[#409eff] hover:bg-[#66b1ff] text-white rounded-lg transition-colors inline-flex items-center gap-2"
       >
         <Icon name={buttonIcon} size={16} />

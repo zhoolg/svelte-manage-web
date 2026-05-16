@@ -348,7 +348,7 @@
               class="w-full flex items-center px-4 py-2.5 text-[14px] text-[#606266] dark:text-[#ccc] hover:bg-[#fef0f0] hover:text-[#f56c6c] transition-colors cursor-pointer outline-none"
             >
               <LogOut size={14} class="mr-3" />
-              {translate('common.close')}
+              {translate('common.logout')}
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
@@ -362,11 +362,11 @@
   <Dialog.Portal>
     <Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
     <Dialog.Content
-      class="fixed left-1/2 top-20 z-50 w-full max-w-xl -translate-x-1/2 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-2xl overflow-hidden"
+      class="fixed left-1/2 top-20 z-50 w-full max-w-xl -translate-x-1/2 bg-white dark:bg-[#1d1d1d] rounded-lg shadow-2xl overflow-hidden data-[state=open]:animate-[slideDown_0.2s_ease-out] data-[state=closed]:animate-[slideUp_0.15s_ease-in]"
     >
       <form onsubmit={handleSearch}>
-        <div class="flex items-center px-4 border-b border-gray-100 dark:border-gray-800">
-          <Search size={18} class="text-gray-400" />
+        <div class="flex items-center px-4 border-b border-gray-100 dark:border-gray-800 focus-within:border-[#409eff] transition-colors">
+          <Search size={18} class="text-gray-400 shrink-0" />
           <input
             bind:this={searchInputRef}
             type="text"

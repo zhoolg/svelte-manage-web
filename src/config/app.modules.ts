@@ -39,6 +39,10 @@ const moduleFiles = import.meta.glob<{ default: AppModule }>('./modules/*.config
 // 提取所有模块配置
 const allModules = Object.values(moduleFiles).map(module => module.default);
 
+// DEBUG: 诊断模块加载
+console.log('[Config] Loaded module files:', Object.keys(moduleFiles));
+console.log('[Config] Module IDs:', allModules.map(m => m?.id));
+
 // 创建模块映射表（通过 id 快速查找）
 const moduleMap = new Map<string, AppModule>();
 allModules.forEach(module => {
@@ -193,6 +197,10 @@ function buildMenuTree(): AppModule[] {
  */
 export const APP_MODULES: AppModule[] = buildMenuTree();
 
+// DEBUG: 诊断菜单树
+console.log('[Config] APP_MODULES count:', APP_MODULES.length);
+console.log('[Config] APP_MODULES:', JSON.stringify(APP_MODULES.map(m => ({ id: m.id, label: m.label, children: m.children?.length ?? 0 })), null, 2));
+
 // ==================== 辅助函数 ====================
 
 /**
@@ -290,6 +298,8 @@ export function toMenuConfig(modules: AppModule[] = APP_MODULES): Array<{
   label: string;
   icon: string;
   hidden?: boolean;
+  permissions?: string[];
+  roles?: string[];
   children?: ReturnType<typeof toMenuConfig>;
 }> {
   return modules.map(module => ({
@@ -297,6 +307,8 @@ export function toMenuConfig(modules: AppModule[] = APP_MODULES): Array<{
     label: module.label,
     icon: module.icon,
     hidden: module.hidden,
+    permissions: module.permissions,
+    roles: module.roles,
     children: module.children ? toMenuConfig(module.children) : undefined,
   }));
 }

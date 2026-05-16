@@ -81,7 +81,7 @@
 >
   <div class="relative w-full">
     <DatePicker.Input
-      class="flex h-9 w-full items-center justify-between rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 text-sm focus-within:border-[#409eff] focus-within:ring-1 focus-within:ring-[#409eff] transition-all {disabled
+      class="flex h-9 w-full items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 text-sm focus-within:border-[#409eff] focus-within:ring-1 focus-within:ring-[#409eff]/20 transition-all {disabled
         ? 'opacity-50 cursor-not-allowed'
         : ''}"
     >

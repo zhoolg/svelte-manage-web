@@ -25,22 +25,40 @@ export const MENU_STRUCTURE: MenuStructure[] = [
     id: 'home',
   },
 
-  // 用户中心（二级菜单）
+  // 房源管理（二级菜单）
   {
-    id: 'user-center',
-    children: ['users', 'agents'],
+    id: 'property',
+    children: ['properties', 'property-types'],
   },
 
-  // 内容管理（二级菜单）
+  // 租客管理（二级菜单）
   {
-    id: 'content',
-    children: ['faq', 'articles'],
+    id: 'tenant',
+    children: ['tenants', 'applications', 'contracts'],
+  },
+
+  // 财务管理（二级菜单）
+  {
+    id: 'finance',
+    children: ['rent-payments', 'deposits', 'refunds'],
+  },
+
+  // 分销管理（二级菜单）
+  {
+    id: 'distribution',
+    children: ['qrcodes', 'commissions'],
+  },
+
+  // 客服中心（二级菜单）
+  {
+    id: 'service',
+    children: ['chat-messages', 'faq'],
   },
 
   // 系统管理（二级菜单）
   {
     id: 'system',
-    children: ['logs', 'dict', 'settings'],
+    children: ['admins', 'logs', 'dict', 'settings'],
   },
 
   // 隐藏菜单

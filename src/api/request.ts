@@ -1,4 +1,5 @@
-import { TokenStorage, clearAuth } from '../utils/storage';
+import { TokenStorage } from '../utils/storage';
+import { authStore } from '../stores/authStore';
 import { getTranslator } from '../lib/locales';
 import { APP_CONFIG } from '../config';
 
@@ -60,9 +61,9 @@ const responseInterceptor = async <T>(response: Response): Promise<ApiResponse<T
     throw new ApiError(t('api.responseFormatError'), 500);
   }
 
-  // 未登录或 token 过期 - 不使用 location.href 避免页面刷新
+  // 未登录或 token 过期 - 清除 store + localStorage，触发 UI 回到登录页
   if (data.code === 401 || data.code === 403) {
-    clearAuth();
+    authStore.logout();
     throw new ApiError(t('message.sessionExpired'), data.code);
   }
 

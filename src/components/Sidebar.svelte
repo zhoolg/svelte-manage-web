@@ -18,13 +18,13 @@
   import { permissionStore } from '../stores/permissionStore';
   import Icon from './Icon.svelte';
 
-  export let collapsed: boolean = false;
+  let { collapsed = false }: { collapsed?: boolean } = $props();
 
   // 展开的菜单 key 列表
-  let openKeys: string[] = [];
+  let openKeys: string[] = $state([]);
 
   // 初始化和路由变化时更新展开状态
-  $: {
+  $effect(() => {
     const path = $currentPath;
     menuConfig.forEach(menu => {
       if (menu.children && hasActiveChild(menu, path)) {
@@ -33,7 +33,7 @@
         }
       }
     });
-  }
+  });
 
   // 切换菜单展开状态
   function toggleMenu(key: string) {
@@ -85,10 +85,9 @@
 </script>
 
 <aside
-  class="fixed top-0 left-0 h-screen transition-all duration-300 z-40"
+  class="fixed top-0 left-0 h-screen transition-all duration-300 z-40 bg-[#304156] dark:bg-[#1d1e1f]"
   class:w-[54px]={collapsed}
   class:w-[210px]={!collapsed}
-  style="background: #304156"
 >
   <div class="flex flex-col h-full">
     <!-- Logo 区域 -->
@@ -157,8 +156,7 @@
                   <!-- 子菜单（非折叠状态） - 使用 Collapsible.Content -->
                   {#if !collapsed}
                     <Collapsible.Content
-                      class="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up"
-                      style="background: #1f2d3d"
+                      class="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up bg-[#1f2d3d] dark:bg-[#151a1f]"
                     >
                       <ul>
                         {#each item.children as child}
@@ -194,8 +192,7 @@
                     class="absolute left-full top-0 hidden group-hover:block z-50 pointer-events-none"
                   >
                     <div
-                      class="py-2 min-w-[180px] rounded-lg shadow-xl border border-[#263445] pointer-events-auto"
-                      style="background: #304156"
+                      class="py-2 min-w-[180px] rounded-lg shadow-xl border border-[#263445] dark:border-gray-700 pointer-events-auto bg-[#304156] dark:bg-[#1d1e1f]"
                     >
                       <div
                         class="px-4 py-2.5 text-[12px] text-[#909399] border-b border-[#263445] font-medium"

@@ -104,6 +104,79 @@ export const ALL_PERMISSIONS = {
     ALL: 'profile:*',
   },
 
+  // ==================== 房源管理 ====================
+  PROPERTY: {
+    VIEW: 'property:view',
+    ADD: 'property:add',
+    EDIT: 'property:edit',
+    DELETE: 'property:delete',
+    EXPORT: 'property:export',
+    BATCH: 'property:batch',
+    ALL: 'property:*',
+  },
+
+  // ==================== 租客管理 ====================
+  TENANT: {
+    VIEW: 'tenant:view',
+    ADD: 'tenant:add',
+    EDIT: 'tenant:edit',
+    DELETE: 'tenant:delete',
+    EXPORT: 'tenant:export',
+    ALL: 'tenant:*',
+  },
+
+  // ==================== 租房申请 ====================
+  APPLICATION: {
+    VIEW: 'application:view',
+    APPROVE: 'application:approve',
+    REJECT: 'application:reject',
+    ALL: 'application:*',
+  },
+
+  // ==================== 合同管理 ====================
+  CONTRACT: {
+    VIEW: 'contract:view',
+    ADD: 'contract:add',
+    EDIT: 'contract:edit',
+    RENEW: 'contract:renew',
+    TERMINATE: 'contract:terminate',
+    EXPORT: 'contract:export',
+    ALL: 'contract:*',
+  },
+
+  // ==================== 财务管理 ====================
+  FINANCE: {
+    VIEW: 'finance:view',
+    EXPORT: 'finance:export',
+    ALL: 'finance:*',
+  },
+
+  // ==================== 分销管理 ====================
+  DISTRIBUTION: {
+    VIEW: 'distribution:view',
+    ADD: 'distribution:add',
+    EDIT: 'distribution:edit',
+    DELETE: 'distribution:delete',
+    ALL: 'distribution:*',
+  },
+
+  // ==================== 客服中心 ====================
+  SERVICE: {
+    VIEW: 'service:view',
+    REPLY: 'service:reply',
+    ALL: 'service:*',
+  },
+
+  // ==================== 管理员管理 ====================
+  ADMIN: {
+    VIEW: 'admin:view',
+    ADD: 'admin:add',
+    EDIT: 'admin:edit',
+    DELETE: 'admin:delete',
+    RESET_PASSWORD: 'admin:reset_password',
+    ALL: 'admin:*',
+  },
+
   // ==================== 超级权限 ====================
   SUPER: {
     ALL: '*', // 所有权限
@@ -128,31 +201,39 @@ export const ALL_ROLES = {
   ADMIN: {
     code: 'admin',
     name: '管理员',
-    description: '拥有大部分管理权限',
+    description: '拥有大部分业务管理权限',
     level: 2,
   },
 
-  // 用户管理员
-  USER_MANAGER: {
-    code: 'user_manager',
-    name: '用户管理员',
-    description: '负责用户和代理商管理',
+  // 房源管理员
+  PROPERTY_MANAGER: {
+    code: 'property_manager',
+    name: '房源管理员',
+    description: '负责房源、租客、合同管理',
     level: 3,
   },
 
-  // 内容管理员
-  CONTENT_MANAGER: {
-    code: 'content_manager',
-    name: '内容管理员',
-    description: '负责内容管理（文章、FAQ等）',
+  // 财务人员
+  FINANCE_STAFF: {
+    code: 'finance_staff',
+    name: '财务人员',
+    description: '负责租金、押金、退款等财务管理',
     level: 3,
+  },
+
+  // 客服人员
+  CUSTOMER_SERVICE: {
+    code: 'customer_service',
+    name: '客服人员',
+    description: '负责租客咨询消息和常见问题管理',
+    level: 4,
   },
 
   // 运营人员
   OPERATOR: {
     code: 'operator',
     name: '运营人员',
-    description: '负责日常运营工作',
+    description: '负责分销推广和日常运营',
     level: 4,
   },
 
@@ -174,68 +255,78 @@ export const ROLE_PERMISSIONS_MAP: Record<string, string[]> = {
   // 超级管理员：所有权限
   [ALL_ROLES.SUPER_ADMIN.code]: [ALL_PERMISSIONS.SUPER.ALL],
 
-  // 管理员：除系统设置外的所有权限
+  // 管理员：除系统设置外的所有业务权限
   [ALL_ROLES.ADMIN.code]: [
     ALL_PERMISSIONS.DASHBOARD.VIEW,
-    ALL_PERMISSIONS.USER.ALL,
-    ALL_PERMISSIONS.AGENT.ALL,
+    ALL_PERMISSIONS.PROPERTY.ALL,
+    ALL_PERMISSIONS.TENANT.ALL,
+    ALL_PERMISSIONS.APPLICATION.ALL,
+    ALL_PERMISSIONS.CONTRACT.ALL,
+    ALL_PERMISSIONS.FINANCE.ALL,
+    ALL_PERMISSIONS.DISTRIBUTION.ALL,
+    ALL_PERMISSIONS.SERVICE.ALL,
+    ALL_PERMISSIONS.ADMIN.ALL,
     ALL_PERMISSIONS.FAQ.ALL,
-    ALL_PERMISSIONS.ARTICLE.ALL,
     ALL_PERMISSIONS.LOG.VIEW,
     ALL_PERMISSIONS.LOG.EXPORT,
     ALL_PERMISSIONS.DICT.ALL,
     ALL_PERMISSIONS.PROFILE.ALL,
   ],
 
-  // 用户管理员：用户和代理商管理
-  [ALL_ROLES.USER_MANAGER.code]: [
+  // 房源管理员：房源、租客、合同、申请
+  [ALL_ROLES.PROPERTY_MANAGER.code]: [
     ALL_PERMISSIONS.DASHBOARD.VIEW,
-    ALL_PERMISSIONS.USER.VIEW,
-    ALL_PERMISSIONS.USER.ADD,
-    ALL_PERMISSIONS.USER.EDIT,
-    ALL_PERMISSIONS.USER.EXPORT,
-    ALL_PERMISSIONS.AGENT.VIEW,
-    ALL_PERMISSIONS.AGENT.ADD,
-    ALL_PERMISSIONS.AGENT.EDIT,
-    ALL_PERMISSIONS.AGENT.APPROVE,
-    ALL_PERMISSIONS.AGENT.REJECT,
-    ALL_PERMISSIONS.AGENT.EXPORT,
+    ALL_PERMISSIONS.PROPERTY.ALL,
+    ALL_PERMISSIONS.TENANT.ALL,
+    ALL_PERMISSIONS.APPLICATION.ALL,
+    ALL_PERMISSIONS.CONTRACT.ALL,
+    ALL_PERMISSIONS.SERVICE.VIEW,
+    ALL_PERMISSIONS.SERVICE.REPLY,
     ALL_PERMISSIONS.LOG.VIEW,
     ALL_PERMISSIONS.PROFILE.ALL,
   ],
 
-  // 内容管理员：内容管理
-  [ALL_ROLES.CONTENT_MANAGER.code]: [
+  // 财务人员：财务管理
+  [ALL_ROLES.FINANCE_STAFF.code]: [
     ALL_PERMISSIONS.DASHBOARD.VIEW,
+    ALL_PERMISSIONS.FINANCE.ALL,
+    ALL_PERMISSIONS.CONTRACT.VIEW,
+    ALL_PERMISSIONS.TENANT.VIEW,
+    ALL_PERMISSIONS.LOG.VIEW,
+    ALL_PERMISSIONS.PROFILE.ALL,
+  ],
+
+  // 客服人员：客服和FAQ
+  [ALL_ROLES.CUSTOMER_SERVICE.code]: [
+    ALL_PERMISSIONS.DASHBOARD.VIEW,
+    ALL_PERMISSIONS.SERVICE.ALL,
     ALL_PERMISSIONS.FAQ.ALL,
-    ALL_PERMISSIONS.ARTICLE.ALL,
+    ALL_PERMISSIONS.PROPERTY.VIEW,
+    ALL_PERMISSIONS.TENANT.VIEW,
     ALL_PERMISSIONS.LOG.VIEW,
     ALL_PERMISSIONS.PROFILE.ALL,
   ],
 
-  // 运营人员：部分增删改权限
+  // 运营人员：分销推广
   [ALL_ROLES.OPERATOR.code]: [
     ALL_PERMISSIONS.DASHBOARD.VIEW,
-    ALL_PERMISSIONS.USER.VIEW,
-    ALL_PERMISSIONS.USER.EXPORT,
-    ALL_PERMISSIONS.AGENT.VIEW,
-    ALL_PERMISSIONS.AGENT.EXPORT,
+    ALL_PERMISSIONS.DISTRIBUTION.ALL,
+    ALL_PERMISSIONS.PROPERTY.VIEW,
+    ALL_PERMISSIONS.TENANT.VIEW,
+    ALL_PERMISSIONS.TENANT.EXPORT,
     ALL_PERMISSIONS.FAQ.VIEW,
-    ALL_PERMISSIONS.FAQ.ADD,
-    ALL_PERMISSIONS.FAQ.EDIT,
-    ALL_PERMISSIONS.ARTICLE.VIEW,
-    ALL_PERMISSIONS.ARTICLE.ADD,
-    ALL_PERMISSIONS.ARTICLE.EDIT,
+    ALL_PERMISSIONS.LOG.VIEW,
     ALL_PERMISSIONS.PROFILE.ALL,
   ],
 
   // 只读用户：只能查看
   [ALL_ROLES.VIEWER.code]: [
     ALL_PERMISSIONS.DASHBOARD.VIEW,
-    ALL_PERMISSIONS.USER.VIEW,
-    ALL_PERMISSIONS.AGENT.VIEW,
+    ALL_PERMISSIONS.PROPERTY.VIEW,
+    ALL_PERMISSIONS.TENANT.VIEW,
+    ALL_PERMISSIONS.CONTRACT.VIEW,
+    ALL_PERMISSIONS.FINANCE.VIEW,
     ALL_PERMISSIONS.FAQ.VIEW,
-    ALL_PERMISSIONS.ARTICLE.VIEW,
     ALL_PERMISSIONS.LOG.VIEW,
     ALL_PERMISSIONS.PROFILE.VIEW,
   ],
@@ -262,23 +353,31 @@ export const MOCK_USERS = [
     name: '系统管理员',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=manager',
     roles: [ALL_ROLES.ADMIN.code],
-    description: '拥有大部分管理权限',
+    description: '拥有大部分业务管理权限',
   },
   {
-    username: 'user_admin',
-    password: 'user123',
-    name: '用户管理员',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user_admin',
-    roles: [ALL_ROLES.USER_MANAGER.code],
-    description: '负责用户和代理商管理',
+    username: 'property',
+    password: 'property123',
+    name: '房源管理员',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=property',
+    roles: [ALL_ROLES.PROPERTY_MANAGER.code],
+    description: '负责房源、租客、合同管理',
   },
   {
-    username: 'content_admin',
-    password: 'content123',
-    name: '内容管理员',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=content_admin',
-    roles: [ALL_ROLES.CONTENT_MANAGER.code],
-    description: '负责内容管理',
+    username: 'finance',
+    password: 'finance123',
+    name: '财务人员',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=finance',
+    roles: [ALL_ROLES.FINANCE_STAFF.code],
+    description: '负责租金、押金、退款管理',
+  },
+  {
+    username: 'service',
+    password: 'service123',
+    name: '客服人员',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=service',
+    roles: [ALL_ROLES.CUSTOMER_SERVICE.code],
+    description: '负责租客咨询和FAQ管理',
   },
   {
     username: 'operator',
@@ -286,7 +385,7 @@ export const MOCK_USERS = [
     name: '运营专员',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=operator',
     roles: [ALL_ROLES.OPERATOR.code],
-    description: '日常运营工作',
+    description: '负责分销推广和日常运营',
   },
   {
     username: 'viewer',

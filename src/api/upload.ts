@@ -42,6 +42,13 @@ export async function uploadImage(file: File): Promise<string> {
 
   // 如果返回的是 JSON 格式
   const result = await response.json();
+
+  // token 过期
+  if (result.code === 401 || result.code === 403) {
+    authStore.logout();
+    throw new Error('登录已过期，请重新登录');
+  }
+
   if (result.code === 0 || result.code === 200) {
     // 返回 API 原始数据，不添加 BASE_URL
     if (result.data && typeof result.data === 'string') {

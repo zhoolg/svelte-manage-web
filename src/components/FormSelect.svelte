@@ -14,36 +14,44 @@
   import { ChevronDown, Check } from 'lucide-svelte';
   import { t } from '$lib/locales';
 
-  export let value: string | number = '';
-  export let options: Array<{ label: string; value: string | number }> = [];
-  export let placeholder: string = '';
-  export let disabled: boolean = false;
+  let {
+    value = $bindable<string | number>(),
+    options = [] as Array<{ label: string; value: string | number }>,
+    placeholder = '',
+    disabled = false,
+  }: {
+    value?: string | number;
+    options?: Array<{ label: string; value: string | number }>;
+    placeholder?: string;
+    disabled?: boolean;
+  } = $props();
 
   // 找到当前选中的选项
-  $: displayPlaceholder = placeholder || $t('table.selectPlaceholder');
-  $: selectedOption = options.find(opt => opt.value === value);
-  $: displayValue = selectedOption ? $t(selectedOption.label) : displayPlaceholder;
+  const displayPlaceholder = $derived(placeholder || $t('table.selectPlaceholder'));
+  const selectedOption = $derived(options.find(opt => opt.value === value));
+  const displayValue = $derived(selectedOption ? $t(selectedOption.label) : displayPlaceholder);
 </script>
 
 <Select.Root type="single" {disabled}>
   <Select.Trigger
-    class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 focus:outline-none focus:border-[#409eff] flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed"
+    class="w-full h-9 px-3 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 hover:border-[#409eff] focus:outline-none focus:border-[#409eff] focus:ring-1 focus:ring-[#409eff]/20 flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
   >
-    <span class="text-gray-900 dark:text-white {!selectedOption ? 'text-gray-400' : ''}">
+    <span class="truncate text-gray-900 dark:text-white {!selectedOption ? 'text-gray-400' : ''}">
       {displayValue}
     </span>
-    <ChevronDown size={12} class="text-gray-400" />
+    <ChevronDown size={14} class="ml-2 shrink-0 text-gray-400 transition-transform duration-200" />
   </Select.Trigger>
 
   <Select.Portal>
     <Select.Content
-      class="w-[var(--bits-select-trigger-width)] max-h-[300px] overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg mt-1 py-1 z-[9999]"
+      sideOffset={4}
+      class="w-(--bits-select-trigger-width) min-w-30 max-h-75 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl py-1.5 z-9999 animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2"
     >
       <!-- 占位符选项 -->
       <Select.Item
         value=""
         label={displayPlaceholder}
-        class="px-3 py-2 text-sm text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors data-[highlighted]:bg-gray-100 data-[highlighted]:dark:bg-gray-700"
+        class="relative px-3 py-2 text-sm text-gray-400 cursor-pointer rounded-md mx-1 transition-colors data-highlighted:bg-gray-100 data-highlighted:dark:bg-gray-700 data-highlighted:outline-none"
       >
         {displayPlaceholder}
       </Select.Item>
@@ -56,12 +64,16 @@
           onclick={() => {
             value = option.value;
           }}
-          class="px-3 py-2 text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors data-[highlighted]:bg-gray-100 data-[highlighted]:dark:bg-gray-700 data-[selected]:bg-[#409eff] data-[selected]:text-white flex items-center justify-between"
+          class="relative px-3 py-2 text-sm cursor-pointer rounded-md mx-1 transition-colors data-highlighted:bg-gray-100 data-highlighted:dark:bg-gray-700 data-highlighted:outline-none {value === option.value
+            ? 'bg-[#409eff]/10 text-[#409eff] dark:bg-[#409eff]/20 dark:text-[#409eff] font-medium'
+            : 'text-gray-900 dark:text-white'}"
         >
-          <span>{$t(option.label)}</span>
-          {#if value === option.value}
-            <Check size={12} />
-          {/if}
+          <span class="flex items-center justify-between">
+            <span>{$t(option.label)}</span>
+            {#if value === option.value}
+              <Check size={14} class="text-[#409eff]" />
+            {/if}
+          </span>
         </Select.Item>
       {/each}
     </Select.Content>

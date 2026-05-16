@@ -162,7 +162,7 @@
                 type="text"
                 bind:value={username}
                 onkeydown={handleKeyDown}
-                class="w-full h-12 pl-9 pr-4 text-base bg-transparent text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#409eff] transition-all duration-300"
+                class="w-full h-12 pl-9 pr-4 text-base bg-transparent text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-gray-700 placeholder-gray-400 outline-none focus:outline-none focus:border-[#409eff] transition-all duration-300"
                 placeholder={$t('login.accountPlaceholder')}
               />
               <!-- 底线动画 -->
@@ -191,7 +191,7 @@
                 type={showPassword ? 'text' : 'password'}
                 bind:value={password}
                 onkeydown={handleKeyDown}
-                class="w-full h-12 pl-9 pr-12 text-base bg-transparent text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#409eff] transition-all duration-300"
+                class="w-full h-12 pl-9 pr-12 text-base bg-transparent text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-gray-700 placeholder-gray-400 outline-none focus:outline-none focus:border-[#409eff] transition-all duration-300"
                 placeholder={$t('login.passwordPlaceholder')}
               />
               <!-- 底线动画 -->

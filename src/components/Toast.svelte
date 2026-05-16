@@ -3,6 +3,7 @@
     id: number;
     type: 'success' | 'error' | 'warning' | 'info';
     message: string;
+    removing?: boolean;
   }
 </script>
 
@@ -35,7 +36,12 @@
     });
 
     setTimeout(() => {
-      toasts.update(items => items.filter(t => t.id !== id));
+      // 标记为退出中，触发退出动画
+      toasts.update(items => items.map(t => t.id === id ? { ...t, removing: true } : t));
+      // 动画结束后移除
+      setTimeout(() => {
+        toasts.update(items => items.filter(t => t.id !== id));
+      }, 200);
     }, 2500);
   }
 
@@ -80,13 +86,17 @@
 </script>
 
 <div
-  class="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2 pointer-events-none"
+  class="fixed top-16 left-1/2 -translate-x-1/2 z-9999 flex flex-col items-center gap-2 pointer-events-none"
+  aria-live="polite"
+  role="alert"
 >
   {#each $toasts as toastItem (toastItem.id)}
     <div
       class="{getStyle(
         toastItem.type
-      )} text-white px-4 py-2.5 rounded-md shadow-md flex items-center gap-2 pointer-events-auto animate-[slideDown_0.3s_ease-out]"
+      )} text-white px-4 py-2.5 rounded-md shadow-md flex items-center gap-2 pointer-events-auto {toastItem.removing
+        ? 'animate-[slideUp_0.2s_ease-in_forwards]'
+        : 'animate-[slideDown_0.3s_ease-out]'}"
     >
       <svelte:component this={getIconComponent(toastItem.type)} size={16} />
       <span class="text-sm">{toastItem.message}</span>
