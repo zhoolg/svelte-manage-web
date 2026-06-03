@@ -84,11 +84,12 @@
 git clone https://github.com/zhoolg/svelte-manage-web.git
 cd svelte-manage-web
 
-# 安装依赖（推荐使用 pnpm）
-pnpm install
+# 安装前端依赖
+cd web
+npm install
 
-# 启动开发服务器
-pnpm dev
+# 启动前端开发服务器
+npm run dev
 ```
 
 ### 2. 创建分支
@@ -114,11 +115,16 @@ git checkout -b docs/your-doc-update
 ### 4. 提交前检查
 
 ```bash
-# 类型检查
-pnpm check
+# 前端类型检查
+cd web
+npm run check
 
-# 构建测试
-pnpm build
+# 前端构建测试
+npm run build
+
+# 后端测试
+cd ../server
+mvn test
 ```
 
 ### 5. 提交 Pull Request

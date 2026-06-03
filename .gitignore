@@ -8,8 +8,12 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+web/node_modules
+.npm-cache
 dist
+web/dist
 dist-ssr
+web/dist-ssr
 *.local
 
 # Editor directories and files
@@ -23,3 +27,10 @@ dist-ssr
 *.sln
 *.sw?
 .claude/*
+.codex/*
+
+# Spring Boot server
+server/target/
+server/uploads/
+server/application-prod.yml
+server/src/main/resources/application-dev.yml

@@ -58,7 +58,7 @@
 - 可能进行钓鱼攻击
 
 **修复建议**:
-在 src/components/SearchBox.svelte 中对用户输入进行 HTML 转义。
+在 web/src/components/SearchBox.svelte 中对用户输入进行 HTML 转义。
 ```
 
 ## 响应流程
@@ -112,10 +112,11 @@
 
    ```bash
    # 定期检查依赖漏洞
-   pnpm audit
+   cd web
+   npm audit
 
    # 更新依赖
-   pnpm update
+   npm update
    ```
 
 ### 对于贡献者
@@ -179,13 +180,14 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 
 ```bash
 # 检查漏洞
-pnpm audit
+cd web
+npm audit
 
 # 自动修复
-pnpm audit fix
+npm audit fix
 
 # 查看详细信息
-pnpm audit --json
+npm audit --json
 ```
 
 ## 安全更新通知
@@ -206,7 +208,8 @@ pnpm audit --json
 
 ```bash
 # 检查新版本
-pnpm outdated
+cd web
+npm outdated
 
 # 查看 CHANGELOG
 cat CHANGELOG.md

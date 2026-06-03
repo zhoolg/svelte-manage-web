@@ -97,8 +97,10 @@ GitHub: @[your-github-username]
 ## 检查清单
 
 - [ ] 代码已通过 Lint 检查
-- [ ] 代码已通过类型检查 (`pnpm check`)
-- [ ] 构建成功 (`pnpm build`)
+- [ ] 前端类型检查通过 (`cd web && npm run check`)
+- [ ] 前端构建成功 (`cd web && npm run build`)
+- [ ] 后端测试通过 (`cd server && mvn test`)
+- [ ] 后端打包成功 (`cd server && mvn -DskipTests package`)
 - [ ] 已测试所有改动
 - [ ] 已更新相关文档
 - [ ] 提交信息遵循规范

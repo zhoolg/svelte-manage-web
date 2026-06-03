@@ -1,0 +1,18 @@
+# 基线配置文件保持为空。
+#
+# 本地开发使用 application-dev.yml：
+#   mvn spring-boot:run -Dspring-boot.run.profiles=dev
+#
+# 生产部署不把真实配置打进 jar。将外部 application-prod.yml 放在 jar 同级目录，
+# 并通过 SPRING_PROFILES_ACTIVE=prod 启用。
+
+spring:
+  ai:
+    model:
+      chat: none
+      image: none
+      embedding: none
+      moderation: none
+      audio:
+        speech: none
+        transcription: none
