@@ -1,6 +1,7 @@
 package com.zhoolg.manage.infrastructure.auth;
 
 import com.zhoolg.manage.exception.ApiException;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +18,25 @@ import java.util.Base64;
 public class SecretCryptoService {
     private static final int NONCE_BYTES = 12;
     private static final int TAG_BITS = 128;
+    private static final String DEFAULT_SECRET = "dev-only-change-me-32-byte-secret";
 
     private final SecureRandom secureRandom = new SecureRandom();
     private final SecretKeySpec keySpec;
+    private final String secret;
+
+    @Value("${spring.profiles.active:${spring.profiles.default:}}")
+    private String profiles;
 
     public SecretCryptoService(@Value("${app.ai.credentials.secret:dev-only-change-me-32-byte-secret}") String secret) {
+        this.secret = secret;
         this.keySpec = new SecretKeySpec(sha256(secret), "AES");
+    }
+
+    @PostConstruct
+    void validateProductionSecret() {
+        if (isProdProfile() && (secret == null || secret.isBlank() || DEFAULT_SECRET.equals(secret))) {
+            throw new IllegalStateException("生产环境必须配置强随机 app.ai.credentials.secret");
+        }
     }
 
     public String encrypt(String plaintext) {
@@ -70,5 +84,11 @@ public class SecretCryptoService {
         } catch (Exception ex) {
             throw new ApiException(500, "AI 密钥加密初始化失败");
         }
+    }
+
+    private boolean isProdProfile() {
+        return java.util.Arrays.stream((profiles == null ? "" : profiles).split(","))
+                .map(String::trim)
+                .anyMatch("prod"::equalsIgnoreCase);
     }
 }

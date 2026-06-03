@@ -2,6 +2,7 @@ package com.zhoolg.manage.controller.admin;
 
 import com.zhoolg.manage.infrastructure.auth.CaptchaService;
 import com.zhoolg.manage.infrastructure.auth.CryptoService;
+import com.zhoolg.manage.infrastructure.auth.RateLimitService;
 import com.zhoolg.manage.entity.base.ApiResponse;
 import com.zhoolg.manage.entity.dto.ChangePasswordDTO;
 import com.zhoolg.manage.entity.dto.LoginRequestDTO;
@@ -15,8 +16,10 @@ import com.zhoolg.manage.entity.dto.UpdateProfileDTO;
 import com.zhoolg.manage.service.IAuthService;
 import com.zhoolg.manage.service.PasskeyService;
 import com.zhoolg.manage.service.ProfileService;
+import com.zhoolg.manage.exception.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/admin/auth")
@@ -39,19 +43,28 @@ public class AuthController {
     private final PasskeyService passkeyService;
     private final CryptoService cryptoService;
     private final CaptchaService captchaService;
+    private final RateLimitService rateLimitService;
 
-    public AuthController(IAuthService authService, ProfileService profileService, PasskeyService passkeyService, CryptoService cryptoService, CaptchaService captchaService) {
+    @Value("${app.auth.captcha.rate-limit.max-per-minute:20}")
+    private int captchaRateLimitPerMinute;
+
+    public AuthController(IAuthService authService, ProfileService profileService, PasskeyService passkeyService, CryptoService cryptoService, CaptchaService captchaService, RateLimitService rateLimitService) {
         this.authService = authService;
         this.profileService = profileService;
         this.passkeyService = passkeyService;
         this.cryptoService = cryptoService;
         this.captchaService = captchaService;
+        this.rateLimitService = rateLimitService;
     }
 
     /** 图形验证码：返回 {captchaId, image(dataURL)}，答案仅存服务端。no-store 防缓存。 */
     @GetMapping("/captcha")
-    public ApiResponse<CaptchaService.Captcha> captcha(HttpServletResponse response) {
+    public ApiResponse<CaptchaService.Captcha> captcha(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
+        String clientIp = resolveClientIp(request);
+        if (rateLimitService.overLimit("auth:captcha:" + clientIp, captchaRateLimitPerMinute, Duration.ofMinutes(1))) {
+            throw new ApiException(429, "验证码请求过于频繁，请稍后再试");
+        }
         return ApiResponse.ok(captchaService.generate());
     }
 
@@ -120,5 +133,20 @@ public class AuthController {
     public ApiResponse<Map<String, Boolean>> logout(HttpServletRequest request, HttpServletResponse response) {
         authService.logout(request, response);
         return ApiResponse.ok(Map.of("success", true));
+    }
+
+    private String resolveClientIp(HttpServletRequest request) {
+        if (request == null) {
+            return "unknown";
+        }
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) {
+            return forwarded.split(",")[0].trim();
+        }
+        String realIp = request.getHeader("X-Real-IP");
+        if (realIp != null && !realIp.isBlank()) {
+            return realIp.trim();
+        }
+        return request.getRemoteAddr() == null ? "unknown" : request.getRemoteAddr();
     }
 }

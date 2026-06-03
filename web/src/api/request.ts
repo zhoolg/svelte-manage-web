@@ -45,6 +45,14 @@ function isAuthEntryRequest(url: string): boolean {
   );
 }
 
+export function handleAuthSessionExpired(code: number): boolean {
+  if (code !== AUTH_SESSION_EXPIRED_CODE) {
+    return false;
+  }
+  authStore.logout();
+  return true;
+}
+
 // 响应拦截器
 const responseInterceptor = async <T>(response: Response, url: string): Promise<ApiResponse<T>> => {
   const t = getTranslator();
@@ -68,7 +76,7 @@ const responseInterceptor = async <T>(response: Response, url: string): Promise<
         throw new ApiError(data.msg || t('api.requestFailed'), data.code);
       }
 
-      authStore.logout();
+      handleAuthSessionExpired(data.code);
       throw new ApiError(t('message.sessionExpired'), data.code);
     }
 

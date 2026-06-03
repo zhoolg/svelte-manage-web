@@ -82,4 +82,11 @@ class ManageServerApplicationTests {
                 .andExpect(jsonPath("$.code").value(ApiErrorCodes.AUTH_SESSION_EXPIRED))
                 .andExpect(jsonPath("$.msg").value("登录已过期，请重新登录"));
     }
+
+    @Test
+    void swaggerApiDocsAreNotPublicByDefault() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(ApiErrorCodes.AUTH_SESSION_EXPIRED));
+    }
 }

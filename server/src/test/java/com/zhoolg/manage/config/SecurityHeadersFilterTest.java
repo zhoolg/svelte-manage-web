@@ -40,4 +40,20 @@ class SecurityHeadersFilterTest {
                 .contains("style-src-elem 'self' 'unsafe-inline'")
                 .contains("connect-src 'self'");
     }
+
+    @Test
+    void isolatesUploadedResourcesFromPageExecution() throws ServletException, IOException {
+        SecurityHeadersFilter filter = new SecurityHeadersFilter();
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/uploads/2026/06/avatar.png");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        filter.doFilter(request, response, new MockFilterChain());
+
+        assertThat(response.getHeader("Content-Security-Policy"))
+                .contains("default-src 'none'")
+                .contains("sandbox")
+                .contains("frame-ancestors 'none'");
+        assertThat(response.getHeader("Cross-Origin-Resource-Policy")).isEqualTo("same-origin");
+        assertThat(response.getHeader("X-Content-Type-Options")).isEqualTo("nosniff");
+    }
 }

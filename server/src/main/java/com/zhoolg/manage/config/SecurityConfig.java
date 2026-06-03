@@ -6,6 +6,7 @@ import com.zhoolg.manage.entity.base.ApiResponse;
 import com.zhoolg.manage.exception.ApiErrorCodes;
 import jakarta.servlet.http.HttpServletResponse;
 import com.zhoolg.manage.service.IAuthService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, IAuthService authService, ObjectMapper objectMapper) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            IAuthService authService,
+            ObjectMapper objectMapper,
+            @Value("${app.security.public-docs-enabled:false}") boolean publicDocsEnabled
+    ) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -42,24 +48,27 @@ public class SecurityConfig {
                                 writeApiError(response, objectMapper, HttpStatus.FORBIDDEN,
                                         ApiErrorCodes.ACCESS_DENIED, "无权限访问"))
                 )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(
-                                "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**",
-                                "/actuator/health", "/actuator/info",
-                                "/file/uploadImg",
-                                "/admin/auth/captcha", "/admin/auth/public-key", "/admin/auth/login",
-                                "/admin/auth/passkeys/assertion/options", "/admin/auth/passkeys/assertion/finish"
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/admins/**").hasAuthority("admin:view")
-                        .requestMatchers(HttpMethod.POST, "/admins").hasAuthority("admin:add")
-                        .requestMatchers(HttpMethod.PUT, "/admins/**").hasAuthority("admin:edit")
-                        .requestMatchers(HttpMethod.DELETE, "/admins/**").hasAuthority("admin:delete")
-                        .requestMatchers("/admin/**", "/web/**", "/applications/**", "/faq/**", "/logs/**", "/dict/**", "/settings/**")
-                        .authenticated()
-                        .anyRequest().authenticated()
-                );
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                    if (publicDocsEnabled) {
+                        auth.requestMatchers(
+                                "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**"
+                        ).permitAll();
+                    }
+                    auth.requestMatchers(
+                            "/actuator/health", "/actuator/info",
+                            "/admin/auth/captcha", "/admin/auth/public-key", "/admin/auth/login",
+                            "/admin/auth/passkeys/assertion/options", "/admin/auth/passkeys/assertion/finish"
+                    ).permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/uploads/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/admins/**").hasAuthority("admin:view");
+                    auth.requestMatchers(HttpMethod.POST, "/admins").hasAuthority("admin:add");
+                    auth.requestMatchers(HttpMethod.PUT, "/admins/**").hasAuthority("admin:edit");
+                    auth.requestMatchers(HttpMethod.DELETE, "/admins/**").hasAuthority("admin:delete");
+                    auth.requestMatchers("/admin/**", "/web/**", "/applications/**", "/faq/**", "/logs/**", "/dict/**", "/settings/**")
+                            .authenticated();
+                    auth.anyRequest().authenticated();
+                });
         return http.build();
     }
 

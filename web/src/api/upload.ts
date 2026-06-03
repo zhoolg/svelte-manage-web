@@ -1,8 +1,7 @@
 /**
  * 文件上传 API
  */
-import { BASE_URL } from './request';
-import { authStore } from '../stores/authStore';
+import { BASE_URL, handleAuthSessionExpired } from './request';
 
 /**
  * 上传图片
@@ -20,12 +19,12 @@ export async function uploadImage(file: File): Promise<string> {
     body: formData,
   });
 
-  if (!response.ok) {
-    throw new Error(`上传失败: ${response.status}`);
-  }
-
   // 获取响应内容类型
   const contentType = response.headers.get('content-type');
+
+  if (!contentType?.includes('application/json') && !response.ok) {
+    throw new Error(`上传失败: ${response.status}`);
+  }
 
   // 如果返回的是纯文本（相对路径）
   if (contentType?.includes('text/plain')) {
@@ -39,8 +38,7 @@ export async function uploadImage(file: File): Promise<string> {
   const result = await response.json();
 
   // 会话过期
-  if (result.code === 401 || result.code === 403) {
-    authStore.logout();
+  if (handleAuthSessionExpired(Number(result.code))) {
     throw new Error('登录已过期，请重新登录');
   }
 

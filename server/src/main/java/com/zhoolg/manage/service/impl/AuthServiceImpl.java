@@ -16,6 +16,7 @@ import com.zhoolg.manage.service.UserDirectoryService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.annotation.PostConstruct;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
+import java.util.Arrays;
 
 /**
  * 认证服务：
@@ -79,6 +81,8 @@ public class AuthServiceImpl implements IAuthService {
     private boolean captchaEnabled;
     @Value("${app.auth.seed-password:}")
     private String seedPassword;
+    @Value("${spring.profiles.active:${spring.profiles.default:}}")
+    private String profiles;
 
     public AuthServiceImpl(CryptoService cryptoService, PasswordEncoder passwordEncoder, UserDirectoryService userDirectory, CaptchaService captchaService, IPermissionService permissionService, AuditLogService auditLogService, RateLimitService rateLimitService, LoginAttemptGuardService loginAttemptGuardService, ObjectProvider<StringRedisTemplate> redisTemplateProvider, ObjectMapper objectMapper) {
         this.cryptoService = cryptoService;
@@ -91,6 +95,19 @@ public class AuthServiceImpl implements IAuthService {
         this.loginAttemptGuardService = loginAttemptGuardService;
         this.redisTemplate = redisTemplateProvider.getIfAvailable();
         this.objectMapper = objectMapper;
+    }
+
+    @PostConstruct
+    void validateProductionSecurityConfig() {
+        if (!isProdProfile()) {
+            return;
+        }
+        if (!cookieSecure) {
+            throw new IllegalStateException("生产环境必须启用 app.auth.cookie.secure=true");
+        }
+        if (cookieName == null || !cookieName.startsWith("__Host-")) {
+            throw new IllegalStateException("生产环境 Cookie 名称必须使用 __Host- 前缀，例如 __Host-SESSION");
+        }
     }
 
     public LoginResponseDTO login(LoginRequestDTO request, HttpServletResponse response) {
@@ -316,6 +333,12 @@ public class AuthServiceImpl implements IAuthService {
 
     private boolean canUseRedisSession() {
         return useRedisSession && redisTemplate != null;
+    }
+
+    private boolean isProdProfile() {
+        return Arrays.stream((profiles == null ? "" : profiles).split(","))
+                .map(String::trim)
+                .anyMatch("prod"::equalsIgnoreCase);
     }
 
     private String redisKey(String token) {

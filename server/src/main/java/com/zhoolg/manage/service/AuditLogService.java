@@ -9,10 +9,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Service
 public class AuditLogService {
+    private static final String REDACTED = "******";
+    private static final List<String> SENSITIVE_KEYWORDS = List.of(
+            "password", "passwd", "pwd", "token", "apikey", "api_key", "api-key",
+            "secret", "authorization", "cookie", "credential", "privatekey", "private_key", "private-key"
+    );
+    private static final Pattern SENSITIVE_TEXT_PATTERN = Pattern.compile(
+            "(?i)(password|passwd|pwd|access[_-]?token|refresh[_-]?token|token|api[_-]?key|secret|authorization|cookie|credential|private[_-]?key)\\s*[:=]\\s*([^,;\\s}\\]]+)"
+    );
+
     private final AuditLogMapper auditLogMapper;
     private final ObjectMapper objectMapper;
 
@@ -49,10 +64,10 @@ public class AuditLogService {
         entity.setTargetType(limit(targetType, 64));
         entity.setTargetId(targetId == null ? null : limit(String.valueOf(targetId), 128));
         entity.setResult("error".equals(result) ? "error" : "success");
-        entity.setDescription(limit(blankToDefault(description, "操作记录"), 512));
+        entity.setDescription(limit(redactText(blankToDefault(description, "操作记录")), 512));
         entity.setIp(limit(clientIp(request), 64));
         entity.setUserAgent(limit(request == null ? null : request.getHeader("User-Agent"), 512));
-        entity.setDetailsJson(writeJson(details == null ? Map.of() : details));
+        entity.setDetailsJson(writeJson(sanitizeValue(details == null ? Map.of() : details)));
 
         auditLogMapper.insert(entity);
     }
@@ -96,5 +111,52 @@ public class AuditLogService {
             return null;
         }
         return value.length() <= maxLength ? value : value.substring(0, maxLength);
+    }
+
+    private Object sanitizeValue(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Map<?, ?> map) {
+            Map<String, Object> sanitized = new LinkedHashMap<>();
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                String key = String.valueOf(entry.getKey());
+                sanitized.put(key, isSensitiveKey(key) ? REDACTED : sanitizeValue(entry.getValue()));
+            }
+            return sanitized;
+        }
+        if (value instanceof Collection<?> collection) {
+            List<Object> sanitized = new ArrayList<>(collection.size());
+            for (Object item : collection) {
+                sanitized.add(sanitizeValue(item));
+            }
+            return sanitized;
+        }
+        if (value.getClass().isArray()) {
+            int length = Array.getLength(value);
+            List<Object> sanitized = new ArrayList<>(length);
+            for (int i = 0; i < length; i++) {
+                sanitized.add(sanitizeValue(Array.get(value, i)));
+            }
+            return sanitized;
+        }
+        if (value instanceof CharSequence text) {
+            return redactText(text.toString());
+        }
+        return value;
+    }
+
+    private boolean isSensitiveKey(String key) {
+        String normalized = key == null ? "" : key.toLowerCase().replaceAll("[\\s._-]", "");
+        return SENSITIVE_KEYWORDS.stream()
+                .map(keyword -> keyword.replaceAll("[\\s._-]", ""))
+                .anyMatch(normalized::contains);
+    }
+
+    private String redactText(String value) {
+        if (value == null) {
+            return null;
+        }
+        return SENSITIVE_TEXT_PATTERN.matcher(value).replaceAll("$1=" + REDACTED);
     }
 }

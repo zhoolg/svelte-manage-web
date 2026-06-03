@@ -1,4 +1,12 @@
-import { get, post, put, BASE_URL, ApiError, type ApiResponse } from './request';
+import {
+  get,
+  post,
+  put,
+  BASE_URL,
+  ApiError,
+  handleAuthSessionExpired,
+  type ApiResponse,
+} from './request';
 
 export interface AiGenerateRequest {
   description?: string;
@@ -150,8 +158,12 @@ export async function generateAiModuleStream(
   });
 
   if (!response.ok || !response.body) {
-    const message = await parseErrorMessage(response);
-    throw new ApiError(message || `服务器错误 (${response.status})`, response.status);
+    const error = await parseErrorResponse(response);
+    const code = error.code || response.status;
+    if (handleAuthSessionExpired(code)) {
+      throw new ApiError('登录已过期，请重新登录', code);
+    }
+    throw new ApiError(error.msg || `服务器错误 (${response.status})`, code);
   }
 
   const reader = response.body.getReader();
@@ -217,6 +229,9 @@ function handleSseFrame(
   const data = parsed as ApiResponse<AiGenerateResponse>;
 
   if (eventName === 'error' || data.code !== 0) {
+    if (handleAuthSessionExpired(data.code)) {
+      throw new ApiError('登录已过期，请重新登录', data.code);
+    }
     throw new ApiError(data.msg || '生成失败', data.code || 500);
   }
 
@@ -229,14 +244,13 @@ function handleSseFrame(
   return null;
 }
 
-async function parseErrorMessage(response: Response) {
+async function parseErrorResponse(response: Response): Promise<Partial<ApiResponse>> {
   try {
     const text = await response.text();
-    if (!text) return '';
-    const data = JSON.parse(text) as Partial<ApiResponse>;
-    return data.msg || '';
+    if (!text) return {};
+    return JSON.parse(text) as Partial<ApiResponse>;
   } catch {
-    return '';
+    return {};
   }
 }
 

@@ -53,6 +53,8 @@ public class PasskeyService {
     private String relyingPartyName;
     @Value("${app.auth.passkey.origins:http://localhost:7052,http://localhost:5173,http://localhost:8080}")
     private String allowedOrigins;
+    @Value("${app.auth.passkey.allow-origin-port:false}")
+    private boolean allowOriginPort;
     @Value("${app.auth.passkey.challenge-ttl-minutes:5}")
     private long challengeTtlMinutes;
 
@@ -180,7 +182,7 @@ public class PasskeyService {
                 .identity(RelyingPartyIdentity.builder().id(rpId).name(rpName).build())
                 .credentialRepository(passkeyRepository)
                 .origins(origins())
-                .allowOriginPort(true)
+                .allowOriginPort(allowOriginPort)
                 .allowUntrustedAttestation(true)
                 .build();
     }

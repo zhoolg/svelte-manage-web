@@ -69,6 +69,8 @@ spring:
           max-tokens: 4096
 
 app:
+  security:
+    public-docs-enabled: false
   crypto:
     private-key-path: ${APP_RSA_PRIVATE_KEY_PATH:secrets/rsa-private.pem}
     generate-ephemeral-key: false
@@ -76,7 +78,7 @@ app:
     redis-enabled: true
   auth:
     cookie:
-      name: SESSION
+      name: __Host-SESSION
       secure: true
       same-site: Strict
     session-ttl-minutes: 120
@@ -86,6 +88,7 @@ app:
       rp-id: ${PASSKEY_RP_ID}
       rp-name: Svelte Manage Web
       origins: ${PASSKEY_ORIGINS}
+      allow-origin-port: false
       challenge-ttl-minutes: 5
     session:
       use-redis: true
@@ -94,6 +97,8 @@ app:
       length: 4
       ttl-seconds: 120
       max-entries: 2000
+      rate-limit:
+        max-per-minute: 20
     seed-password: ${ADMIN_SEED_PASSWORD:}
   cors:
     allowed-origins: ${APP_ALLOWED_ORIGINS}
@@ -103,6 +108,7 @@ app:
   web:
     wechat-login-enabled: false
   ai:
+    allowed-base-url-hosts: api.openai.com,api.anthropic.com
     credentials:
       secret: ${AI_CREDENTIAL_SECRET}
     spring-ai:

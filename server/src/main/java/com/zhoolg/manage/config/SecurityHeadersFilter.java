@@ -20,6 +20,7 @@ import java.io.IOException;
 public class SecurityHeadersFilter implements Filter {
 
     private static final String API_CSP = "default-src 'none'; frame-ancestors 'none'; img-src 'self' data:; style-src 'self'";
+    private static final String UPLOAD_CSP = "default-src 'none'; sandbox; frame-ancestors 'none'";
     private static final String SWAGGER_CSP = String.join("; ",
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline'",
@@ -61,6 +62,12 @@ public class SecurityHeadersFilter implements Filter {
         // 权限策略：禁用不必要的浏览器特性
         httpResponse.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
 
+        if (isUploadResource(httpRequest)) {
+            // 上传资源只作为静态文件被读取，禁止获得页面级脚本执行能力。
+            httpResponse.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+            httpResponse.setHeader("X-Download-Options", "noopen");
+        }
+
         // Swagger UI 需要加载本机脚本、样式和字体，不能使用 API 的极简 CSP。
         httpResponse.setHeader("Content-Security-Policy", resolveContentSecurityPolicy(httpRequest));
         httpResponse.setHeader("X-Permitted-Cross-Domain-Policies", "none");
@@ -73,6 +80,9 @@ public class SecurityHeadersFilter implements Filter {
         if (path == null) {
             return API_CSP;
         }
+        if (path.startsWith("/uploads/")) {
+            return UPLOAD_CSP;
+        }
         if (path.equals("/swagger-ui.html")
                 || path.startsWith("/swagger-ui/")
                 || path.equals("/v3/api-docs")
@@ -81,5 +91,10 @@ public class SecurityHeadersFilter implements Filter {
         }
         // 默认拒绝被其他页面嵌入资源；API 服务不承载内联脚本。
         return API_CSP;
+    }
+
+    private boolean isUploadResource(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path != null && path.startsWith("/uploads/");
     }
 }

@@ -5,15 +5,21 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhoolg.manage.exception.ApiException;
 import com.zhoolg.manage.service.AiModelGateway;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AiHttpModelClient {
@@ -22,6 +28,9 @@ public class AiHttpModelClient {
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
+
+    @Value("${app.ai.allowed-base-url-hosts:}")
+    private String[] allowedBaseUrlHosts;
 
     public AiHttpModelClient(RestClient.Builder restClientBuilder, ObjectMapper objectMapper) {
         this.restClient = restClientBuilder.build();
@@ -132,13 +141,20 @@ public class AiHttpModelClient {
     }
 
     private void validateEndpoint(String value) {
-        URI uri = URI.create(value);
+        URI uri;
+        try {
+            uri = URI.create(value);
+        } catch (IllegalArgumentException ex) {
+            throw new ApiException(400, "AI Base URL 不合法");
+        }
         String scheme = uri.getScheme();
         String host = uri.getHost();
         if (host == null || host.isBlank()) {
             throw new ApiException(400, "AI Base URL 不合法");
         }
         if ("https".equalsIgnoreCase(scheme)) {
+            validateAllowedHost(host);
+            validatePublicHost(host);
             return;
         }
         boolean localHttp = "http".equalsIgnoreCase(scheme)
@@ -146,6 +162,48 @@ public class AiHttpModelClient {
         if (!localHttp) {
             throw new ApiException(400, "AI Base URL 必须使用 HTTPS， localhost 调试除外");
         }
+    }
+
+    private void validateAllowedHost(String host) {
+        Set<String> allowedHosts = Arrays.stream(allowedBaseUrlHosts == null ? new String[0] : allowedBaseUrlHosts)
+                .map(String::trim)
+                .filter(item -> !item.isBlank())
+                .map(item -> item.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+        if (!allowedHosts.isEmpty() && !allowedHosts.contains(host.toLowerCase(Locale.ROOT))) {
+            throw new ApiException(400, "AI Base URL 域名不在允许列表内");
+        }
+    }
+
+    private void validatePublicHost(String host) {
+        InetAddress[] addresses;
+        try {
+            addresses = InetAddress.getAllByName(host);
+        } catch (UnknownHostException ex) {
+            throw new ApiException(400, "AI Base URL 域名无法解析");
+        }
+        for (InetAddress address : addresses) {
+            if (!isPublicAddress(address)) {
+                throw new ApiException(400, "AI Base URL 不允许指向内网或本机地址");
+            }
+        }
+    }
+
+    private boolean isPublicAddress(InetAddress address) {
+        if (address.isAnyLocalAddress()
+                || address.isLoopbackAddress()
+                || address.isLinkLocalAddress()
+                || address.isSiteLocalAddress()
+                || address.isMulticastAddress()) {
+            return false;
+        }
+        byte[] bytes = address.getAddress();
+        if (bytes.length == 4) {
+            int first = bytes[0] & 0xff;
+            int second = bytes[1] & 0xff;
+            return !(first == 100 && second >= 64 && second <= 127);
+        }
+        return bytes.length != 16 || (bytes[0] & 0xfe) != 0xfc;
     }
 
     private String systemPrompt() {
