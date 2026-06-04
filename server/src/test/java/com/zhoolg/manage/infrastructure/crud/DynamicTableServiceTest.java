@@ -31,6 +31,48 @@ class DynamicTableServiceTest {
     }
 
     @Test
+    void rejectsUnknownCreateFieldBeforeWritingDatabase() {
+        DynamicTableService service = new DynamicTableService(
+                mock(JdbcTemplate.class),
+                mock(AiSchemaMigrationMapper.class)
+        );
+
+        assertThatThrownBy(() -> service.create(
+                resource(),
+                Map.of("title", "报修", "status", "pending", "createdBy", "attacker")
+        ))
+                .isInstanceOf(ApiException.class)
+                .hasMessage("字段不允许新增：createdBy");
+    }
+
+    @Test
+    void rejectsSystemManagedCreateFieldBeforeWritingDatabase() {
+        DynamicTableService service = new DynamicTableService(
+                mock(JdbcTemplate.class),
+                mock(AiSchemaMigrationMapper.class)
+        );
+
+        assertThatThrownBy(() -> service.create(
+                resource(),
+                Map.of("id", 99, "title", "报修", "status", "pending")
+        ))
+                .isInstanceOf(ApiException.class)
+                .hasMessage("系统字段不允许写入：id");
+    }
+
+    @Test
+    void rejectsUnknownUpdateFieldBeforeWritingDatabase() {
+        DynamicTableService service = new DynamicTableService(
+                mock(JdbcTemplate.class),
+                mock(AiSchemaMigrationMapper.class)
+        );
+
+        assertThatThrownBy(() -> service.update(resource(), 1L, Map.of("status", "done", "updatedBy", "attacker")))
+                .isInstanceOf(ApiException.class)
+                .hasMessage("字段不允许修改：updatedBy");
+    }
+
+    @Test
     void rejectsUnsafeModuleIdentifier() {
         DynamicTableService service = new DynamicTableService(
                 mock(JdbcTemplate.class),

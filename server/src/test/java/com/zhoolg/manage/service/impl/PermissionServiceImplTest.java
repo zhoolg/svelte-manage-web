@@ -17,7 +17,7 @@ class PermissionServiceImplTest {
     void usesDatabasePermissionsForRole() {
         RolePermissionMapper mapper = mock(RolePermissionMapper.class);
         when(mapper.selectPermissionsByRole("operator")).thenReturn(List.of("dashboard:view", "settings:*"));
-        PermissionServiceImpl service = new PermissionServiceImpl(mapper, mock(PermissionMapper.class));
+        PermissionServiceImpl service = new PermissionServiceImpl(mapper, mock(PermissionMapper.class), "dev");
 
         assertThat(service.permissionsForRole("operator")).containsExactly("dashboard:view", "settings:*");
     }
@@ -26,15 +26,33 @@ class PermissionServiceImplTest {
     void fallsBackToBuiltInPermissionsWhenRoleHasNoDatabaseRows() {
         RolePermissionMapper mapper = mock(RolePermissionMapper.class);
         when(mapper.selectPermissionsByRole("viewer")).thenReturn(List.of());
-        PermissionServiceImpl service = new PermissionServiceImpl(mapper, mock(PermissionMapper.class));
+        PermissionServiceImpl service = new PermissionServiceImpl(mapper, mock(PermissionMapper.class), "dev");
 
         assertThat(service.permissionsForRole("viewer")).contains("dashboard:view", "settings:view");
     }
 
     @Test
+    void productionDoesNotFallBackToBuiltInPermissionsWhenRoleHasNoDatabaseRows() {
+        RolePermissionMapper mapper = mock(RolePermissionMapper.class);
+        when(mapper.selectPermissionsByRole("admin")).thenReturn(List.of());
+        PermissionServiceImpl service = new PermissionServiceImpl(mapper, mock(PermissionMapper.class), "prod");
+
+        assertThat(service.permissionsForRole("admin")).isEmpty();
+    }
+
+    @Test
+    void productionRoleMetadataDoesNotFallBackToBuiltInRolesWhenDatabaseUnavailable() {
+        RolePermissionMapper mapper = mock(RolePermissionMapper.class);
+        when(mapper.selectEnabledRoles()).thenThrow(new IllegalStateException("database unavailable"));
+        PermissionServiceImpl service = new PermissionServiceImpl(mapper, mock(PermissionMapper.class), "prod");
+
+        assertThat(service.roleMetadata()).isEmpty();
+    }
+
+    @Test
     void keepsWildcardPermissionMatching() {
         RolePermissionMapper mapper = mock(RolePermissionMapper.class);
-        PermissionServiceImpl service = new PermissionServiceImpl(mapper, mock(PermissionMapper.class));
+        PermissionServiceImpl service = new PermissionServiceImpl(mapper, mock(PermissionMapper.class), "dev");
         CurrentUser user = new CurrentUser(1L, "operator", "运营人员", "operator", List.of("settings:*"), false);
 
         assertThat(service.hasPermission(user, "settings:edit")).isTrue();

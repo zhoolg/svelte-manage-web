@@ -25,7 +25,7 @@
     "server:dev": "mvn -f ../server/pom.xml spring-boot:run -Dspring-boot.run.profiles=dev",
     "server:build": "mvn -f ../server/pom.xml package",
     "server:check": "mvn -f ../server/pom.xml test",
-    "build": "prettier --write . && vite build",
+    "build": "npm run check && vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsgo -p tsconfig.node.json",
     "format": "prettier --write .",

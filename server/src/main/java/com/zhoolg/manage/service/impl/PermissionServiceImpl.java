@@ -5,6 +5,7 @@ import com.zhoolg.manage.mapper.PermissionMapper;
 import com.zhoolg.manage.mapper.RolePermissionMapper;
 import com.zhoolg.manage.service.IPermissionService;
 import com.zhoolg.manage.entity.base.CurrentUser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -33,10 +34,16 @@ public class PermissionServiceImpl implements IPermissionService {
 
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
+    private final boolean fallbackEnabled;
 
-    public PermissionServiceImpl(RolePermissionMapper rolePermissionMapper, PermissionMapper permissionMapper) {
+    public PermissionServiceImpl(
+            RolePermissionMapper rolePermissionMapper,
+            PermissionMapper permissionMapper,
+            @Value("${spring.profiles.active:${spring.profiles.default:}}") String profiles
+    ) {
         this.rolePermissionMapper = rolePermissionMapper;
         this.permissionMapper = permissionMapper;
+        this.fallbackEnabled = fallbackEnabled(profiles);
     }
 
     /**
@@ -86,7 +93,7 @@ public class PermissionServiceImpl implements IPermissionService {
     }
 
     /**
-     * 角色权限以数据库为准；数据库尚未初始化或角色无权限时回落到内置基线。
+     * 角色权限以数据库为准；仅开发/测试环境允许在初始化阶段回落到内置基线。
      */
     public List<String> permissionsForRole(String roleCode) {
         String normalizedRole = normalizeRole(roleCode);
@@ -96,7 +103,10 @@ public class PermissionServiceImpl implements IPermissionService {
                 return List.copyOf(permissions);
             }
         } catch (RuntimeException ignored) {
-            // 初始化阶段或数据库不可用时，使用内置权限保证本地开发可登录。
+            // 生产环境必须 fail-closed，避免权限表异常时静默放大权限。
+        }
+        if (!fallbackEnabled) {
+            return List.of();
         }
         return FALLBACK_PERMISSIONS.getOrDefault(normalizedRole, FALLBACK_PERMISSIONS.get("viewer"));
     }
@@ -119,7 +129,7 @@ public class PermissionServiceImpl implements IPermissionService {
         } catch (RuntimeException ignored) {
             // 初始化阶段或数据库不可用时，使用内置角色元数据。
         }
-        return FALLBACK_ROLES;
+        return fallbackEnabled ? FALLBACK_ROLES : List.of();
     }
 
     public List<Map<String, Object>> permissionCatalog() {
@@ -139,6 +149,14 @@ public class PermissionServiceImpl implements IPermissionService {
         } catch (RuntimeException ignored) {
             return List.of();
         }
+    }
+
+    private boolean fallbackEnabled(String profiles) {
+        String value = profiles == null ? "" : profiles;
+        return java.util.Arrays.stream(value.split(","))
+                .map(String::trim)
+                .map(String::toLowerCase)
+                .anyMatch(profile -> profile.equals("dev") || profile.equals("test"));
     }
 
     private String normalizeRole(String roleCode) {

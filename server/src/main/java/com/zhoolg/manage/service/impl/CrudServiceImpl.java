@@ -10,9 +10,14 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class CrudServiceImpl implements ICrudService {
+    private static final Set<String> SYSTEM_MANAGED_FIELDS = Set.of(
+            "id", "createTime", "updateTime", "create_time", "update_time"
+    );
+
     private final ResourceRepository repository;
 
     public CrudServiceImpl(ResourceRepository repository) {
@@ -24,11 +29,11 @@ public class CrudServiceImpl implements ICrudService {
     }
 
     public Map<String, Object> create(ResourceDefinition resource, Map<String, Object> payload) {
-        return repository.create(resource, pick(payload, resource.allowedCreateFields()));
+        return repository.create(resource, pick(payload, resource.allowedCreateFields(), true));
     }
 
     public Map<String, Object> update(ResourceDefinition resource, Object id, Map<String, Object> payload) {
-        Map<String, Object> data = pick(payload, resource.allowedUpdateFields());
+        Map<String, Object> data = pick(payload, resource.allowedUpdateFields(), false);
         data.put("id", id);
         return repository.update(resource, id, data);
     }
@@ -62,12 +67,20 @@ public class CrudServiceImpl implements ICrudService {
         return repository.transitionWorkflow(resource, id, transition);
     }
 
-    private Map<String, Object> pick(Map<String, Object> payload, List<String> fields) {
+    private Map<String, Object> pick(Map<String, Object> payload, List<String> fields, boolean create) {
+        Set<String> allowed = Set.copyOf(fields == null ? List.of() : fields);
         Map<String, Object> result = new LinkedHashMap<>();
-        fields.forEach(field -> {
-            if (payload.containsKey(field)) {
-                result.put(field, payload.get(field));
+        payload.forEach((field, value) -> {
+            if (SYSTEM_MANAGED_FIELDS.contains(field)) {
+                if ("id".equals(field) && !create) {
+                    return;
+                }
+                throw new ApiException(400, "系统字段不允许写入：" + field);
             }
+            if (!allowed.contains(field)) {
+                throw new ApiException(400, "字段不允许" + (create ? "新增" : "修改") + "：" + field);
+            }
+            result.put(field, value);
         });
         return result;
     }

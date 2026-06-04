@@ -23,6 +23,10 @@ import java.util.Set;
 
 @Service
 public class DynamicTableService {
+    private static final Set<String> SYSTEM_MANAGED_FIELDS = Set.of(
+            "id", "createTime", "updateTime", "create_time", "update_time"
+    );
+
     private final JdbcTemplate jdbcTemplate;
     private final AiSchemaMigrationMapper migrationMapper;
 
@@ -159,9 +163,7 @@ public class DynamicTableService {
             throw new ApiException(400, "新增数据不能为空");
         }
         validateRequiredFields(resource, payload, true);
-        List<String> fields = payload.keySet().stream()
-                .filter(field -> !"id".equals(field))
-                .toList();
+        List<String> fields = writableFields(resource, payload, resource.allowedCreateFields(), true);
         if (fields.isEmpty()) {
             throw new ApiException(400, "新增数据不能为空");
         }
@@ -187,9 +189,7 @@ public class DynamicTableService {
         String tableName = tableName(resource.key());
         Long parsedId = parseId(id);
         validateRequiredFields(resource, payload, false);
-        List<String> fields = payload.keySet().stream()
-                .filter(field -> !"id".equals(field))
-                .toList();
+        List<String> fields = writableFields(resource, payload, resource.allowedUpdateFields(), false);
         if (fields.isEmpty()) {
             return selectById(resource.key(), parsedId);
         }
@@ -227,6 +227,29 @@ public class DynamicTableService {
 
     public void delete(ResourceDefinition resource, Object id) {
         jdbcTemplate.update("DELETE FROM " + quote(tableName(resource.key())) + " WHERE `id` = ?", parseId(id));
+    }
+
+    private List<String> writableFields(
+            ResourceDefinition resource,
+            Map<String, Object> payload,
+            List<String> allowedFields,
+            boolean create
+    ) {
+        Set<String> allowed = new LinkedHashSet<>(allowedFields == null ? List.of() : allowedFields);
+        List<String> fields = new ArrayList<>();
+        for (String field : payload.keySet()) {
+            if (SYSTEM_MANAGED_FIELDS.contains(field)) {
+                if ("id".equals(field) && !create) {
+                    continue;
+                }
+                throw new ApiException(400, "系统字段不允许写入：" + field);
+            }
+            if (!allowed.contains(field)) {
+                throw new ApiException(400, "字段不允许" + (create ? "新增" : "修改") + "：" + field);
+            }
+            fields.add(field);
+        }
+        return fields;
     }
 
     private Map<String, Object> selectById(String key, Object id) {
