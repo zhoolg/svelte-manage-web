@@ -232,30 +232,33 @@ git commit -m "refactor(api): 重构 API 请求层"
 
 ## 许可证协议
 
-### GPL-3.0 License
+### 商业授权协议
 
-本项目采用 GNU General Public License v3.0 开源协议。向本项目贡献代码即表示您同意：
+本项目采用源码可见的商业授权协议。向本项目贡献代码即表示您同意：
 
 1. **授予许可**
-   - 您授予本项目永久的、全球性的、非独占的、免费的、不可撤销的版权许可
-   - 您授予本项目永久的、全球性的、非独占的、免费的、不可撤销的专利许可
+   - 您授予项目作者永久的、全球性的、非独占的、免费的、不可撤销的版权许可
+   - 您授予项目作者永久的、全球性的、非独占的、免费的、不可撤销的专利许可
+   - 项目作者可以在当前或未来授权模式下使用、修改、合并、分发和商业化您的贡献
 
 2. **贡献声明**
    - 您声明您有权授予上述许可
    - 您的贡献是您的原创作品，或您有权提交该作品
    - 您的贡献不侵犯任何第三方的知识产权
+   - 您的贡献不包含第三方机密信息、商业秘密或受合同约束的信息
 
 3. **代码归属**
    - 提交的代码将成为项目的一部分
-   - 您的贡献将在 GPL-3.0 协议下发布
-   - 您将在 NOTICE 文件或代码注释中被标注为贡献者
+   - 您的贡献适用项目当前商业授权协议和贡献者许可协议
+   - 您将在 NOTICE 文件或代码注释中被标注为贡献者（如适用）
 
 ### 贡献者许可协议 (CLA)
 
 对于重大贡献，我们可能会要求您签署贡献者许可协议。这确保：
 
-- 项目可以自由使用您的贡献
+- 项目可以合法使用您的贡献
 - 您保留您作品的版权
+- 项目可保持“本地评估测试免费、生产部署需商业授权”的授权边界
 - 保护项目免受法律风险
 
 详见 [CLA.md](./CLA.md)（如适用）
@@ -266,20 +269,12 @@ git commit -m "refactor(api): 重构 API 请求层"
 
 ```typescript
 /*
- * Copyright 2025 zhoolg
+ * Copyright 2026 zhoolg
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * Licensed under the Svelte Manage Web Commercial License.
+ * Local evaluation, development, and testing are permitted.
+ * Production deployment and commercial use require written authorization.
+ * See LICENSE for details.
  */
 ```
 
@@ -287,9 +282,9 @@ git commit -m "refactor(api): 重构 API 请求层"
 
 ```typescript
 /*
- * Modifications Copyright 2025 Your Name
+ * Modifications Copyright 2026 Your Name
  *
- * Licensed under GPL-3.0 License
+ * Contributed under the project Contributor License Agreement.
  */
 ```
 

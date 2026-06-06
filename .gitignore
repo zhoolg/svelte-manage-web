@@ -34,3 +34,42 @@ server/target/
 server/uploads/
 server/application-prod.yml
 server/src/main/resources/application-dev.yml
+
+# Deployment artifacts (contains private JARs)
+deploy/
+dist/
+release/
+build-output/
+
+# Commercial license and private secrets
+license.lic
+*.lic
+*.pem
+*.jks
+*.p12
+secrets/
+server/secrets/
+private/
+commercial-private/
+server/private/
+server/src/private/
+server/src/main/java/com/zhoolg/manage/commercial/
+**/official-commercial-license-core*.jar
+**/official-commercial-ai-core*.jar
+
+# Obfuscator implementation must stay outside the public application repository
+svelte-manage-web-obfuscator/
+**/svelte-manage-web-obfuscator/
+**/*-sources.jar
+**/*-javadoc.jar
+**/svelte-manage-web-license-core-private-0.1.0.jar
+**/svelte-manage-web-ai-core-private-0.1.0.jar
+**/BytecodeObfuscator.java
+**/ObfuscatorMain.java
+**/ObfuscatorCli.java
+**/StringEncryptionStrategy.java
+**/ControlFlowObfuscationStrategy.java
+**/ReflectionObfuscationStrategy.java
+**/NameObfuscationStrategy.java
+**/ClassHierarchyObfuscationStrategy.java
+**/AntiDebugStrategy.java
