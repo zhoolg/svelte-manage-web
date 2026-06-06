@@ -1,18 +1,18 @@
-{
-  "generatedAt": "2026-06-06T22:58:36+08:00",
-  "generatedBy": "Codex",
-  "publicDirectory": "C:\\Users\\Qzhan\\Desktop\\work\\new work\\svelte-manage-platform\\svelte-manage-web",
-  "webDist": "web-dist",
-  "privateLibraries": [
-    {
-      "name": "svelte-manage-web-license-core-private",
-      "file": "private-libs/svelte-manage-web-license-core-private-0.1.0-obf.jar",
-      "sha256": "04a9d1cd154576adee71a9b9824eedade8db52194023e29dd1e2d4cd8de954dd"
-    },
-    {
-      "name": "svelte-manage-web-ai-core-private",
-      "file": "private-libs/svelte-manage-web-ai-core-private-0.1.0-obf.jar",
-      "sha256": "b16cbdd6af6aec2226c12044cfcf315ddcfd8bb2b2fb6c088797ea291f264662"
-    }
-  ]
+﻿{
+    "generatedAt":  "2026-06-06T23:19:09+08:00",
+    "generatedBy":  "Codex",
+    "publicDirectory":  "C:\\Users\\Qzhan\\Desktop\\work\\new work\\svelte-manage-platform\\svelte-manage-web",
+    "webDist":  "web-dist",
+    "privateLibraries":  [
+                             {
+                                 "name":  "svelte-manage-web-license-core-private",
+                                 "file":  "private-libs/svelte-manage-web-license-core-private-0.1.0-obf.jar",
+                                 "sha256":  "3e3721965b05ab129190d136ea8d6cae867673e14e93633d6418993a2c7590f8"
+                             },
+                             {
+                                 "name":  "svelte-manage-web-ai-core-private",
+                                 "file":  "private-libs/svelte-manage-web-ai-core-private-0.1.0-obf.jar",
+                                 "sha256":  "393252e03507ab74bfbe69a45d68e10be36825be9bb8daef02b1121fcbb39264"
+                             }
+                         ]
 }

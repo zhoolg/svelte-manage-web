@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhoolg.manage.infrastructure.auth.CookieSessionAuthenticationFilter;
 import com.zhoolg.manage.entity.base.ApiResponse;
 import com.zhoolg.manage.exception.ApiErrorCodes;
+import com.zhoolg.manage.infrastructure.license.CommercialLicenseEnforcementFilter;
+import com.zhoolg.manage.infrastructure.license.CommercialLicenseService;
+import com.zhoolg.manage.infrastructure.license.integrity.RuntimeIntegrityVerifier;
 import jakarta.servlet.http.HttpServletResponse;
 import com.zhoolg.manage.service.IAuthService;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +36,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             IAuthService authService,
+            CommercialLicenseService licenseService,
+            RuntimeIntegrityVerifier runtimeIntegrityVerifier,
             ObjectMapper objectMapper,
             @Value("${app.security.public-docs-enabled:false}") boolean publicDocsEnabled
     ) throws Exception {
@@ -40,6 +45,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new CookieSessionAuthenticationFilter(authService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(
+                        new CommercialLicenseEnforcementFilter(licenseService, runtimeIntegrityVerifier, objectMapper),
+                        CookieSessionAuthenticationFilter.class
+                )
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) ->
                                 writeApiError(response, objectMapper, HttpStatus.UNAUTHORIZED,
